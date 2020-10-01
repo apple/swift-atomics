@@ -1,0 +1,9 @@
+# Byte compiled Python modules.
+*.pyc
+
+# Finder metadata
+.DS_Store
+
+# Generated files from SPM and Xcode.
+/.build
+/.swiftpm
