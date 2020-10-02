@@ -192,7 +192,7 @@ extension UnsafeAtomic {
   /// }
   /// ```
   ///
-  /// The `succesOrdering` argument specifies the memory ordering to use when
+  /// The `successOrdering` argument specifies the memory ordering to use when
   /// the operation manages to update the current value, while `failureOrdering`
   /// will be used when the operation leaves the value intact.
   ///
@@ -598,7 +598,7 @@ extension ManagedAtomic {
   /// }
   /// ```
   ///
-  /// The `succesOrdering` argument specifies the memory ordering to use when
+  /// The `successOrdering` argument specifies the memory ordering to use when
   /// the operation manages to update the current value, while `failureOrdering`
   /// will be used when the operation leaves the value intact.
   ///
