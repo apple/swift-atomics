@@ -360,12 +360,14 @@ SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, uint64_t)
 #error "Unsupported intptr_t bit width"
 #endif // __INTPTR_WIDTH
 
-static inline void _sa_retain_n(void *object, uint32_t n) {
+SWIFTATOMIC_INLINE
+void _sa_retain_n(void *object, uint32_t n) {
   extern void *swift_retain_n(void *object, uint32_t n);
   swift_retain_n(object, n);
 }
 
-static inline void _sa_release_n(void *object, uint32_t n) {
+SWIFTATOMIC_INLINE
+void _sa_release_n(void *object, uint32_t n) {
   extern void swift_release_n(void *object, uint32_t n);
   swift_release_n(object, n);
 }
