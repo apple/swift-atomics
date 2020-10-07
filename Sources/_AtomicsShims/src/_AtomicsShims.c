@@ -12,12 +12,6 @@
 
 #include "_AtomicsShims.h"
 
-void _sa_retain_n(void *object, uint32_t n) {
-  extern void *swift_retain_n(void *object, uint32_t n);
-  swift_retain_n(object, n);
-}
-
-void _sa_release_n(void *object, uint32_t n) {
-  extern void swift_release_n(void *object, uint32_t n);
-  swift_release_n(object, n);
-}
+// Note: This file intentionally doesn't contain any actual defintions;
+// it only exists to satisfy SPM's requirement that each C target include at
+// least one .c file.
