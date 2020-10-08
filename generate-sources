@@ -31,7 +31,7 @@ lineDirective=''
 echo "Running gyb..."
 
 # Create a temporary directory; remove it on exit.
-tmpdir="$(mktemp -d -t "$(basename "$0")")"
+tmpdir="$(mktemp -d  "${TMPDIR:-/tmp}/$(basename "$0").XXXXXXXX")"
 trap "rm -rf \"$tmpdir\"" EXIT
 
 # Run gyb on each gyb file in the source tree and put results in
