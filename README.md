@@ -79,6 +79,20 @@ Of particular note is full support for atomic strong references. This provides a
 
 All atomic operations exposed by this package are guaranteed to have lock-free implementations. However, we do not guarantee wait-free operation -- depending on the capabilities of the target platform, some of the exposed operations may be implemented by compare-and-exchange loops. That said, all atomic operations map directly to dedicated CPU instructions where available -- to the extent supported by llvm & Clang.
 
+## Portability Concerns
+
+Lock-free double-wide atomics requires support for such things from the underlying target platform. Where such support isn't available, this package doesn't implement `DoubleWord` atomics or atomic strong references. While modern multiprocessing CPUs have been providing double-wide atomic instructions for a number of years now, some platforms still target older architectures by default; these require a special compiler option to enable double-wide atomic instructions. This currently includes Linux operating systems running on x86_64 processors, where the `cmpxchg16b` instruction isn't considered a baseline requirement.
+
+To enable double-wide atomics on Linux/x86_64, you currently have to manually supply a couple of additional options on the SPM build invocation:
+
+```
+$ swift build -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS -c release
+```
+
+(`-mcx16` turns on support for `cmpxchg16b` in Clang, and `-DENABLE_DOUBLEWIDE_ATOMICS` makes Swift aware that double-wide atomics are available. Note that the resulting binaries won't run on some older AMD64 CPUs.)
+
+The package cannot currently configure this automatically.
+
 ## Memory Management
 
 Atomic access is implemented in terms of dedicated atomic storage representations that are kept distinct from the corresponding regular (non-atomic) type. (E.g., the actual integer value underlying the counter above isn't directly accessible.) This has several advantages:
