@@ -24,8 +24,7 @@ let package = Package(
     .target(name: "_AtomicsShims"),
     .target(
       name: "Atomics",
-      dependencies: ["_AtomicsShims"],
-      path: "Sources/Atomics"
+      dependencies: ["_AtomicsShims"]
     ),
     .testTarget(
       name: "AtomicsTests",

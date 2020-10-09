@@ -28,6 +28,9 @@ import XCTest
 import Dispatch
 import Atomics
 
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+private let nodeCount = ManagedAtomic<Int>(0)
+
 class LockFreeQueue<Element> {
   class Node: AtomicReference {
     let next: ManagedAtomic<Node?>
@@ -36,6 +39,7 @@ class LockFreeQueue<Element> {
     init(value: Element?, next: Node?) {
       self.value = value
       self.next = ManagedAtomic(next)
+      nodeCount.wrappingIncrement(ordering: .relaxed)
     }
 
     deinit {
@@ -52,6 +56,7 @@ class LockFreeQueue<Element> {
       if values > 0 {
         print(values)
       }
+      nodeCount.wrappingDecrement(ordering: .relaxed)
     }
   }
 
@@ -128,6 +133,10 @@ class LockFreeQueue<Element> {
 }
 
 class QueueTests: XCTestCase {
+  override func tearDown() {
+    XCTAssertEqual(nodeCount.load(ordering: .relaxed), 0)
+  }
+
   func check(readers: Int, writers: Int, count: Int) {
     let queue = LockFreeQueue<(writer: Int, value: Int)>()
     let num = ManagedAtomic(0)
@@ -169,3 +178,4 @@ class QueueTests: XCTestCase {
   }
 }
 
+#endif

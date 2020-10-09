@@ -14,6 +14,7 @@ import XCTest
 import Atomics
 import Dispatch
 
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 let iterations = 1_000_000
 
 private class Node: AtomicReference {
@@ -227,3 +228,4 @@ class StrongReferenceRace: XCTestCase {
   func testLifetimes_08() { checkLifetimes(count: 8, iterations: iterations) }
   func testLifetimes_16() { checkLifetimes(count: 16, iterations: iterations) }
 }
+#endif

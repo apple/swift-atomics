@@ -42,6 +42,7 @@ private class Bar: Equatable, CustomStringConvertible {
   }
 }
 
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 private class Baz: Equatable, CustomStringConvertible, AtomicReference {
   var value: Int
   init(_ value: Int) { self.value = value }
@@ -50,12 +51,14 @@ private class Baz: Equatable, CustomStringConvertible, AtomicReference {
     left === right
   }
 }
+#endif
 
 private enum Fred: Int, AtomicValue {
   case one
   case two
 }
 
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicIntTests: XCTestCase {
@@ -1581,11 +1584,8 @@ class BasicAtomicIntTests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: Int = 3
     let b: Int = 8
@@ -2489,6 +2489,8 @@ class BasicAtomicIntTests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt8Tests: XCTestCase {
@@ -4014,11 +4016,8 @@ class BasicAtomicInt8Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: Int8 = 3
     let b: Int8 = 8
@@ -4922,6 +4921,8 @@ class BasicAtomicInt8Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt16Tests: XCTestCase {
@@ -6447,11 +6448,8 @@ class BasicAtomicInt16Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: Int16 = 3
     let b: Int16 = 8
@@ -7355,6 +7353,8 @@ class BasicAtomicInt16Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt32Tests: XCTestCase {
@@ -8880,11 +8880,8 @@ class BasicAtomicInt32Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: Int32 = 3
     let b: Int32 = 8
@@ -9788,6 +9785,8 @@ class BasicAtomicInt32Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt64Tests: XCTestCase {
@@ -11313,11 +11312,8 @@ class BasicAtomicInt64Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: Int64 = 3
     let b: Int64 = 8
@@ -12221,6 +12217,8 @@ class BasicAtomicInt64Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUIntTests: XCTestCase {
@@ -13746,11 +13744,8 @@ class BasicAtomicUIntTests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: UInt = 3
     let b: UInt = 8
@@ -14654,6 +14649,8 @@ class BasicAtomicUIntTests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt8Tests: XCTestCase {
@@ -16179,11 +16176,8 @@ class BasicAtomicUInt8Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: UInt8 = 3
     let b: UInt8 = 8
@@ -17087,6 +17081,8 @@ class BasicAtomicUInt8Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt16Tests: XCTestCase {
@@ -18612,11 +18608,8 @@ class BasicAtomicUInt16Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: UInt16 = 3
     let b: UInt16 = 8
@@ -19520,6 +19513,8 @@ class BasicAtomicUInt16Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt32Tests: XCTestCase {
@@ -21045,11 +21040,8 @@ class BasicAtomicUInt32Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: UInt32 = 3
     let b: UInt32 = 8
@@ -21953,6 +21945,8 @@ class BasicAtomicUInt32Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt64Tests: XCTestCase {
@@ -23478,11 +23472,8 @@ class BasicAtomicUInt64Tests: XCTestCase {
   }
 
 
-// Bool operations
-
 
 // Integer operations
-
   func test_loadThenWrappingIncrement_relaxed() {
     let a: UInt64 = 3
     let b: UInt64 = 8
@@ -24386,6 +24377,8 @@ class BasicAtomicUInt64Tests: XCTestCase {
   }
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicBoolTests: XCTestCase {
@@ -25911,8 +25904,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
 
-// Bool operations
-
+  // Bool operations
   func test_loadThenLogicalAnd_relaxed() {
     let v = UnsafeAtomic<Bool>.create(false)
     defer { v.destroy() }
@@ -26455,1542 +26447,10 @@ class BasicAtomicBoolTests: XCTestCase {
     }
   }
 
-// Integer operations
-
 
 }
-/// Exercises all operations in a single-threaded context, verifying
-/// they provide the expected results.
-class BasicAtomicDoubleWordTests: XCTestCase {
-
-  func test_create_destroy() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-
-  func test_load_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-  func test_load_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .acquiring), DoubleWord(high: 100, low: 64))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .acquiring), DoubleWord(high: 50, low: 32))
-  }
-  func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), DoubleWord(high: 50, low: 32))
-  }
-
-  func test_store_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    v.store(DoubleWord(high: 50, low: 32), ordering: .relaxed)
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    w.store(DoubleWord(high: 100, low: 64), ordering: .relaxed)
-    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_store_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    v.store(DoubleWord(high: 50, low: 32), ordering: .releasing)
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    w.store(DoubleWord(high: 100, low: 64), ordering: .releasing)
-    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-    v.store(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent)
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
-    defer { w.destroy() }
-    w.store(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent)
-    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-
-  func test_exchange_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .relaxed), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .relaxed), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .relaxed), DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-  func test_exchange_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiring), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiring), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiring), DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-  func test_exchange_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .releasing), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .releasing), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .releasing), DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-  func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiringAndReleasing), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiringAndReleasing), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiringAndReleasing), DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-  func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent), DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-  }
-
-  func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .releasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .releasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .acquiringAndReleasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .acquiringAndReleasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      ordering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      ordering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-
-  func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 100, low: 64),
-      desired: DoubleWord(high: 50, low: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-
-    (exchanged, original) = v.compareExchange(
-      expected: DoubleWord(high: 50, low: 32),
-      desired: DoubleWord(high: 100, low: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
-    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
-  }
-
-
-// Bool operations
-
-
-// Integer operations
-
-
-}
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicPointerTests: XCTestCase {
@@ -29537,13 +27997,11 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalPointerTests: XCTestCase {
@@ -31090,13 +29548,11 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicMutablePointerTests: XCTestCase {
@@ -32643,13 +31099,11 @@ class BasicAtomicMutablePointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalMutablePointerTests: XCTestCase {
@@ -34196,13 +32650,11 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicRawPointerTests: XCTestCase {
@@ -35738,13 +34190,11 @@ class BasicAtomicRawPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalRawPointerTests: XCTestCase {
@@ -37280,13 +35730,11 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicMutableRawPointerTests: XCTestCase {
@@ -38822,13 +37270,11 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
@@ -40364,13 +38810,11 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUnmanagedTests: XCTestCase {
@@ -41903,13 +40347,11 @@ class BasicAtomicUnmanagedTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalUnmanagedTests: XCTestCase {
@@ -43442,13 +41884,3071 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if true
+/// Exercises all operations in a single-threaded context, verifying
+/// they provide the expected results.
+class BasicAtomicRawRepresentableTests: XCTestCase {
+
+  func test_create_destroy() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
+  }
+
+  func test_load_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
+  }
+  func test_load_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .acquiring), Fred.one)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .acquiring), Fred.two)
+  }
+  func test_load_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), Fred.one)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), Fred.two)
+  }
+
+  func test_store_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    v.store(Fred.two, ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    w.store(Fred.one, ordering: .relaxed)
+    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
+  }
+  func test_store_releasing() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    v.store(Fred.two, ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    w.store(Fred.one, ordering: .releasing)
+    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
+  }
+  func test_store_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+    v.store(Fred.two, ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    defer { w.destroy() }
+    w.store(Fred.one, ordering: .sequentiallyConsistent)
+    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_exchange_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(Fred.one, ordering: .relaxed), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .relaxed), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .relaxed), Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+  }
+  func test_exchange_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiring), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiring), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiring), Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+  }
+  func test_exchange_releasing() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(Fred.one, ordering: .releasing), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .releasing), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .releasing), Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+  }
+  func test_exchange_acquiringAndReleasing() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiringAndReleasing), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiringAndReleasing), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiringAndReleasing), Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+  }
+  func test_exchange_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(Fred.one, ordering: .sequentiallyConsistent), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .sequentiallyConsistent), Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    XCTAssertEqual(v.exchange(Fred.two, ordering: .sequentiallyConsistent), Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+  }
+
+  func test_compareExchange_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_releasing() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiringAndReleasing() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_compareExchange_relaxed_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_relaxed_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_relaxed_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiring_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiring_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiring_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_releasing_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_releasing_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_releasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiringAndReleasing_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiringAndReleasing_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_sequentiallyConsistent_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_sequentiallyConsistent_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_relaxed_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_relaxed_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiring_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiring_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_releasing_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_releasing_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_releasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
+    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.compareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+
+
+
+}
+#endif
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+/// Exercises all operations in a single-threaded context, verifying
+/// they provide the expected results.
+class BasicAtomicDoubleWordTests: XCTestCase {
+
+  func test_create_destroy() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+
+  func test_load_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+  func test_load_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .acquiring), DoubleWord(high: 100, low: 64))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .acquiring), DoubleWord(high: 50, low: 32))
+  }
+  func test_load_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), DoubleWord(high: 50, low: 32))
+  }
+
+  func test_store_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    v.store(DoubleWord(high: 50, low: 32), ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    w.store(DoubleWord(high: 100, low: 64), ordering: .relaxed)
+    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_store_releasing() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    v.store(DoubleWord(high: 50, low: 32), ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    w.store(DoubleWord(high: 100, low: 64), ordering: .releasing)
+    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_store_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+    v.store(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    defer { w.destroy() }
+    w.store(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent)
+    XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+
+  func test_exchange_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .relaxed), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .relaxed), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .relaxed), DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+  func test_exchange_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiring), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiring), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiring), DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+  func test_exchange_releasing() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .releasing), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .releasing), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .releasing), DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+  func test_exchange_acquiringAndReleasing() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiringAndReleasing), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiringAndReleasing), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .acquiringAndReleasing), DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+  func test_exchange_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    XCTAssertEqual(v.exchange(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent), DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+  }
+
+  func test_compareExchange_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_releasing() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiringAndReleasing() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+
+  func test_compareExchange_relaxed_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_relaxed_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_relaxed_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiring_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiring_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiring_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_releasing_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_releasing_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_releasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiringAndReleasing_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiringAndReleasing_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_sequentiallyConsistent_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_sequentiallyConsistent_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_relaxed_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_relaxed_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .relaxed,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiring_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiring_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiring,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_releasing_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_releasing_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_releasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .releasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .acquiringAndReleasing,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+  func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
+    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 100, low: 64),
+      desired: DoubleWord(high: 50, low: 32),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 50, low: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+
+    (exchanged, original) = v.compareExchange(
+      expected: DoubleWord(high: 50, low: 32),
+      desired: DoubleWord(high: 100, low: 64),
+      successOrdering: .sequentiallyConsistent,
+      failureOrdering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(high: 100, low: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
+  }
+
+
+
+
+}
+#endif
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicReferenceTests: XCTestCase {
@@ -44976,13 +46476,11 @@ class BasicAtomicReferenceTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
+#endif
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalReferenceTests: XCTestCase {
@@ -46510,1542 +48008,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
   }
 
 
-// Bool operations
-
-
-// Integer operations
 
 
 }
-/// Exercises all operations in a single-threaded context, verifying
-/// they provide the expected results.
-class BasicAtomicRawRepresentableTests: XCTestCase {
-
-  func test_create_destroy() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
-  }
-
-  func test_load_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
-  }
-  func test_load_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .acquiring), Fred.one)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .acquiring), Fred.two)
-  }
-  func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), Fred.one)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), Fred.two)
-  }
-
-  func test_store_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    v.store(Fred.two, ordering: .relaxed)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    w.store(Fred.one, ordering: .relaxed)
-    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
-  }
-  func test_store_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    v.store(Fred.two, ordering: .releasing)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    w.store(Fred.one, ordering: .releasing)
-    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
-  }
-  func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-    v.store(Fred.two, ordering: .sequentiallyConsistent)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
-    defer { w.destroy() }
-    w.store(Fred.one, ordering: .sequentiallyConsistent)
-    XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
-  }
-
-  func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(Fred.one, ordering: .relaxed), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .relaxed), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .relaxed), Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-  }
-  func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiring), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiring), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiring), Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-  }
-  func test_exchange_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(Fred.one, ordering: .releasing), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .releasing), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .releasing), Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-  }
-  func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiringAndReleasing), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiringAndReleasing), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .acquiringAndReleasing), Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-  }
-  func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    XCTAssertEqual(v.exchange(Fred.one, ordering: .sequentiallyConsistent), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .sequentiallyConsistent), Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    XCTAssertEqual(v.exchange(Fred.two, ordering: .sequentiallyConsistent), Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-  }
-
-  func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .releasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .releasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiringAndReleasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiringAndReleasing)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-
-  func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-  func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
-    defer { v.destroy() }
-
-    var (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
-    XCTAssertEqual(original, Fred.two)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-
-    (exchanged, original) = v.compareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertFalse(exchanged)
-    XCTAssertEqual(original, Fred.one)
-    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
-  }
-
-
-// Bool operations
-
-
-// Integer operations
-
-
-}
+#endif

@@ -12,6 +12,10 @@
 
 import _AtomicsShims
 
+// Double-wide atomic primitives on x86_64 CPUs aren't available by default
+// on Linux distributions, and we cannot currently enable them automatically.
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+
 /// A class type that supports atomic strong references.
 public protocol AtomicReference: AnyObject, AtomicOptionalWrappable
 where
@@ -569,3 +573,4 @@ extension AtomicOptionalReferenceStorage: AtomicStorage {
   }
 }
 
+#endif // ENABLE_DOUBLEWIDE_ATOMICS
