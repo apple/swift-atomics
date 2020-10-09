@@ -28,8 +28,6 @@ lineDirective=''
 #lineDirective='#sourceLocation(file: "%(file)s", line: %(line)d)'
 
 
-echo "Running gyb..."
-
 # Create a temporary directory; remove it on exit.
 tmpdir="$(mktemp -d  "${TMPDIR:-/tmp}/$(basename "$0").XXXXXXXX")"
 trap "rm -rf \"$tmpdir\"" EXIT
@@ -62,11 +60,3 @@ sort "$tmpdir/generated-files.txt" | uniq -u | while read obsolete; do
     echo "Removing $obsolete"
     rm "$obsolete"
 done 
-
-# Generate XCTest test registry for platforms without the Objective-C runtime.
-if [ "$(uname)" = Darwin ]; then
-    echo "Registering tests..."
-    swift test --generate-linuxmain
-fi
-
-echo "All done!"
