@@ -19,7 +19,8 @@ import XCTest
 import Atomics
 import Dispatch
 
-let nodeCount = ManagedAtomic<Int>(0)
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+private let nodeCount = ManagedAtomic<Int>(0)
 
 private class List<Value: Equatable> {
   class Node: AtomicReference {
@@ -256,3 +257,4 @@ class StrongReferenceShuffleTests: XCTestCase {
   func test_sink_04_08() { checkSink(writers: 4, readers: 8, iterations: iterations) }
   func test_sink_08_08() { checkSink(writers: 8, readers: 8, iterations: iterations) }
 }
+#endif

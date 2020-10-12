@@ -59,6 +59,20 @@
 #include <stdatomic.h>
 #include <assert.h>
 
+// For now, assume double-wide atomics are available everywhere,
+// except on Linux/x86_64, where they need to be manually enabled
+// by the `cx16` target attribute. (Unfortunately we cannot currently
+// turn that on in our package description.)
+#ifdef __APPLE__
+#  define ENABLE_DOUBLEWIDE_ATOMICS 1
+#elif defined(_WIN32)
+#  define ENABLE_DOUBLEWIDE_ATOMICS 1
+#elif defined(__linux__)
+#  if !defined(__x86_64__) || defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_16)
+#    define ENABLE_DOUBLEWIDE_ATOMICS 1
+#  endif
+#endif
+
 #define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
 #define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
 
@@ -320,9 +334,13 @@ _sa_dword _sa_decode_dword(__uint128_t value) {
   return result;
 }
 
+#if ENABLE_DOUBLEWIDE_ATOMICS
 #define SWIFTATOMIC_ENCODE_DoubleWord(_value) (_value).value
 #define SWIFTATOMIC_DECODE_DoubleWord(value) _sa_decode_dword(value)
 SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, __uint128_t)
+#else
+SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, __uint128_t)
+#endif
 
 #elif __INTPTR_WIDTH__ == 32
 
@@ -352,15 +370,21 @@ _sa_dword _sa_decode_dword(uint64_t value) {
   return result;
 }
 
+#if ENABLE_DOUBLEWIDE_ATOMICS
 #define SWIFTATOMIC_ENCODE_DoubleWord(_value) (_value).value
 #define SWIFTATOMIC_DECODE_DoubleWord(value) _sa_decode_dword(value)
 SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, uint64_t)
+#else
+SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, uint64_t)
+#endif // ENABLE_DOUBLEWIDE_ATOMICS
 
 #else
 #error "Unsupported intptr_t bit width"
 #endif // __INTPTR_WIDTH
 
+#if ENABLE_DOUBLEWIDE_ATOMICS
 extern void _sa_retain_n(void *object, uint32_t n);
 extern void _sa_release_n(void *object, uint32_t n);
+#endif
 
 #endif //SWIFTATOMIC_HEADER_INCLUDED
