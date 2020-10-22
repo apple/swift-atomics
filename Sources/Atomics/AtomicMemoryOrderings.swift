@@ -44,7 +44,7 @@ extension AtomicLoadOrdering {
   /// An acquiring load synchronizes with a releasing operation whose
   /// value its reads. It ensures that the releasing and acquiring
   /// threads agree that all subsequent variable accesses on the
-  /// acquring thread happen after the atomic operation itself.
+  /// acquiring thread happen after the atomic operation itself.
   ///
   /// This value corresponds to `std::memory_order_acquire` in C++.
   @_semantics("constant_evaluable")
