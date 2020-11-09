@@ -167,9 +167,11 @@ extension List {
     withExtendedLifetime(node) {}
     return result
   }
+}
 
+extension List where Value: Hashable {
   @inline(never)
-  func readUnique(expectedCount: Int = 0) -> Set<Value> where Value: Hashable {
+  func readUnique(expectedCount: Int = 0) -> Set<Value> {
     var result: Set<Value> = []
     result.reserveCapacity(expectedCount)
     var node = head
