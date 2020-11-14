@@ -51,7 +51,8 @@ extension Unmanaged {
 extension Unmanaged {
   fileprivate static func passRetained(_ instance: __owned Instance?) -> Self? {
     guard let instance = instance else { return nil }
-    return .passRetained(instance)
+    // Note: Swift 5.2 doesn't like this optional promotion without the explicit cast
+    return .passRetained(instance) as Self
   }
 }
 
