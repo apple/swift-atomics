@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include <dlfcn.h>
 #include "_AtomicsShims.h"
 
 #if ENABLE_DOUBLEWIDE_ATOMICS
