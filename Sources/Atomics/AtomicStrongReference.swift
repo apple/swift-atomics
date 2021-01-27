@@ -79,11 +79,9 @@ extension DoubleWord {
 
   @inline(__always)
   fileprivate static var _readersBitWidth: Int {
-    #if arch(i386) || arch(arm) || arch(arm64_32)
-    return 8
-    #else
-    return 16
-    #endif
+    // This reserves 8 bits for the accesses-in-flight counter on 32-bit
+    // systems, and 16 bits on 64-bit systems.
+    Int.bitWidth / 4
   }
 
   @inline(__always)
