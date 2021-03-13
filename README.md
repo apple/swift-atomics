@@ -1,5 +1,6 @@
 # Swift Atomics ⚛︎︎
 
+
 [SE-0282]: https://github.com/apple/swift-evolution/blob/master/proposals/0282-atomics.md
 [SE-0282r0]: https://github.com/apple/swift-evolution/blob/3a358a07e878a58bec256639d2beb48461fc3177/proposals/0282-atomics.md
 
