@@ -202,7 +202,7 @@ extension Bool.AtomicRepresentation {
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  static func atomicLoadThen${name}(
+  public static func atomicLoadThen${name}(
     ${label} operand: Value,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
