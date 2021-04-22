@@ -358,7 +358,7 @@ extension Bool.AtomicRepresentation {
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  static func atomicLoadThenLogicalAnd(
+  public static func atomicLoadThenLogicalAnd(
     with operand: Value,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
@@ -399,7 +399,7 @@ extension Bool.AtomicRepresentation {
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  static func atomicLoadThenLogicalOr(
+  public static func atomicLoadThenLogicalOr(
     with operand: Value,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
@@ -440,7 +440,7 @@ extension Bool.AtomicRepresentation {
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  static func atomicLoadThenLogicalXor(
+  public static func atomicLoadThenLogicalXor(
     with operand: Value,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
