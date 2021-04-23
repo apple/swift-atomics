@@ -304,23 +304,30 @@ SWIFTATOMIC_INTEGER_FNS(xor, Bool, bool, bool)
 SWIFTATOMIC_INTEGER_FNS(and, Bool, bool, bool)
 
 // Double wide atomics (__uint128_t on 64-bit platforms, uint64_t elsewhere)
-#if __INTPTR_WIDTH__ == 64
-#if !defined(__SIZEOF_INT128__)
-#error "Double wide atomics need __uint128_t"
+
+#if __SIZEOF_POINTER__ == 8
+# if !defined(__SIZEOF_INT128__)
+#   error "Double wide atomics need __uint128_t"
+# endif
+# define _sa_double_word_ctype __uint128_t
+#elif __SIZEOF_POINTER__ == 4
+# define _sa_double_word_ctype uint64_t
+#else
+# error "Unsupported Pointer Size"
 #endif
+
 typedef struct {
-  __uint128_t value;
+  _sa_double_word_ctype value;
 } _sa_dword SWIFTATOMIC_SWIFT_NAME(DoubleWord);
 
 SWIFTATOMIC_INLINE
 _sa_dword _sa_dword_create(uintptr_t high, uintptr_t low) {
-  _sa_dword result = { ((__uint128_t)high << 64) | (__uint128_t)low };
-  return result;
+  return (_sa_dword){ ((_sa_double_word_ctype)high << __INTPTR_WIDTH__) | (_sa_double_word_ctype)low };
 }
 
 SWIFTATOMIC_INLINE
 uintptr_t _sa_dword_extract_high(_sa_dword value) {
-  return (uintptr_t)(value.value >> 64);
+  return (uintptr_t)(value.value >> __INTPTR_WIDTH__);
 }
 
 SWIFTATOMIC_INLINE
@@ -330,57 +337,16 @@ uintptr_t _sa_dword_extract_low(_sa_dword value) {
 
 SWIFTATOMIC_INLINE
 _sa_dword _sa_decode_dword(__uint128_t value) {
-  _sa_dword result = { value };
-  return result;
+  return (_sa_dword){ value };
 }
 
 #if ENABLE_DOUBLEWIDE_ATOMICS
 #define SWIFTATOMIC_ENCODE_DoubleWord(_value) (_value).value
-#define SWIFTATOMIC_DECODE_DoubleWord(value) _sa_decode_dword(value)
-SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, __uint128_t)
+#define SWIFTATOMIC_DECODE_DoubleWord(_value) _sa_decode_dword(_value)
+SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, _sa_double_word_ctype)
 #else
-SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, __uint128_t)
+SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, _sa_double_word_ctype)
 #endif
-
-#elif __INTPTR_WIDTH__ == 32
-
-typedef struct {
-  uint64_t value;
-} _sa_dword SWIFTATOMIC_SWIFT_NAME(DoubleWord);
-
-SWIFTATOMIC_INLINE
-_sa_dword _sa_dword_create(uintptr_t high, uintptr_t low) {
-  _sa_dword result = { ((uint64_t)high << 32) | (uint64_t)low };
-  return result;
-}
-
-SWIFTATOMIC_INLINE
-uintptr_t _sa_dword_extract_high(_sa_dword value) {
-  return (uintptr_t)(value.value >> 32);
-}
-
-SWIFTATOMIC_INLINE
-uintptr_t _sa_dword_extract_low(_sa_dword value) {
-  return (uintptr_t)value.value;
-}
-
-SWIFTATOMIC_INLINE
-_sa_dword _sa_decode_dword(uint64_t value) {
-  _sa_dword result = { value };
-  return result;
-}
-
-#if ENABLE_DOUBLEWIDE_ATOMICS
-#define SWIFTATOMIC_ENCODE_DoubleWord(_value) (_value).value
-#define SWIFTATOMIC_DECODE_DoubleWord(value) _sa_decode_dword(value)
-SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, uint64_t)
-#else
-SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, uint64_t)
-#endif // ENABLE_DOUBLEWIDE_ATOMICS
-
-#else
-#error "Unsupported intptr_t bit width"
-#endif // __INTPTR_WIDTH
 
 #if ENABLE_DOUBLEWIDE_ATOMICS
 extern void _sa_retain_n(void *object, uint32_t n);
