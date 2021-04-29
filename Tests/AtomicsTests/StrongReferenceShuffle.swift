@@ -258,5 +258,30 @@ class StrongReferenceShuffleTests: XCTestCase {
   func test_sink_02_08() { checkSink(writers: 2, readers: 8, iterations: iterations) }
   func test_sink_04_08() { checkSink(writers: 4, readers: 8, iterations: iterations) }
   func test_sink_08_08() { checkSink(writers: 8, readers: 8, iterations: iterations) }
+
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("test_sink_01_00", test_sink_01_00),
+    ("test_sink_02_00", test_sink_02_00),
+    ("test_sink_04_00", test_sink_04_00),
+    ("test_sink_08_00", test_sink_08_00),
+    ("test_sink_01_01", test_sink_01_01),
+    ("test_sink_02_01", test_sink_02_01),
+    ("test_sink_04_01", test_sink_04_01),
+    ("test_sink_08_01", test_sink_08_01),
+    ("test_sink_01_02", test_sink_01_02),
+    ("test_sink_02_02", test_sink_02_02),
+    ("test_sink_04_02", test_sink_04_02),
+    ("test_sink_08_02", test_sink_08_02),
+    ("test_sink_01_04", test_sink_01_04),
+    ("test_sink_02_04", test_sink_02_04),
+    ("test_sink_04_04", test_sink_04_04),
+    ("test_sink_08_04", test_sink_08_04),
+    ("test_sink_01_08", test_sink_01_08),
+    ("test_sink_02_08", test_sink_02_08),
+    ("test_sink_04_08", test_sink_04_08),
+    ("test_sink_08_08", test_sink_08_08),
+  ]
+#endif
 }
 #endif

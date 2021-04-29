@@ -176,6 +176,15 @@ class QueueTests: XCTestCase {
   func test16_16() {
     check(readers: 16, writers: 16, count: 1_000_000)
   }
+
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("test01_10", test01_10),
+    ("test02_10", test02_10),
+    ("test04_10", test04_10),
+    ("test16_16", test16_16),
+  ]
+#endif
 }
 
 #endif

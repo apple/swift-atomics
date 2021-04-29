@@ -86,4 +86,14 @@ class DoubleWordTests: XCTestCase {
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(6, 5))
     #endif
   }
+
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("testMemoryLayout", testMemoryLayout),
+    ("testFirstSecondInitializer", testFirstSecondInitializer),
+    ("testHighLowInitializer", testHighLowInitializer),
+    ("testPropertyGetters", testPropertyGetters),
+    ("testPropertySetters", testPropertySetters),
+  ]
+#endif
 }
