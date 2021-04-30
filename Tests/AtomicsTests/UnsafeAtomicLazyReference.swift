@@ -37,4 +37,11 @@ class UnsafeAtomicLazyReferenceTests: XCTestCase {
     }
     XCTAssertEqual(LifetimeTracked.instances, 0)
   }
+
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("test_create_destroy", test_create_destroy),
+    ("test_storeIfNilThenLoad", test_storeIfNilThenLoad),
+  ]
+#endif
 }

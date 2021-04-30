@@ -28,7 +28,8 @@ let package = Package(
     ),
     .testTarget(
       name: "AtomicsTests",
-      dependencies: ["Atomics"]
+      dependencies: ["Atomics"],
+      exclude: ["main.swift"]
     ),
   ]
 )

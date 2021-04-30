@@ -142,4 +142,12 @@ class LockFreeSingleConsumerStackTests: XCTestCase {
       XCTAssertEqual(Array(repeating: numValues * (numValues - 1) / 2, count: numThreads), perThreadSums)
     }
   }
+
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("test_Basics", test_Basics),
+    ("test_ConcurrentPushes", test_ConcurrentPushes),
+    ("test_ConcurrentPushesAndPops", test_ConcurrentPushesAndPops),
+  ]
+#endif
 }
