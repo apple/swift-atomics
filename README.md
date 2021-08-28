@@ -148,7 +148,7 @@ The current version of the `Atomics` module does not implement APIs for tagged a
 
 ## Source Stability
 
-The Swift Atomics package is source stable. The version numbers follow [Semantic Versioning][semver] -- source breaking changes can only land in a new major version.
+The Swift Atomics package is source stable. The version numbers follow [Semantic Versioning][semver] -- source breaking changes to public API can only land in a new major version.
 
 [semver]: https://semver.org
 
