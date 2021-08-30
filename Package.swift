@@ -21,15 +21,31 @@ let package = Package(
       targets: ["Atomics"]),
   ],
   targets: [
-    .target(name: "_AtomicsShims"),
+    .target(
+      name: "_AtomicsShims",
+      exclude: [
+        "CMakeLists.txt"
+      ]
+    ),
     .target(
       name: "Atomics",
-      dependencies: ["_AtomicsShims"]
+      dependencies: ["_AtomicsShims"],
+      exclude: [
+        "CMakeLists.txt",
+        "HighLevelTypes.swift.gyb",
+        "PointerConformances.swift.gyb",
+        "IntegerConformances.swift.gyb",
+        "AtomicBool.swift.gyb",
+        "AtomicLazyReference.swift.gyb",
+      ]
     ),
     .testTarget(
       name: "AtomicsTests",
       dependencies: ["Atomics"],
-      exclude: ["main.swift"]
+      exclude: [
+        "main.swift",
+        "Basics.swift.gyb"
+      ]
     ),
   ]
 )
