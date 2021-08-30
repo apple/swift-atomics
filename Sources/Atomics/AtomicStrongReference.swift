@@ -318,6 +318,7 @@ internal struct _AtomicReferenceStorage {
   }
 }
 
+@frozen
 public struct AtomicReferenceStorage<Value: AnyObject> {
   @usableFromInline
   internal var _storage: _AtomicReferenceStorage
@@ -441,6 +442,7 @@ extension AtomicReferenceStorage: AtomicStorage {
   }
 }
 
+@frozen
 public struct AtomicOptionalReferenceStorage<Instance: AnyObject> {
   @usableFromInline
   internal var _storage: _AtomicReferenceStorage
