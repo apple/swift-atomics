@@ -336,7 +336,7 @@ uintptr_t _sa_dword_extract_low(_sa_dword value) {
 }
 
 SWIFTATOMIC_INLINE
-_sa_dword _sa_decode_dword(__uint128_t value) {
+_sa_dword _sa_decode_dword(_sa_double_word_ctype value) {
   return (_sa_dword){ value };
 }
 
