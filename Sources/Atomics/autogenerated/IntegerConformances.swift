@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -20,6 +20,7 @@
 import _AtomicsShims
 
 extension Int: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int
 
@@ -512,6 +513,7 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension Int64: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int64
 
@@ -1004,6 +1006,7 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension Int32: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int32
 
@@ -1496,6 +1499,7 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension Int16: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int16
 
@@ -1988,6 +1992,7 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension Int8: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int8
 
@@ -2480,6 +2485,7 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension UInt: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt
 
@@ -2972,6 +2978,7 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension UInt64: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt64
 
@@ -3464,6 +3471,7 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension UInt32: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt32
 
@@ -3956,6 +3964,7 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension UInt16: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt16
 
@@ -4448,6 +4457,7 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
 }
 
 extension UInt8: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt8
 
@@ -4943,6 +4953,7 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
 // on Linux distributions, and we cannot currently enable them automatically.
 #if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 extension DoubleWord: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = DoubleWord
 

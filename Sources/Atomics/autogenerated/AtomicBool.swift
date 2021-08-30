@@ -21,6 +21,7 @@
 import _AtomicsShims
 
 extension Bool: AtomicValue {
+  @frozen
   public struct AtomicRepresentation {
     public typealias Value = Bool
     @usableFromInline

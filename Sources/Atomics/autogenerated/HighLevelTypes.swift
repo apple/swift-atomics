@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -74,6 +74,7 @@ public struct UnsafeAtomic<Value: AtomicValue> {
 }
 
 /// A reference type holding an atomic value, with automatic memory management.
+@_fixed_layout
 public class ManagedAtomic<Value: AtomicValue> {
   @usableFromInline
   internal var _storage: Value.AtomicRepresentation
