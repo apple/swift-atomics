@@ -27,7 +27,6 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin) # FIXME Hook this up on Darwin
 
   target_link_libraries(AtomicsTestBundle PRIVATE
     Atomics
-    _AtomicsShims
     XCTest
     dispatch
     Foundation)
