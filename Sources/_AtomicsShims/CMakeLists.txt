@@ -11,6 +11,8 @@ add_library(_AtomicsShims STATIC
   src/_AtomicsShims.c)
 target_include_directories(_AtomicsShims PUBLIC
   include)
+target_compile_definitions(_AtomicsShims PUBLIC
+  ENABLE_DOUBLEWIDE_ATOMICS)
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
   target_compile_options(_AtomicsShims PUBLIC
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -mcx16>")

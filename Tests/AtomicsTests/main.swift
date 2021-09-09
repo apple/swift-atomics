@@ -13,7 +13,7 @@
 #if !SWIFT_PACKAGE
 import XCTest
 
-XCTMain([
+var testCases = [
   // Basics
   testCase(BasicAtomicIntTests.allTests),
   testCase(BasicAtomicInt8Tests.allTests),
@@ -37,26 +37,33 @@ XCTMain([
   testCase(BasicAtomicUnmanagedTests.allTests),
   testCase(BasicAtomicOptionalUnmanagedTests.allTests),
   testCase(BasicAtomicRawRepresentableTests.allTests),
-  testCase(BasicAtomicDoubleWordTests.allTests),
-  testCase(BasicAtomicReferenceTests.allTests),
-  testCase(BasicAtomicOptionalReferenceTests.allTests),
+
+  // LockFreeSingleConsumerStackTests
+  testCase(LockFreeSingleConsumerStackTests.allTests),
 
   // DoubleWord
   testCase(DoubleWordTests.allTests),
 
+  // UnsafeAtomicLazyReferenceTests
+  testCase(UnsafeAtomicLazyReferenceTests.allTests),
+]
+
+#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+testCases += [
+  testCase(BasicAtomicDoubleWordTests.allTests),
+  testCase(BasicAtomicReferenceTests.allTests),
+  testCase(BasicAtomicOptionalReferenceTests.allTests),
+
   // LockFreeQueue
   testCase(QueueTests.allTests),
-
-  // LockFreeSingleConsumerStackTests
-  testCase(LockFreeSingleConsumerStackTests.allTests),
 
   // StrongReferenceRace
   testCase(StrongReferenceRace.allTests),
 
   // StrongReferenceShuffle
   testCase(StrongReferenceShuffleTests.allTests),
+]
+#endif
 
-  // UnsafeAtomicLazyReferenceTests
-  testCase(UnsafeAtomicLazyReferenceTests.allTests),
-])
+XCTMain(testCases)
 #endif
