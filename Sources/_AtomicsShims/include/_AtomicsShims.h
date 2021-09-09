@@ -56,8 +56,13 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdatomic.h>
 #include <assert.h>
+// The atomic primitives are only needed when this is compiled using Swift's
+// Clang Importer. This allows us to continue reling on some Clang extensions
+// (see https://github.com/apple/swift-atomics/issues/37).
+#if defined(__swift__)
+#  include <stdatomic.h>
+#endif
 
 // For now, assume double-wide atomics are available everywhere,
 // except on Linux/x86_64, where they need to be manually enabled
@@ -72,6 +77,8 @@
 #    define ENABLE_DOUBLEWIDE_ATOMICS 1
 #  endif
 #endif
+
+#if defined(__swift__)
 
 #define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
 #define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
@@ -347,6 +354,8 @@ SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, _sa_double_word_ctype)
 #else
 SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, _sa_double_word_ctype)
 #endif
+
+#endif // __swift__
 
 #if ENABLE_DOUBLEWIDE_ATOMICS
 extern void _sa_retain_n(void *object, uint32_t n);
