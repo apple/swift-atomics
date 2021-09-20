@@ -44,6 +44,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
   static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
   ) -> UnsafeMutablePointer<Storage> {
+    // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: Storage.self)
   }
 
