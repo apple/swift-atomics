@@ -4989,6 +4989,16 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
+    // Work around https://github.com/apple/swift-atomics/issues/41
+    #if compiler(>=5.5) && arch(arm64) && DEBUG
+    let (_, original) = atomicCompareExchange(
+      expected: DoubleWord(high: 0, low: 0),
+      desired: DoubleWord(high: 0, low: 0),
+      at: pointer,
+      successOrdering: .relaxed, // Note: this relies on the FIXME below.
+      failureOrdering: ordering)
+    return original
+    #else
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_DoubleWord(pointer._extract)
@@ -4999,6 +5009,7 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     default:
       fatalError("Unsupported ordering")
     }
+    #endif
   }
 
   @_semantics("atomics.requires_constant_orderings")
