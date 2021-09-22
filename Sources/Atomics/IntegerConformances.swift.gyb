@@ -44,7 +44,24 @@ extension ${swiftType}: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_${swiftType}(_storage)
+% if swiftType == "DoubleWord":
+      // Work around https://github.com/apple/swift-atomics/issues/41
+      #if compiler(>=5.5) && arch(arm64) && DEBUG
+      var copy = self // This is not great
+      var expected = DoubleWord(high: 0, low: 0)
+      withUnsafeMutablePointer(to: &copy) { pointer in
+        _ = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
+          pointer._extract,
+          &expected,
+          DoubleWord(high: 0, low: 0))
+      }
+      return expected
+      #else
+% end
+      return _sa_dispose_${swiftType}(_storage)
+% if swiftType == "DoubleWord":
+      #endif
+% end
     }
   }
 }

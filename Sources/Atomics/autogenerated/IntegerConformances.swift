@@ -34,7 +34,7 @@ extension Int: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Int(_storage)
+      return _sa_dispose_Int(_storage)
     }
   }
 }
@@ -527,7 +527,7 @@ extension Int64: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Int64(_storage)
+      return _sa_dispose_Int64(_storage)
     }
   }
 }
@@ -1020,7 +1020,7 @@ extension Int32: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Int32(_storage)
+      return _sa_dispose_Int32(_storage)
     }
   }
 }
@@ -1513,7 +1513,7 @@ extension Int16: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Int16(_storage)
+      return _sa_dispose_Int16(_storage)
     }
   }
 }
@@ -2006,7 +2006,7 @@ extension Int8: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Int8(_storage)
+      return _sa_dispose_Int8(_storage)
     }
   }
 }
@@ -2499,7 +2499,7 @@ extension UInt: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_UInt(_storage)
+      return _sa_dispose_UInt(_storage)
     }
   }
 }
@@ -2992,7 +2992,7 @@ extension UInt64: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_UInt64(_storage)
+      return _sa_dispose_UInt64(_storage)
     }
   }
 }
@@ -3485,7 +3485,7 @@ extension UInt32: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_UInt32(_storage)
+      return _sa_dispose_UInt32(_storage)
     }
   }
 }
@@ -3978,7 +3978,7 @@ extension UInt16: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_UInt16(_storage)
+      return _sa_dispose_UInt16(_storage)
     }
   }
 }
@@ -4471,7 +4471,7 @@ extension UInt8: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_UInt8(_storage)
+      return _sa_dispose_UInt8(_storage)
     }
   }
 }
@@ -4967,7 +4967,20 @@ extension DoubleWord: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_DoubleWord(_storage)
+      // Work around https://github.com/apple/swift-atomics/issues/41
+      #if compiler(>=5.5) && arch(arm64) && DEBUG
+      var copy = self // This is not great
+      var expected = DoubleWord(high: 0, low: 0)
+      withUnsafeMutablePointer(to: &copy) { pointer in
+        _ = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
+          pointer._extract,
+          &expected,
+          DoubleWord(high: 0, low: 0))
+      }
+      return expected
+      #else
+      return _sa_dispose_DoubleWord(_storage)
+      #endif
     }
   }
 }
