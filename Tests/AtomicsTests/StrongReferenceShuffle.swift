@@ -20,6 +20,14 @@ import Atomics
 import Dispatch
 
 #if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+private var iterations: Int {
+  #if SWIFT_ATOMICS_LONG_TESTS
+  return 1_000_000
+  #else
+  return 50_000
+  #endif
+}
+
 private let nodeCount = ManagedAtomic<Int>(0)
 
 private class List<Value: Equatable> {
@@ -231,8 +239,6 @@ class StrongReferenceShuffleTests: XCTestCase {
       "Unexpected list contents at end",
       file: file, line: line)
   }
-
-  private let iterations = 1_000_000
 
   func test_sink_01_00() { checkSink(writers: 1, readers: 0, iterations: iterations) }
   func test_sink_02_00() { checkSink(writers: 2, readers: 0, iterations: iterations) }

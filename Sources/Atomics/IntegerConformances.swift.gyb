@@ -228,12 +228,12 @@ extension ${swiftType}.AtomicRepresentation: AtomicStorage {
   }
 }
 
-% if swiftType <> "DoubleWord":
+% if swiftType != "DoubleWord":
 extension ${swiftType}: AtomicInteger {}
 
 extension ${swiftType}.AtomicRepresentation: AtomicIntegerStorage {
 % for (name, cname, op, label, doc) in integerOperations:
-% defaultValue = " = 1" if label <> "" else ""
+% defaultValue = " = 1" if label != "" else ""
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult

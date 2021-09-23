@@ -2,26 +2,13 @@
 # GYB: Generate Your Boilerplate (improved names welcome; at least
 # this one's short).  See -h output for instructions
 
-from __future__ import print_function
-
 import os
 import re
 import sys
 import textwrap
 import tokenize
 from bisect import bisect
-
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-
-try:
-    basestring
-except NameError:
-    basestring = str
+from io import StringIO
 
 
 def get_line_starts(s):
@@ -243,7 +230,7 @@ def tokenize_template(template_text):
         # pull out the one matched key (ignoring internal patterns starting
         # with _)
         ((kind, text), ) = (
-            (kind, text) for (kind, text) in m.groupdict().items()
+            (kind, text) for (kind, text) in list(m.groupdict().items())
             if text is not None and kind[0] != '_')
 
         if kind in ('literal', 'symbol'):
@@ -731,7 +718,7 @@ class Code(ASTNode):
         # If we got a result, the code was an expression, so append
         # its value
         if result is not None \
-                or (isinstance(result, basestring) and result != ''):
+                or (isinstance(result, str) and result != ''):
             from numbers import Number, Integral
             result_string = None
             if isinstance(result, Number) and not isinstance(result, Integral):

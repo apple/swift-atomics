@@ -39,7 +39,7 @@ else
 fi
 
 echo "Build output logs are saved in $bold_on$build_dir$bold_off"
-swift --version
+$swift --version
 
 report_failure() {
     logs="$1"
@@ -66,48 +66,44 @@ try() {
 }
 
 # Build using SPM
-try "spm.debug" $swift test -c debug $spm_flags --build-path "$build_dir/spm.debug"
-try "spm.release" $swift test -c release $spm_flags --build-path "$build_dir/spm.release"
+try "spm.debug.build" $swift build -c debug $spm_flags --build-path "$build_dir/spm.debug"
+try "spm.release.build" $swift build -c release $spm_flags --build-path "$build_dir/spm.release"
 if [ "$(uname)" = "Linux" ]; then
-    try "spm.release.dword" $swift test -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
+    try "spm.release.dword.build" $swift build -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
 fi
 
 # Build with CMake
 cmake_debug_build_dir="$build_dir/cmake.debug"
 try "cmake.debug.generate" cmake -S . -B "$cmake_debug_build_dir" -G Ninja -DCMAKE_BUILD_TYPE=DEBUG
-try "cmake.debug.build-with-ninja" ninja -C "$cmake_debug_build_dir" 
+try "cmake.debug.build-with-ninja" ninja -C "$cmake_debug_build_dir"
 
 cmake_release_build_dir="$build_dir/cmake.release"
 try "cmake.release.generate" cmake -S . -B "$cmake_release_build_dir" -G Ninja -DCMAKE_BUILD_TYPE=RELEASE
 try "cmake.release.build-with-ninja" ninja -C "$cmake_release_build_dir"
-if [ "$(uname)" != "Darwin" ]; then # We have not hooked up cmake tests on Darwin yet
-    try "cmake.release.test" "$cmake_release_build_dir/bin/AtomicsTestBundle"
-fi
 
+# Build using xcodebuild
+try_xcodebuild() {
+    label="$1"
+    destination="$2"
+    shift 2
+    
+    try "$label" \
+        xcrun xcodebuild -scheme swift-atomics \
+        -configuration Release \
+        -destination "$destination" \
+        -derivedDataPath "$build_dir/xcodebuild" \
+        "$@"
+}
 
 if [ "$(uname)" = "Darwin" ]; then
-    # Build using xcodebuild
-    try "xcodebuild.build" \
-        xcodebuild -scheme swift-atomics \
-        -configuration Release \
-        -destination "generic/platform=macOS" \
-        -destination "generic/platform=macOS,variant=Mac Catalyst" \
-        -destination "generic/platform=iOS" \
-        -destination "generic/platform=iOS Simulator" \
-        -destination "generic/platform=watchOS" \
-        -destination "generic/platform=watchOS Simulator" \
-        -destination "generic/platform=tvOS" \
-        -destination "generic/platform=tvOS Simulator" \
-        clean build
-    try "xcodebuild.test" \
-        xcodebuild -scheme swift-atomics \
-        -configuration Release \
-        -destination "platform=macOS" \
-        -destination "platform=macOS,variant=Mac Catalyst" \
-        -destination "platform=iOS Simulator,name=iPhone 12" \
-        -destination "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm" \
-        -destination "platform=tvOS Simulator,name=Apple TV 4K (at 1080p) (2nd generation)" \
-        test
+    try_xcodebuild "xcodebuild.build.macOS" "generic/platform=macOS" build
+    try_xcodebuild "xcodebuild.build.macCatalyst" "generic/platform=macOS,variant=Mac Catalyst" build
+    try_xcodebuild "xcodebuild.build.iOS" "generic/platform=iOS" build
+    try_xcodebuild "xcodebuild.build.iOS-simulator" "generic/platform=iOS Simulator" build
+    try_xcodebuild "xcodebuild.build.watchOS" "generic/platform=watchOS" build
+    try_xcodebuild "xcodebuild.build.watchOS-simulator" "generic/platform=watchOS Simulator" build
+    try_xcodebuild "xcodebuild.build.tvOS" "generic/platform=tvOS" build
+    try_xcodebuild "xcodebuild.build.tvOS-simulator" "generic/platform=tvOS Simulator" build
 fi
 
 # Build with custom configurations
@@ -132,4 +128,56 @@ if [ "$(uname)" = "Darwin" ]; then
         BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 fi
 
-$swift package clean
+# Run tests
+try "spm.debug.test" $swift test -c debug $spm_flags --build-path "$build_dir/spm.debug"
+try "spm.release.test" $swift test -c release $spm_flags --build-path "$build_dir/spm.release"
+
+if [ "$(uname)" != "Darwin" ]; then
+    try "spm.release.dword.test" $swift test -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
+fi
+
+if [ "$(uname)" != "Darwin" ]; then # We have not hooked up cmake tests on Darwin yet
+    try "cmake.release.test" "$cmake_release_build_dir/bin/AtomicsTestBundle"
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+    try_xcodebuild "xcodebuild.test.macOS" "platform=macOS" test
+    try_xcodebuild "xcodebuild.test.macCatalyst" "platform=macOS,variant=Mac Catalyst" test
+    try_xcodebuild "xcodebuild.test.iOS-simulator" "platform=iOS Simulator,name=iPhone 12" test
+    try_xcodebuild "xcodebuild.test.watchOS-simulator" "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm" test
+    try_xcodebuild "xcodebuild.test.tvOS-simulator" "platform=tvOS Simulator,name=Apple TV 4K (at 1080p) (2nd generation)" test
+fi
+
+# Run long tests
+if [ "$(uname)" = "Darwin" ]; then
+    try "spm.release.test.long" \
+        $swift test -c release \
+        $spm_flags \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
+        --build-path "$build_dir/spm.release.test.long"
+    try "spm.release.test.long+tsan" \
+        $swift test -c release \
+        $spm_flags \
+        --sanitize=thread \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
+        --build-path "$build_dir/spm.release.test.long+tsan"
+    try_xcodebuild \
+        "xcodebuild.test.macOS.tsan" \
+        "platform=macOS" \
+        -enableThreadSanitizer YES \
+        test
+else
+    try "spm.release.test.long" \
+        $swift test -c release \
+        $spm_flags \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
+        -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
+        --build-path "$build_dir/spm.release.test.long"
+    try "spm.release.test.long+tsan" \
+        $swift test -c release \
+        $spm_flags \
+        --sanitize=thread \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
+        -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
+        --build-path "$build_dir/spm.release.test.long+tsan"
+fi
