@@ -37,12 +37,10 @@ where
 internal var _concurrencyWindow: Int { 20 }
 
 extension Unmanaged {
-  @inlinable
   internal func retain(by delta: Int) {
     _sa_retain_n(toOpaque(), UInt32(delta))
   }
 
-  @inlinable
   internal func release(by delta: Int) {
     _sa_release_n(toOpaque(), UInt32(delta))
   }
