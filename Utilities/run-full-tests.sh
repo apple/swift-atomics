@@ -39,7 +39,7 @@ else
 fi
 
 echo "Build output logs are saved in $bold_on$build_dir$bold_off"
-swift --version
+$swift --version
 
 report_failure() {
     logs="$1"
@@ -66,24 +66,20 @@ try() {
 }
 
 # Build using SPM
-try "spm.debug" $swift test -c debug $spm_flags --build-path "$build_dir/spm.debug"
-try "spm.release" $swift test -c release $spm_flags --build-path "$build_dir/spm.release"
+try "spm.debug.build" $swift build -c debug $spm_flags --build-path "$build_dir/spm.debug"
+try "spm.release.build" $swift build -c release $spm_flags --build-path "$build_dir/spm.release"
 if [ "$(uname)" = "Linux" ]; then
-    try "spm.release.dword" $swift test -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
+    try "spm.release.dword.build" $swift build -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
 fi
 
 # Build with CMake
 cmake_debug_build_dir="$build_dir/cmake.debug"
 try "cmake.debug.generate" cmake -S . -B "$cmake_debug_build_dir" -G Ninja -DCMAKE_BUILD_TYPE=DEBUG
-try "cmake.debug.build-with-ninja" ninja -C "$cmake_debug_build_dir" 
+try "cmake.debug.build-with-ninja" ninja -C "$cmake_debug_build_dir"
 
 cmake_release_build_dir="$build_dir/cmake.release"
 try "cmake.release.generate" cmake -S . -B "$cmake_release_build_dir" -G Ninja -DCMAKE_BUILD_TYPE=RELEASE
 try "cmake.release.build-with-ninja" ninja -C "$cmake_release_build_dir"
-if [ "$(uname)" != "Darwin" ]; then # We have not hooked up cmake tests on Darwin yet
-    try "cmake.release.test" "$cmake_release_build_dir/bin/AtomicsTestBundle"
-fi
-
 
 if [ "$(uname)" = "Darwin" ]; then
     # Build using xcodebuild
@@ -99,15 +95,6 @@ if [ "$(uname)" = "Darwin" ]; then
         -destination "generic/platform=tvOS" \
         -destination "generic/platform=tvOS Simulator" \
         clean build
-    try "xcodebuild.test" \
-        xcodebuild -scheme swift-atomics \
-        -configuration Release \
-        -destination "platform=macOS" \
-        -destination "platform=macOS,variant=Mac Catalyst" \
-        -destination "platform=iOS Simulator,name=iPhone 12" \
-        -destination "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm" \
-        -destination "platform=tvOS Simulator,name=Apple TV 4K (at 1080p) (2nd generation)" \
-        test
 fi
 
 # Build with custom configurations
@@ -130,6 +117,28 @@ if [ "$(uname)" = "Darwin" ]; then
         -destination "generic/platform=macOS" \
         -destination "generic/platform=iOS" \
         BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+fi
+
+# Run tests
+try "spm.debug.test" $swift test -c debug $spm_flags --build-path "$build_dir/spm.debug"
+try "spm.release.test" $swift test -c release $spm_flags --build-path "$build_dir/spm.release"
+if [ "$(uname)" = "Linux" ]; then
+    try "spm.release.dword.test" $swift test -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
+fi
+if [ "$(uname)" != "Darwin" ]; then # We have not hooked up cmake tests on Darwin yet
+    try "cmake.release.test" "$cmake_release_build_dir/bin/AtomicsTestBundle"
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+    try "xcodebuild.test" \
+        xcodebuild -scheme swift-atomics \
+        -configuration Release \
+        -destination "platform=macOS" \
+        -destination "platform=macOS,variant=Mac Catalyst" \
+        -destination "platform=iOS Simulator,name=iPhone 12" \
+        -destination "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm" \
+        -destination "platform=tvOS Simulator,name=Apple TV 4K (at 1080p) (2nd generation)" \
+        test
 fi
 
 $swift package clean
