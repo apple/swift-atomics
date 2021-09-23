@@ -29,6 +29,14 @@ import Dispatch
 import Atomics
 
 #if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
+private var iterations: Int {
+  #if SWIFT_ATOMIC_LONG_TEST
+  return 1_000_000
+  #else
+  return 50_000
+  #endif
+}
+
 private let nodeCount = ManagedAtomic<Int>(0)
 
 class LockFreeQueue<Element> {
@@ -162,19 +170,19 @@ class QueueTests: XCTestCase {
   }
 
   func test01_10() {
-    check(readers: 1, writers: 10, count: 1_000_000)
+    check(readers: 1, writers: 10, count: iterations)
   }
 
   func test02_10() {
-    check(readers: 2, writers: 10, count: 1_000_000)
+    check(readers: 2, writers: 10, count: iterations)
   }
 
   func test04_10() {
-    check(readers: 2, writers: 10, count: 1_000_000)
+    check(readers: 2, writers: 10, count: iterations)
   }
 
   func test16_16() {
-    check(readers: 16, writers: 16, count: 1_000_000)
+    check(readers: 16, writers: 16, count: iterations)
   }
 
 #if !SWIFT_PACKAGE
