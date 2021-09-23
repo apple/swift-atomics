@@ -21,7 +21,7 @@ import Dispatch
 
 #if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 private var iterations: Int {
-  #if SWIFT_ATOMIC_LONG_TEST
+  #if SWIFT_ATOMICS_LONG_TESTS
   return 1_000_000
   #else
   return 50_000

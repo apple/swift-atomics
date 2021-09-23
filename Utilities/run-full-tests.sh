@@ -153,13 +153,13 @@ if [ "$(uname)" = "Darwin" ]; then
     try "spm.release.test.long" \
         $swift test -c release \
         $spm_flags \
-        -Xswiftc -DSWIFT_ATOMIC_LONG_TEST \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
         --build-path "$build_dir/spm.release.test.long"
     try "spm.release.test.long+tsan" \
         $swift test -c release \
         $spm_flags \
         --sanitize=thread \
-        -Xswiftc -DSWIFT_ATOMIC_LONG_TEST \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
         --build-path "$build_dir/spm.release.test.long+tsan"
     try_xcodebuild \
         "xcodebuild.test.macOS.tsan" \
@@ -170,14 +170,14 @@ else
     try "spm.release.test.long" \
         $swift test -c release \
         $spm_flags \
-        -Xswiftc -DSWIFT_ATOMIC_LONG_TEST \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
         -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
         --build-path "$build_dir/spm.release.test.long"
     try "spm.release.test.long+tsan" \
         $swift test -c release \
         $spm_flags \
         --sanitize=thread \
-        -Xswiftc -DSWIFT_ATOMIC_LONG_TEST \
+        -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
         -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
         --build-path "$build_dir/spm.release.test.long+tsan"
 fi
