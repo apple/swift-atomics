@@ -181,6 +181,3 @@ else
         -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
         --build-path "$build_dir/spm.release.test.long+tsan"
 fi
-
-
-enableThreadSanitizer
