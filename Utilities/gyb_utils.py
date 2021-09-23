@@ -81,5 +81,5 @@ def lowerFirst(str):
   return str[:1].lower() + str[1:] if str else ""
 
 def argLabel(label):
-  return label + ": " if label <> "_" else ""
+  return label + ": " if label != "_" else ""
 
