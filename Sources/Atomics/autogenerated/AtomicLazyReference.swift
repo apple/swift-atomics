@@ -50,6 +50,11 @@ public struct UnsafeAtomicLazyReference<Instance: AnyObject> {
   }
 }
 
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension UnsafeAtomicLazyReference: @unchecked Sendable
+where Instance: Sendable {}
+#endif
+
 extension UnsafeAtomicLazyReference {
   /// The storage representation for an atomic lazy reference value.
   @frozen
