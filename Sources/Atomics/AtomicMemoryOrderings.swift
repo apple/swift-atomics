@@ -305,6 +305,9 @@ extension AtomicUpdateOrdering: CustomStringConvertible {
 ///   operations.
 ///
 /// This operation corresponds to `std::atomic_thread_fence` in C++.
+///
+/// Be aware that Thread Sanitizer does not support fences and may report
+/// false-positive races for data protected by a fence.
 @_semantics("atomics.requires_constant_orderings")
 @_transparent // Debug performance
 public func atomicMemoryFence(
