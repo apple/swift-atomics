@@ -10,7 +10,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-extension RawRepresentable where Self: AtomicValue, RawValue: AtomicValue {
+extension RawRepresentable
+where
+  Self: AtomicValue,
+  RawValue: AtomicValue,
+  RawValue._AtomicValue == RawValue
+{
+  public typealias _AtomicValue = Self
   public typealias AtomicRepresentation = AtomicRawRepresentableStorage<Self>
 }
 
@@ -18,7 +24,11 @@ extension RawRepresentable where Self: AtomicValue, RawValue: AtomicValue {
 /// type whose `RawValue` conforms to `AtomicValue`.
 @frozen
 public struct AtomicRawRepresentableStorage<Value>: AtomicStorage
-where Value: RawRepresentable, Value.RawValue: AtomicValue {
+where
+  Value: RawRepresentable,
+  Value.RawValue: AtomicValue,
+  Value.RawValue._AtomicValue == Value.RawValue
+{
   @usableFromInline internal typealias Storage = Value.RawValue.AtomicRepresentation
   @usableFromInline
   internal var _storage: Storage

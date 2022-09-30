@@ -13,9 +13,10 @@
 /// A type that supports atomic operations through a separate atomic storage
 /// representation.
 public protocol AtomicValue {
+  associatedtype _AtomicValue = Self
   /// The atomic storage representation for this value.
   associatedtype AtomicRepresentation: AtomicStorage
-  where AtomicRepresentation.Value == Self
+  where AtomicRepresentation.Value == _AtomicValue
 }
 
 /// The storage representation for an atomic value, providing pointer-based

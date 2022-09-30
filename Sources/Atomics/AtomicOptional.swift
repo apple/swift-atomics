@@ -17,9 +17,10 @@
 public protocol AtomicOptionalWrappable: AtomicValue {
   /// The atomic storage representation for `Optional<Self>`.
   associatedtype AtomicOptionalRepresentation: AtomicStorage
-  where AtomicOptionalRepresentation.Value == Self?
+  where AtomicOptionalRepresentation.Value == _AtomicValue?
 }
 
-extension Optional: AtomicValue where Wrapped: AtomicOptionalWrappable {
+extension Optional: AtomicValue
+where Wrapped: AtomicOptionalWrappable, Wrapped._AtomicValue == Wrapped {
   public typealias AtomicRepresentation = Wrapped.AtomicOptionalRepresentation
 }

@@ -15,15 +15,10 @@ import _AtomicsShims
 /// A class type that supports atomic strong references.
 public protocol AtomicReference: AnyObject, AtomicOptionalWrappable
 where
-  AtomicRepresentation == AtomicReferenceStorage<Self>,
-  AtomicOptionalRepresentation == AtomicOptionalReferenceStorage<Self>
+  _AtomicValue: AnyObject,
+  AtomicRepresentation == AtomicReferenceStorage<_AtomicValue>,
+  AtomicOptionalRepresentation == AtomicOptionalReferenceStorage<_AtomicValue>
 {
-  // These were added as a workaround for https://bugs.swift.org/browse/SR-10251
-  // FIXME: We should remove these once the package requires a
-  // compiler version that contains that fix.
-  override associatedtype AtomicRepresentation = AtomicReferenceStorage<Self>
-  override associatedtype AtomicOptionalRepresentation =
-    AtomicOptionalReferenceStorage<Self>
 }
 
 /// The maximum number of other threads that can start accessing a
