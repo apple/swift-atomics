@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 //===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
@@ -32,7 +32,6 @@ let package = Package(
       dependencies: ["_AtomicsShims"],
       exclude: [
         "CMakeLists.txt",
-        "Atomics.docc",
         "HighLevelTypes.swift.gyb",
         "PointerConformances.swift.gyb",
         "IntegerConformances.swift.gyb",
