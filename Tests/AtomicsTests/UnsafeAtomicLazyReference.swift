@@ -10,38 +10,38 @@
 //
 //===----------------------------------------------------------------------===//
 
-// import XCTest
-// import Atomics
+import XCTest
+import Atomics
 
-// class UnsafeAtomicLazyReferenceTests: XCTestCase {
-//   func test_create_destroy() {
-//     let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
-//     defer { v.destroy() }
-//     XCTAssertNil(v.load())
-//   }
+class UnsafeAtomicLazyReferenceTests: XCTestCase {
+  func test_create_destroy() {
+    let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
+    defer { v.destroy() }
+    XCTAssertNil(v.load())
+  }
 
-//   func test_storeIfNilThenLoad() {
-//     do {
-//       let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
-//       XCTAssertNil(v.load())
+  func test_storeIfNilThenLoad() {
+    do {
+      let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
+      XCTAssertNil(v.load())
 
-//       let ref = LifetimeTracked(42)
-//       XCTAssertTrue(v.storeIfNilThenLoad(ref) === ref)
-//       XCTAssertTrue(v.load() === ref)
+      let ref = LifetimeTracked(42)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref) === ref)
+      XCTAssertTrue(v.load() === ref)
 
-//       let ref2 = LifetimeTracked(23)
-//       XCTAssertTrue(v.storeIfNilThenLoad(ref2) === ref)
-//       XCTAssertTrue(v.load() === ref)
+      let ref2 = LifetimeTracked(23)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref2) === ref)
+      XCTAssertTrue(v.load() === ref)
 
-//       v.destroy()
-//     }
-//     XCTAssertEqual(LifetimeTracked.instances, 0)
-//   }
+      v.destroy()
+    }
+    XCTAssertEqual(LifetimeTracked.instances, 0)
+  }
 
-// #if !SWIFT_PACKAGE
-//   public static var allTests = [
-//     ("test_create_destroy", test_create_destroy),
-//     ("test_storeIfNilThenLoad", test_storeIfNilThenLoad),
-//   ]
-// #endif
-// }
+#if !SWIFT_PACKAGE
+  public static var allTests = [
+    ("test_create_destroy", test_create_destroy),
+    ("test_storeIfNilThenLoad", test_storeIfNilThenLoad),
+  ]
+#endif
+}
