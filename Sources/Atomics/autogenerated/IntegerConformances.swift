@@ -511,7 +511,6 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension Int64: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -1004,7 +1003,6 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension Int32: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -1497,7 +1495,6 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension Int16: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -1990,7 +1987,6 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension Int8: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -2483,7 +2479,6 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension UInt: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -2976,7 +2971,6 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension UInt64: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -3469,7 +3463,6 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension UInt32: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -3962,7 +3955,6 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension UInt16: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -4455,7 +4447,6 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
 extension UInt8: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -4948,10 +4939,6 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     }
   }
 }
-
-// Double-wide atomic primitives on x86_64 CPUs aren't available by default
-// on Linux distributions, and we cannot currently enable them automatically.
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 extension DoubleWord: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -5299,5 +5286,3 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
   }
 }
 
-
-#endif // ENABLE_DOUBLEWIDE_ATOMICS

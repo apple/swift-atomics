@@ -48,7 +48,6 @@ var testCases = [
   testCase(UnsafeAtomicLazyReferenceTests.allTests),
 ]
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 testCases += [
   testCase(BasicAtomicDoubleWordTests.allTests),
   testCase(BasicAtomicReferenceTests.allTests),
@@ -63,7 +62,6 @@ testCases += [
   // StrongReferenceShuffle
   testCase(StrongReferenceShuffleTests.allTests),
 ]
-#endif
 
 XCTMain(testCases)
 #endif

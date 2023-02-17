@@ -62,23 +62,6 @@
 // (see https://github.com/apple/swift-atomics/issues/37).
 #if defined(__swift__)
 #  include <stdatomic.h>
-#endif
-
-// For now, assume double-wide atomics are available everywhere,
-// except on Linux/x86_64, where they need to be manually enabled
-// by the `cx16` target attribute. (Unfortunately we cannot currently
-// turn that on in our package description.)
-#ifdef __APPLE__
-#  define ENABLE_DOUBLEWIDE_ATOMICS 1
-#elif defined(_WIN32)
-#  define ENABLE_DOUBLEWIDE_ATOMICS 1
-#elif defined(__linux__)
-#  if !defined(__x86_64__) || defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_16)
-#    define ENABLE_DOUBLEWIDE_ATOMICS 1
-#  endif
-#endif
-
-#if defined(__swift__)
 
 #define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
 #define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
@@ -347,19 +330,13 @@ _sa_dword _sa_decode_dword(_sa_double_word_ctype value) {
   return (_sa_dword){ value };
 }
 
-#if ENABLE_DOUBLEWIDE_ATOMICS
 #define SWIFTATOMIC_ENCODE_DoubleWord(_value) (_value).value
 #define SWIFTATOMIC_DECODE_DoubleWord(_value) _sa_decode_dword(_value)
 SWIFTATOMIC_DEFINE_TYPE(COMPLEX, DoubleWord, _sa_dword, _sa_double_word_ctype)
-#else
-SWIFTATOMIC_STORAGE_TYPE(DoubleWord, _sa_dword, _sa_double_word_ctype)
-#endif
 
 #endif // __swift__
 
-#if ENABLE_DOUBLEWIDE_ATOMICS
 extern void _sa_retain_n(void *object, uint32_t n);
 extern void _sa_release_n(void *object, uint32_t n);
-#endif
 
 #endif //SWIFTATOMIC_HEADER_INCLUDED

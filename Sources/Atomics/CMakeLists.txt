@@ -22,8 +22,6 @@ add_library(Atomics
   DoubleWord.swift)
 set_target_properties(Atomics PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_Swift_MODULE_DIRECTORY})
-target_compile_definitions(Atomics PUBLIC
-  ENABLE_DOUBLEWIDE_ATOMICS)
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
   target_compile_options(Atomics PUBLIC
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -mcx16>")

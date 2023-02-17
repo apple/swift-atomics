@@ -22,8 +22,6 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin) # FIXME Hook this up on Darwin
     AtomicsTests/StrongReferenceRace.swift
     AtomicsTests/StrongReferenceShuffle.swift
     AtomicsTests/UnsafeAtomicLazyReference.swift)
-  target_compile_definitions(AtomicsTestBundle PUBLIC
-    ENABLE_DOUBLEWIDE_ATOMICS)
 
   target_link_libraries(AtomicsTestBundle PRIVATE
     Atomics

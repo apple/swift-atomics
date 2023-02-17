@@ -19,7 +19,6 @@ import XCTest
 import Atomics
 import Dispatch
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
   return 1_000_000
@@ -31,7 +30,7 @@ private var iterations: Int {
 private let nodeCount = ManagedAtomic<Int>(0)
 
 private class List<Value: Equatable> {
-  class Node: AtomicReference {
+  final class Node: AtomicReference {
     private let _next: UnsafeAtomic<Node?>
     private let _value: UnsafeAtomic<UnsafeMutablePointer<Value>?>
 
@@ -290,4 +289,3 @@ class StrongReferenceShuffleTests: XCTestCase {
   ]
 #endif
 }
-#endif

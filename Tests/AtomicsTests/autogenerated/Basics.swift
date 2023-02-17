@@ -42,8 +42,7 @@ private class Bar: Equatable, CustomStringConvertible {
   }
 }
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
-private class Baz: Equatable, CustomStringConvertible, AtomicReference {
+private final class Baz: Equatable, CustomStringConvertible, AtomicReference {
   var value: Int
   init(_ value: Int) { self.value = value }
   var description: String { "Bar(\(value))" }
@@ -51,92 +50,90 @@ private class Baz: Equatable, CustomStringConvertible, AtomicReference {
     left === right
   }
 }
-#endif
 
 private enum Fred: Int, AtomicValue {
   case one
   case two
 }
 
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicIntTests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int>.create(23)
+    let w: UnsafeAtomic<Int> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -149,7 +146,7 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -162,7 +159,7 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -175,7 +172,7 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -188,7 +185,7 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -202,10 +199,10 @@ class BasicAtomicIntTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -238,10 +235,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -274,10 +271,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -310,10 +307,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -346,10 +343,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -383,10 +380,10 @@ class BasicAtomicIntTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -423,10 +420,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -463,10 +460,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -503,10 +500,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -543,10 +540,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -583,10 +580,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -623,10 +620,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -663,10 +660,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -703,10 +700,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -743,10 +740,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -783,10 +780,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -823,10 +820,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -863,10 +860,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -903,10 +900,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -943,10 +940,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -983,10 +980,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1023,10 +1020,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1063,10 +1060,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1103,10 +1100,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1143,10 +1140,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1183,10 +1180,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1223,10 +1220,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1263,10 +1260,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1303,10 +1300,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1343,10 +1340,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1383,10 +1380,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1423,10 +1420,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1463,10 +1460,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1503,10 +1500,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1543,10 +1540,10 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int>.create(12)
+    let v: UnsafeAtomic<Int> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1593,14 +1590,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: Int = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: Int = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1611,14 +1608,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: Int = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: Int = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1629,14 +1626,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: Int = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: Int = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1647,14 +1644,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1665,14 +1662,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1683,14 +1680,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: Int = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: Int = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1701,14 +1698,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: Int = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: Int = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1719,14 +1716,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: Int = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: Int = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1737,14 +1734,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1755,14 +1752,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1773,14 +1770,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: Int = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: Int = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1791,14 +1788,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: Int = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: Int = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1809,14 +1806,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: Int = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: Int = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1827,14 +1824,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1845,14 +1842,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1863,14 +1860,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: Int = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: Int = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1881,14 +1878,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: Int = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: Int = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1899,14 +1896,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: Int = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: Int = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1917,14 +1914,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1935,14 +1932,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1953,14 +1950,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: Int = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: Int = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1971,14 +1968,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: Int = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: Int = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -1989,14 +1986,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: Int = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: Int = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2007,14 +2004,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2025,14 +2022,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2044,14 +2041,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2062,14 +2059,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2080,14 +2077,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2098,14 +2095,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2116,14 +2113,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &+ b
     let result2: Int = result1 &+ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2134,14 +2131,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2152,14 +2149,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2170,14 +2167,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2188,14 +2185,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2206,14 +2203,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a &- b
     let result2: Int = result1 &- c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2224,14 +2221,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: Int = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: Int = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2242,14 +2239,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: Int = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: Int = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2260,14 +2257,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: Int = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: Int = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2278,14 +2275,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2296,14 +2293,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a & b
     let result2: Int = result1 & c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2314,14 +2311,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: Int = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: Int = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2332,14 +2329,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: Int = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: Int = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2350,14 +2347,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: Int = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: Int = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2368,14 +2365,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2386,14 +2383,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a | b
     let result2: Int = result1 | c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2404,14 +2401,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: Int = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: Int = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2422,14 +2419,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: Int = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: Int = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2440,14 +2437,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: Int = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: Int = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2458,14 +2455,14 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -2476,20 +2473,20 @@ class BasicAtomicIntTests: XCTestCase {
     let result1: Int = a ^ b
     let result2: Int = result1 ^ c
 
-    let v = UnsafeAtomic<Int>.create(a)
+    let v: UnsafeAtomic<Int> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicIntTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -2589,86 +2586,84 @@ class BasicAtomicIntTests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt8Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int8>.create(23)
+    let w: UnsafeAtomic<Int8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -2681,7 +2676,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -2694,7 +2689,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -2707,7 +2702,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -2720,7 +2715,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -2734,10 +2729,10 @@ class BasicAtomicInt8Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -2770,10 +2765,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -2806,10 +2801,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -2842,10 +2837,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -2878,10 +2873,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -2915,10 +2910,10 @@ class BasicAtomicInt8Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -2955,10 +2950,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -2995,10 +2990,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -3035,10 +3030,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3075,10 +3070,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3115,10 +3110,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3155,10 +3150,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3195,10 +3190,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3235,10 +3230,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3275,10 +3270,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3315,10 +3310,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3355,10 +3350,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3395,10 +3390,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -3435,10 +3430,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -3475,10 +3470,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -3515,10 +3510,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -3555,10 +3550,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -3595,10 +3590,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -3635,10 +3630,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3675,10 +3670,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3715,10 +3710,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -3755,10 +3750,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3795,10 +3790,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3835,10 +3830,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -3875,10 +3870,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3915,10 +3910,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3955,10 +3950,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -3995,10 +3990,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -4035,10 +4030,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -4075,10 +4070,10 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int8>.create(12)
+    let v: UnsafeAtomic<Int8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -4125,14 +4120,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: Int8 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: Int8 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4143,14 +4138,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: Int8 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: Int8 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4161,14 +4156,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: Int8 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: Int8 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4179,14 +4174,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int8 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int8 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4197,14 +4192,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int8 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int8 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4215,14 +4210,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: Int8 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: Int8 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4233,14 +4228,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: Int8 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: Int8 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4251,14 +4246,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: Int8 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: Int8 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4269,14 +4264,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int8 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int8 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4287,14 +4282,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int8 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int8 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4305,14 +4300,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: Int8 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: Int8 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4323,14 +4318,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: Int8 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: Int8 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4341,14 +4336,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: Int8 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: Int8 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4359,14 +4354,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int8 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int8 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4377,14 +4372,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int8 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int8 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4395,14 +4390,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: Int8 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: Int8 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4413,14 +4408,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: Int8 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: Int8 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4431,14 +4426,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: Int8 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: Int8 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4449,14 +4444,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int8 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int8 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4467,14 +4462,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int8 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int8 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4485,14 +4480,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: Int8 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: Int8 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4503,14 +4498,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: Int8 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: Int8 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4521,14 +4516,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: Int8 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: Int8 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4539,14 +4534,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int8 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int8 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4557,14 +4552,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int8 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int8 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4576,14 +4571,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int8 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int8 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4594,14 +4589,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int8 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int8 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4612,14 +4607,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int8 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int8 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4630,14 +4625,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int8 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int8 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4648,14 +4643,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &+ b
     let result2: Int8 = result1 &+ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int8 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int8 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4666,14 +4661,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int8 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int8 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4684,14 +4679,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int8 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int8 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4702,14 +4697,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int8 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int8 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4720,14 +4715,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int8 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int8 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4738,14 +4733,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a &- b
     let result2: Int8 = result1 &- c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int8 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int8 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4756,14 +4751,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: Int8 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: Int8 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4774,14 +4769,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: Int8 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: Int8 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4792,14 +4787,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: Int8 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: Int8 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4810,14 +4805,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int8 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int8 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4828,14 +4823,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a & b
     let result2: Int8 = result1 & c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int8 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int8 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4846,14 +4841,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: Int8 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: Int8 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4864,14 +4859,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: Int8 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: Int8 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4882,14 +4877,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: Int8 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: Int8 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4900,14 +4895,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int8 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int8 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4918,14 +4913,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a | b
     let result2: Int8 = result1 | c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int8 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int8 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4936,14 +4931,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: Int8 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: Int8 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4954,14 +4949,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: Int8 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: Int8 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4972,14 +4967,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: Int8 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: Int8 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -4990,14 +4985,14 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int8 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int8 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -5008,20 +5003,20 @@ class BasicAtomicInt8Tests: XCTestCase {
     let result1: Int8 = a ^ b
     let result2: Int8 = result1 ^ c
 
-    let v = UnsafeAtomic<Int8>.create(a)
+    let v: UnsafeAtomic<Int8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int8 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int8 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicInt8Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -5121,86 +5116,84 @@ class BasicAtomicInt8Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt16Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int16>.create(23)
+    let w: UnsafeAtomic<Int16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -5213,7 +5206,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -5226,7 +5219,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -5239,7 +5232,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -5252,7 +5245,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -5266,10 +5259,10 @@ class BasicAtomicInt16Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -5302,10 +5295,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -5338,10 +5331,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -5374,10 +5367,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -5410,10 +5403,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -5447,10 +5440,10 @@ class BasicAtomicInt16Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -5487,10 +5480,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -5527,10 +5520,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -5567,10 +5560,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -5607,10 +5600,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -5647,10 +5640,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -5687,10 +5680,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -5727,10 +5720,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -5767,10 +5760,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -5807,10 +5800,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -5847,10 +5840,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -5887,10 +5880,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -5927,10 +5920,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -5967,10 +5960,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -6007,10 +6000,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -6047,10 +6040,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -6087,10 +6080,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -6127,10 +6120,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -6167,10 +6160,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -6207,10 +6200,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -6247,10 +6240,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -6287,10 +6280,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -6327,10 +6320,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -6367,10 +6360,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -6407,10 +6400,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -6447,10 +6440,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -6487,10 +6480,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -6527,10 +6520,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -6567,10 +6560,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -6607,10 +6600,10 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int16>.create(12)
+    let v: UnsafeAtomic<Int16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -6657,14 +6650,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: Int16 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: Int16 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6675,14 +6668,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: Int16 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: Int16 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6693,14 +6686,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: Int16 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: Int16 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6711,14 +6704,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int16 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int16 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6729,14 +6722,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int16 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int16 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6747,14 +6740,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: Int16 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: Int16 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6765,14 +6758,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: Int16 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: Int16 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6783,14 +6776,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: Int16 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: Int16 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6801,14 +6794,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int16 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int16 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6819,14 +6812,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int16 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int16 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6837,14 +6830,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: Int16 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: Int16 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6855,14 +6848,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: Int16 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: Int16 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6873,14 +6866,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: Int16 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: Int16 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6891,14 +6884,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int16 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int16 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6909,14 +6902,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int16 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int16 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6927,14 +6920,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: Int16 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: Int16 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6945,14 +6938,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: Int16 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: Int16 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6963,14 +6956,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: Int16 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: Int16 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6981,14 +6974,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int16 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int16 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -6999,14 +6992,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int16 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int16 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7017,14 +7010,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: Int16 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: Int16 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7035,14 +7028,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: Int16 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: Int16 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7053,14 +7046,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: Int16 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: Int16 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7071,14 +7064,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int16 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int16 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7089,14 +7082,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int16 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int16 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7108,14 +7101,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int16 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int16 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7126,14 +7119,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int16 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int16 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7144,14 +7137,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int16 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int16 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7162,14 +7155,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int16 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int16 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7180,14 +7173,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &+ b
     let result2: Int16 = result1 &+ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int16 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int16 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7198,14 +7191,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int16 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int16 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7216,14 +7209,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int16 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int16 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7234,14 +7227,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int16 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int16 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7252,14 +7245,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int16 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int16 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7270,14 +7263,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a &- b
     let result2: Int16 = result1 &- c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int16 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int16 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7288,14 +7281,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: Int16 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: Int16 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7306,14 +7299,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: Int16 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: Int16 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7324,14 +7317,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: Int16 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: Int16 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7342,14 +7335,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int16 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int16 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7360,14 +7353,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a & b
     let result2: Int16 = result1 & c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int16 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int16 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7378,14 +7371,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: Int16 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: Int16 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7396,14 +7389,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: Int16 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: Int16 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7414,14 +7407,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: Int16 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: Int16 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7432,14 +7425,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int16 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int16 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7450,14 +7443,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a | b
     let result2: Int16 = result1 | c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int16 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int16 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7468,14 +7461,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: Int16 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: Int16 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7486,14 +7479,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: Int16 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: Int16 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7504,14 +7497,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: Int16 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: Int16 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7522,14 +7515,14 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int16 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int16 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -7540,20 +7533,20 @@ class BasicAtomicInt16Tests: XCTestCase {
     let result1: Int16 = a ^ b
     let result2: Int16 = result1 ^ c
 
-    let v = UnsafeAtomic<Int16>.create(a)
+    let v: UnsafeAtomic<Int16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int16 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int16 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicInt16Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -7653,86 +7646,84 @@ class BasicAtomicInt16Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt32Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int32>.create(23)
+    let w: UnsafeAtomic<Int32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -7745,7 +7736,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -7758,7 +7749,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -7771,7 +7762,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -7784,7 +7775,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -7798,10 +7789,10 @@ class BasicAtomicInt32Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -7834,10 +7825,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -7870,10 +7861,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -7906,10 +7897,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -7942,10 +7933,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -7979,10 +7970,10 @@ class BasicAtomicInt32Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8019,10 +8010,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8059,10 +8050,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8099,10 +8090,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8139,10 +8130,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8179,10 +8170,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8219,10 +8210,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8259,10 +8250,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8299,10 +8290,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8339,10 +8330,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -8379,10 +8370,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -8419,10 +8410,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -8459,10 +8450,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -8499,10 +8490,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -8539,10 +8530,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -8579,10 +8570,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8619,10 +8610,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8659,10 +8650,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -8699,10 +8690,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8739,10 +8730,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8779,10 +8770,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -8819,10 +8810,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8859,10 +8850,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8899,10 +8890,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -8939,10 +8930,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -8979,10 +8970,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -9019,10 +9010,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -9059,10 +9050,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -9099,10 +9090,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -9139,10 +9130,10 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int32>.create(12)
+    let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -9189,14 +9180,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: Int32 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: Int32 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9207,14 +9198,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: Int32 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: Int32 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9225,14 +9216,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: Int32 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: Int32 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9243,14 +9234,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int32 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int32 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9261,14 +9252,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int32 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int32 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9279,14 +9270,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: Int32 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: Int32 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9297,14 +9288,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: Int32 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: Int32 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9315,14 +9306,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: Int32 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: Int32 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9333,14 +9324,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int32 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int32 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9351,14 +9342,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int32 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int32 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9369,14 +9360,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: Int32 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: Int32 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9387,14 +9378,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: Int32 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: Int32 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9405,14 +9396,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: Int32 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: Int32 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9423,14 +9414,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int32 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int32 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9441,14 +9432,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int32 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int32 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9459,14 +9450,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: Int32 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: Int32 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9477,14 +9468,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: Int32 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: Int32 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9495,14 +9486,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: Int32 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: Int32 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9513,14 +9504,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int32 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int32 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9531,14 +9522,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int32 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int32 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9549,14 +9540,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: Int32 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: Int32 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9567,14 +9558,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: Int32 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: Int32 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9585,14 +9576,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: Int32 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: Int32 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9603,14 +9594,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int32 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int32 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9621,14 +9612,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int32 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int32 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9640,14 +9631,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int32 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int32 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9658,14 +9649,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int32 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int32 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9676,14 +9667,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int32 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int32 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9694,14 +9685,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int32 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int32 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9712,14 +9703,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &+ b
     let result2: Int32 = result1 &+ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int32 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int32 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9730,14 +9721,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int32 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int32 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9748,14 +9739,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int32 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int32 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9766,14 +9757,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int32 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int32 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9784,14 +9775,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int32 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int32 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9802,14 +9793,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a &- b
     let result2: Int32 = result1 &- c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int32 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int32 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9820,14 +9811,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: Int32 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: Int32 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9838,14 +9829,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: Int32 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: Int32 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9856,14 +9847,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: Int32 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: Int32 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9874,14 +9865,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int32 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int32 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9892,14 +9883,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a & b
     let result2: Int32 = result1 & c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int32 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int32 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9910,14 +9901,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: Int32 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: Int32 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9928,14 +9919,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: Int32 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: Int32 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9946,14 +9937,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: Int32 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: Int32 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9964,14 +9955,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int32 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int32 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -9982,14 +9973,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a | b
     let result2: Int32 = result1 | c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int32 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int32 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -10000,14 +9991,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: Int32 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: Int32 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -10018,14 +10009,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: Int32 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: Int32 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -10036,14 +10027,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: Int32 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: Int32 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -10054,14 +10045,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int32 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int32 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -10072,20 +10063,20 @@ class BasicAtomicInt32Tests: XCTestCase {
     let result1: Int32 = a ^ b
     let result2: Int32 = result1 ^ c
 
-    let v = UnsafeAtomic<Int32>.create(a)
+    let v: UnsafeAtomic<Int32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int32 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int32 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicInt32Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -10185,86 +10176,84 @@ class BasicAtomicInt32Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicInt64Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<Int64>.create(23)
+    let w: UnsafeAtomic<Int64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -10277,7 +10266,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -10290,7 +10279,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -10303,7 +10292,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -10316,7 +10305,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -10330,10 +10319,10 @@ class BasicAtomicInt64Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -10366,10 +10355,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -10402,10 +10391,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -10438,10 +10427,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -10474,10 +10463,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -10511,10 +10500,10 @@ class BasicAtomicInt64Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -10551,10 +10540,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -10591,10 +10580,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -10631,10 +10620,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -10671,10 +10660,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -10711,10 +10700,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -10751,10 +10740,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -10791,10 +10780,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -10831,10 +10820,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -10871,10 +10860,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -10911,10 +10900,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -10951,10 +10940,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -10991,10 +10980,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11031,10 +11020,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11071,10 +11060,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11111,10 +11100,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -11151,10 +11140,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -11191,10 +11180,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -11231,10 +11220,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -11271,10 +11260,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -11311,10 +11300,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -11351,10 +11340,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -11391,10 +11380,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -11431,10 +11420,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -11471,10 +11460,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -11511,10 +11500,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -11551,10 +11540,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -11591,10 +11580,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11631,10 +11620,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11671,10 +11660,10 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Int64>.create(12)
+    let v: UnsafeAtomic<Int64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Int64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -11721,14 +11710,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: Int64 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: Int64 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11739,14 +11728,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: Int64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: Int64 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11757,14 +11746,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: Int64 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: Int64 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11775,14 +11764,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int64 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11793,14 +11782,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int64 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int64 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11811,14 +11800,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: Int64 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: Int64 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11829,14 +11818,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: Int64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: Int64 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11847,14 +11836,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: Int64 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: Int64 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11865,14 +11854,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: Int64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: Int64 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11883,14 +11872,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: Int64 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: Int64 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11901,14 +11890,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: Int64 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: Int64 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11919,14 +11908,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: Int64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: Int64 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11937,14 +11926,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: Int64 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: Int64 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11955,14 +11944,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int64 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11973,14 +11962,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int64 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int64 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -11991,14 +11980,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: Int64 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: Int64 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12009,14 +11998,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: Int64 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: Int64 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12027,14 +12016,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: Int64 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: Int64 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12045,14 +12034,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int64 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int64 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12063,14 +12052,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int64 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int64 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12081,14 +12070,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: Int64 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: Int64 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12099,14 +12088,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: Int64 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: Int64 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12117,14 +12106,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: Int64 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: Int64 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12135,14 +12124,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: Int64 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: Int64 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12153,14 +12142,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: Int64 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: Int64 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12172,14 +12161,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int64 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int64 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12190,14 +12179,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int64 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12208,14 +12197,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int64 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int64 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12226,14 +12215,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int64 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12244,14 +12233,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &+ b
     let result2: Int64 = result1 &+ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int64 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int64 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12262,14 +12251,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: Int64 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: Int64 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12280,14 +12269,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: Int64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: Int64 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12298,14 +12287,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: Int64 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: Int64 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12316,14 +12305,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: Int64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: Int64 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12334,14 +12323,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a &- b
     let result2: Int64 = result1 &- c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: Int64 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: Int64 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12352,14 +12341,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: Int64 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: Int64 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12370,14 +12359,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: Int64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: Int64 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12388,14 +12377,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: Int64 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: Int64 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12406,14 +12395,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int64 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12424,14 +12413,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a & b
     let result2: Int64 = result1 & c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int64 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int64 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12442,14 +12431,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: Int64 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: Int64 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12460,14 +12449,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: Int64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: Int64 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12478,14 +12467,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: Int64 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: Int64 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12496,14 +12485,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int64 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12514,14 +12503,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a | b
     let result2: Int64 = result1 | c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int64 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int64 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12532,14 +12521,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: Int64 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: Int64 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12550,14 +12539,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: Int64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: Int64 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12568,14 +12557,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: Int64 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: Int64 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12586,14 +12575,14 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: Int64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: Int64 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -12604,20 +12593,20 @@ class BasicAtomicInt64Tests: XCTestCase {
     let result1: Int64 = a ^ b
     let result2: Int64 = result1 ^ c
 
-    let v = UnsafeAtomic<Int64>.create(a)
+    let v: UnsafeAtomic<Int64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: Int64 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: Int64 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicInt64Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -12717,86 +12706,84 @@ class BasicAtomicInt64Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUIntTests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt>.create(23)
+    let w: UnsafeAtomic<UInt> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -12809,7 +12796,7 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -12822,7 +12809,7 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -12835,7 +12822,7 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -12848,7 +12835,7 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -12862,10 +12849,10 @@ class BasicAtomicUIntTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -12898,10 +12885,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -12934,10 +12921,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -12970,10 +12957,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -13006,10 +12993,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -13043,10 +13030,10 @@ class BasicAtomicUIntTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13083,10 +13070,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13123,10 +13110,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13163,10 +13150,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13203,10 +13190,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13243,10 +13230,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13283,10 +13270,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -13323,10 +13310,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -13363,10 +13350,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -13403,10 +13390,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -13443,10 +13430,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -13483,10 +13470,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -13523,10 +13510,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -13563,10 +13550,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -13603,10 +13590,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -13643,10 +13630,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13683,10 +13670,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13723,10 +13710,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -13763,10 +13750,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13803,10 +13790,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13843,10 +13830,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -13883,10 +13870,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -13923,10 +13910,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -13963,10 +13950,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -14003,10 +13990,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -14043,10 +14030,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -14083,10 +14070,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -14123,10 +14110,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -14163,10 +14150,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -14203,10 +14190,10 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt>.create(12)
+    let v: UnsafeAtomic<UInt> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -14253,14 +14240,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: UInt = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: UInt = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14271,14 +14258,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: UInt = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: UInt = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14289,14 +14276,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: UInt = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: UInt = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14307,14 +14294,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14325,14 +14312,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14343,14 +14330,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: UInt = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: UInt = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14361,14 +14348,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: UInt = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: UInt = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14379,14 +14366,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: UInt = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: UInt = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14397,14 +14384,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14415,14 +14402,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14433,14 +14420,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: UInt = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: UInt = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14451,14 +14438,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: UInt = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: UInt = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14469,14 +14456,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: UInt = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: UInt = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14487,14 +14474,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14505,14 +14492,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14523,14 +14510,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: UInt = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: UInt = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14541,14 +14528,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: UInt = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: UInt = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14559,14 +14546,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: UInt = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: UInt = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14577,14 +14564,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14595,14 +14582,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14613,14 +14600,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: UInt = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: UInt = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14631,14 +14618,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: UInt = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: UInt = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14649,14 +14636,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: UInt = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: UInt = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14667,14 +14654,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14685,14 +14672,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14704,14 +14691,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14722,14 +14709,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14740,14 +14727,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14758,14 +14745,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14776,14 +14763,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &+ b
     let result2: UInt = result1 &+ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14794,14 +14781,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14812,14 +14799,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14830,14 +14817,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14848,14 +14835,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14866,14 +14853,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a &- b
     let result2: UInt = result1 &- c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14884,14 +14871,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14902,14 +14889,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14920,14 +14907,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: UInt = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: UInt = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14938,14 +14925,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14956,14 +14943,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a & b
     let result2: UInt = result1 & c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14974,14 +14961,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -14992,14 +14979,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15010,14 +14997,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: UInt = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: UInt = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15028,14 +15015,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15046,14 +15033,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a | b
     let result2: UInt = result1 | c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15064,14 +15051,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15082,14 +15069,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15100,14 +15087,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: UInt = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: UInt = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15118,14 +15105,14 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -15136,20 +15123,20 @@ class BasicAtomicUIntTests: XCTestCase {
     let result1: UInt = a ^ b
     let result2: UInt = result1 ^ c
 
-    let v = UnsafeAtomic<UInt>.create(a)
+    let v: UnsafeAtomic<UInt> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUIntTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -15249,86 +15236,84 @@ class BasicAtomicUIntTests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt8Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt8>.create(23)
+    let w: UnsafeAtomic<UInt8> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -15341,7 +15326,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -15354,7 +15339,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -15367,7 +15352,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -15380,7 +15365,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -15394,10 +15379,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -15430,10 +15415,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -15466,10 +15451,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -15502,10 +15487,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -15538,10 +15523,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -15575,10 +15560,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -15615,10 +15600,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -15655,10 +15640,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -15695,10 +15680,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -15735,10 +15720,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -15775,10 +15760,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -15815,10 +15800,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -15855,10 +15840,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -15895,10 +15880,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -15935,10 +15920,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -15975,10 +15960,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -16015,10 +16000,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -16055,10 +16040,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16095,10 +16080,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16135,10 +16120,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16175,10 +16160,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -16215,10 +16200,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -16255,10 +16240,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -16295,10 +16280,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -16335,10 +16320,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -16375,10 +16360,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -16415,10 +16400,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -16455,10 +16440,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -16495,10 +16480,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -16535,10 +16520,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -16575,10 +16560,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -16615,10 +16600,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -16655,10 +16640,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16695,10 +16680,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16735,10 +16720,10 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt8>.create(12)
+    let v: UnsafeAtomic<UInt8> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt8) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -16785,14 +16770,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: UInt8 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: UInt8 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16803,14 +16788,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: UInt8 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: UInt8 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16821,14 +16806,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: UInt8 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: UInt8 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16839,14 +16824,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt8 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt8 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16857,14 +16842,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt8 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt8 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16875,14 +16860,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: UInt8 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: UInt8 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16893,14 +16878,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: UInt8 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: UInt8 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16911,14 +16896,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: UInt8 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: UInt8 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16929,14 +16914,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt8 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt8 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16947,14 +16932,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt8 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt8 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16965,14 +16950,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: UInt8 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: UInt8 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -16983,14 +16968,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: UInt8 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: UInt8 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17001,14 +16986,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: UInt8 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: UInt8 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17019,14 +17004,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt8 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt8 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17037,14 +17022,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt8 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt8 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17055,14 +17040,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: UInt8 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: UInt8 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17073,14 +17058,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: UInt8 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: UInt8 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17091,14 +17076,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: UInt8 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: UInt8 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17109,14 +17094,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt8 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt8 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17127,14 +17112,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt8 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt8 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17145,14 +17130,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: UInt8 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: UInt8 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17163,14 +17148,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: UInt8 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: UInt8 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17181,14 +17166,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: UInt8 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: UInt8 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17199,14 +17184,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt8 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt8 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17217,14 +17202,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt8 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt8 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17236,14 +17221,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt8 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt8 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17254,14 +17239,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt8 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt8 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17272,14 +17257,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt8 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt8 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17290,14 +17275,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt8 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt8 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17308,14 +17293,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &+ b
     let result2: UInt8 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt8 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt8 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17326,14 +17311,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt8 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt8 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17344,14 +17329,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt8 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt8 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17362,14 +17347,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt8 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt8 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17380,14 +17365,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt8 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt8 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17398,14 +17383,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a &- b
     let result2: UInt8 = result1 &- c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt8 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt8 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17416,14 +17401,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt8 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt8 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17434,14 +17419,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt8 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt8 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17452,14 +17437,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: UInt8 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: UInt8 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17470,14 +17455,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt8 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt8 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17488,14 +17473,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a & b
     let result2: UInt8 = result1 & c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt8 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt8 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17506,14 +17491,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt8 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt8 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17524,14 +17509,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt8 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt8 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17542,14 +17527,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: UInt8 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: UInt8 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17560,14 +17545,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt8 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt8 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17578,14 +17563,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a | b
     let result2: UInt8 = result1 | c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt8 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt8 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17596,14 +17581,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt8 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt8 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17614,14 +17599,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt8 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt8 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17632,14 +17617,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: UInt8 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: UInt8 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17650,14 +17635,14 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt8 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt8 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -17668,20 +17653,20 @@ class BasicAtomicUInt8Tests: XCTestCase {
     let result1: UInt8 = a ^ b
     let result2: UInt8 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt8>.create(a)
+    let v: UnsafeAtomic<UInt8> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt8 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt8 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUInt8Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -17781,86 +17766,84 @@ class BasicAtomicUInt8Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt16Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt16>.create(23)
+    let w: UnsafeAtomic<UInt16> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -17873,7 +17856,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -17886,7 +17869,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -17899,7 +17882,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -17912,7 +17895,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -17926,10 +17909,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -17962,10 +17945,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -17998,10 +17981,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -18034,10 +18017,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -18070,10 +18053,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -18107,10 +18090,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18147,10 +18130,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18187,10 +18170,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18227,10 +18210,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18267,10 +18250,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18307,10 +18290,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18347,10 +18330,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -18387,10 +18370,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -18427,10 +18410,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -18467,10 +18450,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -18507,10 +18490,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -18547,10 +18530,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -18587,10 +18570,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -18627,10 +18610,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -18667,10 +18650,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -18707,10 +18690,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18747,10 +18730,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18787,10 +18770,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -18827,10 +18810,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18867,10 +18850,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18907,10 +18890,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -18947,10 +18930,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -18987,10 +18970,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -19027,10 +19010,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -19067,10 +19050,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -19107,10 +19090,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -19147,10 +19130,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -19187,10 +19170,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -19227,10 +19210,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -19267,10 +19250,10 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt16>.create(12)
+    let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -19317,14 +19300,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: UInt16 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: UInt16 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19335,14 +19318,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: UInt16 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: UInt16 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19353,14 +19336,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: UInt16 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: UInt16 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19371,14 +19354,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt16 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt16 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19389,14 +19372,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt16 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt16 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19407,14 +19390,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: UInt16 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: UInt16 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19425,14 +19408,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: UInt16 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: UInt16 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19443,14 +19426,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: UInt16 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: UInt16 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19461,14 +19444,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt16 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt16 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19479,14 +19462,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt16 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt16 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19497,14 +19480,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: UInt16 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: UInt16 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19515,14 +19498,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: UInt16 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: UInt16 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19533,14 +19516,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: UInt16 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: UInt16 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19551,14 +19534,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt16 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt16 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19569,14 +19552,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt16 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt16 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19587,14 +19570,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: UInt16 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: UInt16 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19605,14 +19588,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: UInt16 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: UInt16 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19623,14 +19606,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: UInt16 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: UInt16 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19641,14 +19624,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt16 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt16 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19659,14 +19642,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt16 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt16 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19677,14 +19660,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: UInt16 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: UInt16 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19695,14 +19678,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: UInt16 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: UInt16 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19713,14 +19696,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: UInt16 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: UInt16 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19731,14 +19714,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt16 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt16 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19749,14 +19732,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt16 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt16 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19768,14 +19751,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt16 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt16 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19786,14 +19769,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt16 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt16 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19804,14 +19787,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt16 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt16 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19822,14 +19805,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt16 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt16 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19840,14 +19823,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &+ b
     let result2: UInt16 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt16 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt16 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19858,14 +19841,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt16 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt16 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19876,14 +19859,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt16 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt16 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19894,14 +19877,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt16 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt16 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19912,14 +19895,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt16 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt16 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19930,14 +19913,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a &- b
     let result2: UInt16 = result1 &- c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt16 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt16 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19948,14 +19931,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt16 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt16 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19966,14 +19949,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt16 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt16 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -19984,14 +19967,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: UInt16 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: UInt16 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20002,14 +19985,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt16 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt16 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20020,14 +20003,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a & b
     let result2: UInt16 = result1 & c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt16 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt16 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20038,14 +20021,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt16 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt16 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20056,14 +20039,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt16 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt16 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20074,14 +20057,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: UInt16 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: UInt16 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20092,14 +20075,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt16 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt16 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20110,14 +20093,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a | b
     let result2: UInt16 = result1 | c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt16 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt16 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20128,14 +20111,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt16 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt16 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20146,14 +20129,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt16 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt16 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20164,14 +20147,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: UInt16 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: UInt16 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20182,14 +20165,14 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt16 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt16 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -20200,20 +20183,20 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let result1: UInt16 = a ^ b
     let result2: UInt16 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt16>.create(a)
+    let v: UnsafeAtomic<UInt16> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt16 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt16 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUInt16Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -20313,86 +20296,84 @@ class BasicAtomicUInt16Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt32Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt32>.create(23)
+    let w: UnsafeAtomic<UInt32> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -20405,7 +20386,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -20418,7 +20399,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -20431,7 +20412,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -20444,7 +20425,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -20458,10 +20439,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -20494,10 +20475,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -20530,10 +20511,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -20566,10 +20547,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -20602,10 +20583,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -20639,10 +20620,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -20679,10 +20660,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -20719,10 +20700,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -20759,10 +20740,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -20799,10 +20780,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -20839,10 +20820,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -20879,10 +20860,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -20919,10 +20900,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -20959,10 +20940,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -20999,10 +20980,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21039,10 +21020,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21079,10 +21060,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21119,10 +21100,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21159,10 +21140,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21199,10 +21180,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21239,10 +21220,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -21279,10 +21260,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -21319,10 +21300,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -21359,10 +21340,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -21399,10 +21380,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -21439,10 +21420,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -21479,10 +21460,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -21519,10 +21500,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -21559,10 +21540,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -21599,10 +21580,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21639,10 +21620,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21679,10 +21660,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -21719,10 +21700,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21759,10 +21740,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21799,10 +21780,10 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt32>.create(12)
+    let v: UnsafeAtomic<UInt32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt32) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -21849,14 +21830,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: UInt32 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: UInt32 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21867,14 +21848,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: UInt32 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: UInt32 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21885,14 +21866,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: UInt32 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: UInt32 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21903,14 +21884,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt32 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt32 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21921,14 +21902,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt32 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt32 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21939,14 +21920,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: UInt32 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: UInt32 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21957,14 +21938,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: UInt32 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: UInt32 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21975,14 +21956,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: UInt32 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: UInt32 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -21993,14 +21974,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt32 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt32 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22011,14 +21992,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt32 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt32 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22029,14 +22010,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: UInt32 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: UInt32 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22047,14 +22028,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: UInt32 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: UInt32 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22065,14 +22046,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: UInt32 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: UInt32 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22083,14 +22064,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt32 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt32 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22101,14 +22082,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt32 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt32 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22119,14 +22100,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: UInt32 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: UInt32 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22137,14 +22118,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: UInt32 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: UInt32 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22155,14 +22136,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: UInt32 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: UInt32 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22173,14 +22154,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt32 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt32 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22191,14 +22172,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt32 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt32 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22209,14 +22190,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: UInt32 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: UInt32 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22227,14 +22208,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: UInt32 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: UInt32 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22245,14 +22226,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: UInt32 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: UInt32 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22263,14 +22244,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt32 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt32 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22281,14 +22262,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt32 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt32 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22300,14 +22281,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt32 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt32 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22318,14 +22299,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt32 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt32 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22336,14 +22317,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt32 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt32 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22354,14 +22335,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt32 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt32 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22372,14 +22353,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &+ b
     let result2: UInt32 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt32 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt32 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22390,14 +22371,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt32 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt32 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22408,14 +22389,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt32 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt32 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22426,14 +22407,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt32 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt32 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22444,14 +22425,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt32 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt32 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22462,14 +22443,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a &- b
     let result2: UInt32 = result1 &- c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt32 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt32 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22480,14 +22461,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt32 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt32 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22498,14 +22479,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt32 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt32 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22516,14 +22497,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: UInt32 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: UInt32 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22534,14 +22515,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt32 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt32 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22552,14 +22533,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a & b
     let result2: UInt32 = result1 & c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt32 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt32 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22570,14 +22551,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt32 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt32 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22588,14 +22569,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt32 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt32 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22606,14 +22587,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: UInt32 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: UInt32 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22624,14 +22605,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt32 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt32 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22642,14 +22623,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a | b
     let result2: UInt32 = result1 | c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt32 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt32 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22660,14 +22641,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt32 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt32 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22678,14 +22659,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt32 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt32 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22696,14 +22677,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: UInt32 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: UInt32 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22714,14 +22695,14 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt32 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt32 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -22732,20 +22713,20 @@ class BasicAtomicUInt32Tests: XCTestCase {
     let result1: UInt32 = a ^ b
     let result2: UInt32 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt32>.create(a)
+    let v: UnsafeAtomic<UInt32> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt32 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt32 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUInt32Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -22845,86 +22826,84 @@ class BasicAtomicUInt32Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUInt64Tests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), 23)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), 12)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), 23)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), 12)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), 23)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
     v.store(23, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    let w = UnsafeAtomic<UInt64>.create(23)
+    let w: UnsafeAtomic<UInt64> = .create(23)
     defer { w.destroy() }
     w.store(12, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), 12)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .relaxed), 12)
@@ -22937,7 +22916,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiring), 12)
@@ -22950,7 +22929,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .releasing), 12)
@@ -22963,7 +22942,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .acquiringAndReleasing), 12)
@@ -22976,7 +22955,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(12, ordering: .sequentiallyConsistent), 12)
@@ -22990,10 +22969,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .relaxed)
@@ -23026,10 +23005,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiring)
@@ -23062,10 +23041,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .releasing)
@@ -23098,10 +23077,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .acquiringAndReleasing)
@@ -23134,10 +23113,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       ordering: .sequentiallyConsistent)
@@ -23171,10 +23150,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23211,10 +23190,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23251,10 +23230,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23291,10 +23270,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -23331,10 +23310,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -23371,10 +23350,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -23411,10 +23390,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -23451,10 +23430,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -23491,10 +23470,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -23531,10 +23510,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -23571,10 +23550,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -23611,10 +23590,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -23651,10 +23630,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -23691,10 +23670,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -23731,10 +23710,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -23771,10 +23750,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23811,10 +23790,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23851,10 +23830,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -23891,10 +23870,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -23931,10 +23910,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -23971,10 +23950,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -24011,10 +23990,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -24051,10 +24030,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -24091,10 +24070,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -24131,10 +24110,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -24171,10 +24150,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -24211,10 +24190,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -24251,10 +24230,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -24291,10 +24270,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -24331,10 +24310,10 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UInt64>.create(12)
+    let v: UnsafeAtomic<UInt64> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt64) = v.compareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -24381,14 +24360,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+    let old1: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
+    let old2: UInt64 = v.loadThenWrappingIncrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24399,14 +24378,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+    let old1: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
+    let old2: UInt64 = v.loadThenWrappingIncrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24417,14 +24396,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+    let old1: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
+    let old2: UInt64 = v.loadThenWrappingIncrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24435,14 +24414,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt64 = v.loadThenWrappingIncrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24453,14 +24432,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt64 = v.loadThenWrappingIncrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24471,14 +24450,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+    let old1: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
+    let old2: UInt64 = v.loadThenWrappingDecrement(by: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24489,14 +24468,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+    let old1: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
+    let old2: UInt64 = v.loadThenWrappingDecrement(by: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24507,14 +24486,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+    let old1: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
+    let old2: UInt64 = v.loadThenWrappingDecrement(by: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24525,14 +24504,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+    let old1: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
+    let old2: UInt64 = v.loadThenWrappingDecrement(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24543,14 +24522,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+    let old1: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
+    let old2: UInt64 = v.loadThenWrappingDecrement(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24561,14 +24540,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+    let old1: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
+    let old2: UInt64 = v.loadThenBitwiseAnd(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24579,14 +24558,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+    let old1: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
+    let old2: UInt64 = v.loadThenBitwiseAnd(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24597,14 +24576,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+    let old1: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
+    let old2: UInt64 = v.loadThenBitwiseAnd(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24615,14 +24594,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt64 = v.loadThenBitwiseAnd(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24633,14 +24612,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt64 = v.loadThenBitwiseAnd(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24651,14 +24630,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+    let old1: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
+    let old2: UInt64 = v.loadThenBitwiseOr(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24669,14 +24648,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+    let old1: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
+    let old2: UInt64 = v.loadThenBitwiseOr(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24687,14 +24666,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+    let old1: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
+    let old2: UInt64 = v.loadThenBitwiseOr(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24705,14 +24684,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt64 = v.loadThenBitwiseOr(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24723,14 +24702,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt64 = v.loadThenBitwiseOr(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24741,14 +24720,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+    let old1: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
+    let old2: UInt64 = v.loadThenBitwiseXor(with: c, ordering: .relaxed)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24759,14 +24738,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+    let old1: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
+    let old2: UInt64 = v.loadThenBitwiseXor(with: c, ordering: .acquiring)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24777,14 +24756,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+    let old1: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
+    let old2: UInt64 = v.loadThenBitwiseXor(with: c, ordering: .releasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24795,14 +24774,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+    let old1: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
+    let old2: UInt64 = v.loadThenBitwiseXor(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24813,14 +24792,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+    let old1: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
+    let old2: UInt64 = v.loadThenBitwiseXor(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24832,14 +24811,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt64 = v.wrappingIncrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24850,14 +24829,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt64 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24868,14 +24847,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt64 = v.wrappingIncrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24886,14 +24865,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt64 = v.wrappingIncrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24904,14 +24883,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &+ b
     let result2: UInt64 = result1 &+ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt64 = v.wrappingIncrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24922,14 +24901,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+    let new1: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
+    let new2: UInt64 = v.wrappingDecrementThenLoad(by: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24940,14 +24919,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+    let new1: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
+    let new2: UInt64 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24958,14 +24937,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+    let new1: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
+    let new2: UInt64 = v.wrappingDecrementThenLoad(by: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24976,14 +24955,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+    let new1: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
+    let new2: UInt64 = v.wrappingDecrementThenLoad(by: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -24994,14 +24973,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a &- b
     let result2: UInt64 = result1 &- c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+    let new1: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
+    let new2: UInt64 = v.wrappingDecrementThenLoad(by: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25012,14 +24991,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt64 = v.bitwiseAndThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25030,14 +25009,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt64 = v.bitwiseAndThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25048,14 +25027,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+    let new1: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
+    let new2: UInt64 = v.bitwiseAndThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25066,14 +25045,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt64 = v.bitwiseAndThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25084,14 +25063,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a & b
     let result2: UInt64 = result1 & c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt64 = v.bitwiseAndThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25102,14 +25081,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt64 = v.bitwiseOrThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25120,14 +25099,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt64 = v.bitwiseOrThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25138,14 +25117,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+    let new1: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
+    let new2: UInt64 = v.bitwiseOrThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25156,14 +25135,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt64 = v.bitwiseOrThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25174,14 +25153,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a | b
     let result2: UInt64 = result1 | c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt64 = v.bitwiseOrThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25192,14 +25171,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+    let new1: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
+    let new2: UInt64 = v.bitwiseXorThenLoad(with: c, ordering: .relaxed)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25210,14 +25189,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+    let new1: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
+    let new2: UInt64 = v.bitwiseXorThenLoad(with: c, ordering: .acquiring)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25228,14 +25207,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+    let new1: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
+    let new2: UInt64 = v.bitwiseXorThenLoad(with: c, ordering: .releasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25246,14 +25225,14 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+    let new1: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
+    let new2: UInt64 = v.bitwiseXorThenLoad(with: c, ordering: .acquiringAndReleasing)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -25264,20 +25243,20 @@ class BasicAtomicUInt64Tests: XCTestCase {
     let result1: UInt64 = a ^ b
     let result2: UInt64 = result1 ^ c
 
-    let v = UnsafeAtomic<UInt64>.create(a)
+    let v: UnsafeAtomic<UInt64> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+    let new1: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
+    let new2: UInt64 = v.bitwiseXorThenLoad(with: c, ordering: .sequentiallyConsistent)
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUInt64Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -25377,86 +25356,84 @@ class BasicAtomicUInt64Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicBoolTests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), false)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), false)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), true)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), false)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), true)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), false)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     v.store(false, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     w.store(true, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     v.store(false, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     w.store(true, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
     v.store(false, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w = UnsafeAtomic<Bool>.create(false)
+    let w: UnsafeAtomic<Bool> = .create(false)
     defer { w.destroy() }
     w.store(true, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(true, ordering: .relaxed), true)
@@ -25469,7 +25446,7 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), false)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(true, ordering: .acquiring), true)
@@ -25482,7 +25459,7 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), false)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(true, ordering: .releasing), true)
@@ -25495,7 +25472,7 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), false)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(true, ordering: .acquiringAndReleasing), true)
@@ -25508,7 +25485,7 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), false)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(true, ordering: .sequentiallyConsistent), true)
@@ -25522,10 +25499,10 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       ordering: .relaxed)
@@ -25558,10 +25535,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       ordering: .acquiring)
@@ -25594,10 +25571,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       ordering: .releasing)
@@ -25630,10 +25607,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       ordering: .acquiringAndReleasing)
@@ -25666,10 +25643,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       ordering: .sequentiallyConsistent)
@@ -25703,10 +25680,10 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -25743,10 +25720,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -25783,10 +25760,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -25823,10 +25800,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -25863,10 +25840,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -25903,10 +25880,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -25943,10 +25920,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -25983,10 +25960,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -26023,10 +26000,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -26063,10 +26040,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26103,10 +26080,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26143,10 +26120,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26183,10 +26160,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -26223,10 +26200,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -26263,10 +26240,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -26303,10 +26280,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -26343,10 +26320,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -26383,10 +26360,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .relaxed,
@@ -26423,10 +26400,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -26463,10 +26440,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -26503,10 +26480,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiring,
@@ -26543,10 +26520,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -26583,10 +26560,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -26623,10 +26600,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .releasing,
@@ -26663,10 +26640,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26703,10 +26680,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26743,10 +26720,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .acquiringAndReleasing,
@@ -26783,10 +26760,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -26823,10 +26800,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -26863,10 +26840,10 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(true)
+    let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
       desired: false,
       successOrdering: .sequentiallyConsistent,
@@ -27449,7 +27426,7 @@ class BasicAtomicBoolTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicBoolTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -27529,8 +27506,6 @@ class BasicAtomicBoolTests: XCTestCase {
     ("test_logicalXorThenLoad_sequentiallyConsistent", test_logicalXorThenLoad_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicPointerTests: XCTestCase {
@@ -27557,79 +27532,79 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _foo1)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _foo2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _foo1)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _foo2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     v.store(_foo2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     w.store(_foo1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     v.store(_foo2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     w.store(_foo1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
     v.store(_foo2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
     defer { w.destroy() }
     w.store(_foo1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .relaxed), _foo1)
@@ -27642,7 +27617,7 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .acquiring), _foo1)
@@ -27655,7 +27630,7 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .releasing), _foo1)
@@ -27668,7 +27643,7 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .acquiringAndReleasing), _foo1)
@@ -27681,7 +27656,7 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .sequentiallyConsistent), _foo1)
@@ -27695,10 +27670,10 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       ordering: .relaxed)
@@ -27731,10 +27706,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       ordering: .acquiring)
@@ -27767,10 +27742,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       ordering: .releasing)
@@ -27803,10 +27778,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       ordering: .acquiringAndReleasing)
@@ -27839,10 +27814,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       ordering: .sequentiallyConsistent)
@@ -27876,10 +27851,10 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -27916,10 +27891,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -27956,10 +27931,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -27996,10 +27971,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28036,10 +28011,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28076,10 +28051,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28116,10 +28091,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28156,10 +28131,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28196,10 +28171,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28236,10 +28211,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28276,10 +28251,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28316,10 +28291,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28356,10 +28331,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -28396,10 +28371,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -28436,10 +28411,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -28476,10 +28451,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -28516,10 +28491,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -28556,10 +28531,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -28596,10 +28571,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28636,10 +28611,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28676,10 +28651,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -28716,10 +28691,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28756,10 +28731,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28796,10 +28771,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .releasing,
@@ -28836,10 +28811,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28876,10 +28851,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28916,10 +28891,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -28956,10 +28931,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -28996,10 +28971,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -29036,10 +29011,10 @@ class BasicAtomicPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>>.create(_foo1)
+    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -29080,7 +29055,7 @@ class BasicAtomicPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -29130,8 +29105,6 @@ class BasicAtomicPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalPointerTests: XCTestCase {
@@ -29158,79 +29131,79 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _foo2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _foo2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_foo2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_foo2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_foo2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w = UnsafeAtomic<UnsafePointer<Foo>?>.create(_foo2)
+    let w: UnsafeAtomic<UnsafePointer<Foo>?> = .create(_foo2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -29243,7 +29216,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -29256,7 +29229,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -29269,7 +29242,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -29282,7 +29255,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -29296,10 +29269,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       ordering: .relaxed)
@@ -29332,10 +29305,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       ordering: .acquiring)
@@ -29368,10 +29341,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       ordering: .releasing)
@@ -29404,10 +29377,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       ordering: .acquiringAndReleasing)
@@ -29440,10 +29413,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       ordering: .sequentiallyConsistent)
@@ -29477,10 +29450,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -29517,10 +29490,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -29557,10 +29530,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -29597,10 +29570,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -29637,10 +29610,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -29677,10 +29650,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -29717,10 +29690,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -29757,10 +29730,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -29797,10 +29770,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -29837,10 +29810,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -29877,10 +29850,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -29917,10 +29890,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -29957,10 +29930,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -29997,10 +29970,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -30037,10 +30010,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -30077,10 +30050,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -30117,10 +30090,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -30157,10 +30130,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -30197,10 +30170,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -30237,10 +30210,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -30277,10 +30250,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -30317,10 +30290,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -30357,10 +30330,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -30397,10 +30370,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -30437,10 +30410,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -30477,10 +30450,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -30517,10 +30490,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -30557,10 +30530,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -30597,10 +30570,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -30637,10 +30610,10 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -30681,7 +30654,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -30731,8 +30704,6 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicMutablePointerTests: XCTestCase {
@@ -30759,79 +30730,79 @@ class BasicAtomicMutablePointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _mfoo1)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _mfoo2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _mfoo1)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _mfoo2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(_mfoo1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(_mfoo1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(_mfoo1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mfoo1, ordering: .relaxed), _mfoo1)
@@ -30844,7 +30815,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mfoo1, ordering: .acquiring), _mfoo1)
@@ -30857,7 +30828,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mfoo1, ordering: .releasing), _mfoo1)
@@ -30870,7 +30841,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mfoo1, ordering: .acquiringAndReleasing), _mfoo1)
@@ -30883,7 +30854,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mfoo1, ordering: .sequentiallyConsistent), _mfoo1)
@@ -30897,10 +30868,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       ordering: .relaxed)
@@ -30933,10 +30904,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       ordering: .acquiring)
@@ -30969,10 +30940,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       ordering: .releasing)
@@ -31005,10 +30976,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       ordering: .acquiringAndReleasing)
@@ -31041,10 +31012,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       ordering: .sequentiallyConsistent)
@@ -31078,10 +31049,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31118,10 +31089,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31158,10 +31129,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31198,10 +31169,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31238,10 +31209,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31278,10 +31249,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31318,10 +31289,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -31358,10 +31329,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -31398,10 +31369,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -31438,10 +31409,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -31478,10 +31449,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -31518,10 +31489,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -31558,10 +31529,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -31598,10 +31569,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -31638,10 +31609,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -31678,10 +31649,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31718,10 +31689,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31758,10 +31729,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -31798,10 +31769,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31838,10 +31809,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31878,10 +31849,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -31918,10 +31889,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -31958,10 +31929,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -31998,10 +31969,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -32038,10 +32009,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -32078,10 +32049,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -32118,10 +32089,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -32158,10 +32129,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -32198,10 +32169,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -32238,10 +32209,10 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>>.create(_mfoo1)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>> = .create(_mfoo1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>) = v.compareExchange(
       expected: _mfoo1,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -32282,7 +32253,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicMutablePointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -32332,8 +32303,6 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalMutablePointerTests: XCTestCase {
@@ -32360,79 +32329,79 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mfoo2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _mfoo2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _mfoo2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
     v.store(_mfoo2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
 
-    let w = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(_mfoo2)
+    let w: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(_mfoo2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -32445,7 +32414,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -32458,7 +32427,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -32471,7 +32440,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -32484,7 +32453,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -32498,10 +32467,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       ordering: .relaxed)
@@ -32534,10 +32503,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       ordering: .acquiring)
@@ -32570,10 +32539,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       ordering: .releasing)
@@ -32606,10 +32575,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       ordering: .acquiringAndReleasing)
@@ -32642,10 +32611,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       ordering: .sequentiallyConsistent)
@@ -32679,10 +32648,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -32719,10 +32688,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -32759,10 +32728,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -32799,10 +32768,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -32839,10 +32808,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -32879,10 +32848,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -32919,10 +32888,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -32959,10 +32928,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -32999,10 +32968,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -33039,10 +33008,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33079,10 +33048,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33119,10 +33088,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33159,10 +33128,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33199,10 +33168,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33239,10 +33208,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33279,10 +33248,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -33319,10 +33288,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -33359,10 +33328,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .relaxed,
@@ -33399,10 +33368,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -33439,10 +33408,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -33479,10 +33448,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiring,
@@ -33519,10 +33488,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -33559,10 +33528,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -33599,10 +33568,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .releasing,
@@ -33639,10 +33608,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33679,10 +33648,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33719,10 +33688,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .acquiringAndReleasing,
@@ -33759,10 +33728,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33799,10 +33768,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33839,10 +33808,10 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutablePointer<Foo>?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.compareExchange(
       expected: nil,
       desired: _mfoo2,
       successOrdering: .sequentiallyConsistent,
@@ -33883,7 +33852,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalMutablePointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -33933,8 +33902,6 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicRawPointerTests: XCTestCase {
@@ -33950,79 +33917,79 @@ class BasicAtomicRawPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _raw2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _raw2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _raw1)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _raw2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _raw1)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _raw2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     v.store(_raw2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     w.store(_raw1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _raw1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     v.store(_raw2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     w.store(_raw1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _raw1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
     v.store(_raw2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer> = .create(_raw2)
     defer { w.destroy() }
     w.store(_raw1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _raw1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_raw1, ordering: .relaxed), _raw1)
@@ -34035,7 +34002,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_raw1, ordering: .acquiring), _raw1)
@@ -34048,7 +34015,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_raw1, ordering: .releasing), _raw1)
@@ -34061,7 +34028,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_raw1, ordering: .acquiringAndReleasing), _raw1)
@@ -34074,7 +34041,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_raw1, ordering: .sequentiallyConsistent), _raw1)
@@ -34088,10 +34055,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       ordering: .relaxed)
@@ -34124,10 +34091,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       ordering: .acquiring)
@@ -34160,10 +34127,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       ordering: .releasing)
@@ -34196,10 +34163,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       ordering: .acquiringAndReleasing)
@@ -34232,10 +34199,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       ordering: .sequentiallyConsistent)
@@ -34269,10 +34236,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34309,10 +34276,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34349,10 +34316,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34389,10 +34356,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -34429,10 +34396,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -34469,10 +34436,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -34509,10 +34476,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -34549,10 +34516,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -34589,10 +34556,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -34629,10 +34596,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -34669,10 +34636,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -34709,10 +34676,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -34749,10 +34716,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -34789,10 +34756,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -34829,10 +34796,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -34869,10 +34836,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34909,10 +34876,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34949,10 +34916,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -34989,10 +34956,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -35029,10 +34996,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -35069,10 +35036,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -35109,10 +35076,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -35149,10 +35116,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -35189,10 +35156,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -35229,10 +35196,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -35269,10 +35236,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -35309,10 +35276,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -35349,10 +35316,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -35389,10 +35356,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -35429,10 +35396,10 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer>.create(_raw1)
+    let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -35473,7 +35440,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -35523,8 +35490,6 @@ class BasicAtomicRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalRawPointerTests: XCTestCase {
@@ -35540,79 +35505,79 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _raw2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _raw2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _raw2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _raw2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_raw2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_raw2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_raw2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    let w = UnsafeAtomic<UnsafeRawPointer?>.create(_raw2)
+    let w: UnsafeAtomic<UnsafeRawPointer?> = .create(_raw2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -35625,7 +35590,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -35638,7 +35603,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -35651,7 +35616,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -35664,7 +35629,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -35678,10 +35643,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       ordering: .relaxed)
@@ -35714,10 +35679,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       ordering: .acquiring)
@@ -35750,10 +35715,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       ordering: .releasing)
@@ -35786,10 +35751,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       ordering: .acquiringAndReleasing)
@@ -35822,10 +35787,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       ordering: .sequentiallyConsistent)
@@ -35859,10 +35824,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -35899,10 +35864,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -35939,10 +35904,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -35979,10 +35944,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36019,10 +35984,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36059,10 +36024,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36099,10 +36064,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36139,10 +36104,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36179,10 +36144,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36219,10 +36184,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36259,10 +36224,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36299,10 +36264,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36339,10 +36304,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -36379,10 +36344,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -36419,10 +36384,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -36459,10 +36424,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -36499,10 +36464,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -36539,10 +36504,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -36579,10 +36544,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36619,10 +36584,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36659,10 +36624,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -36699,10 +36664,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36739,10 +36704,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36779,10 +36744,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .releasing,
@@ -36819,10 +36784,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36859,10 +36824,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36899,10 +36864,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -36939,10 +36904,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -36979,10 +36944,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -37019,10 +36984,10 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -37063,7 +37028,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -37113,8 +37078,6 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicMutableRawPointerTests: XCTestCase {
@@ -37130,79 +37093,79 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _mraw1)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _mraw2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _mraw1)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _mraw2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     w.store(_mraw1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     w.store(_mraw1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
     defer { w.destroy() }
     w.store(_mraw1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .relaxed), _mraw1)
@@ -37215,7 +37178,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .acquiring), _mraw1)
@@ -37228,7 +37191,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .releasing), _mraw1)
@@ -37241,7 +37204,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .acquiringAndReleasing), _mraw1)
@@ -37254,7 +37217,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .sequentiallyConsistent), _mraw1)
@@ -37268,10 +37231,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       ordering: .relaxed)
@@ -37304,10 +37267,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       ordering: .acquiring)
@@ -37340,10 +37303,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       ordering: .releasing)
@@ -37376,10 +37339,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       ordering: .acquiringAndReleasing)
@@ -37412,10 +37375,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       ordering: .sequentiallyConsistent)
@@ -37449,10 +37412,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -37489,10 +37452,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -37529,10 +37492,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -37569,10 +37532,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -37609,10 +37572,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -37649,10 +37612,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -37689,10 +37652,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -37729,10 +37692,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -37769,10 +37732,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -37809,10 +37772,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -37849,10 +37812,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -37889,10 +37852,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -37929,10 +37892,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -37969,10 +37932,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -38009,10 +37972,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -38049,10 +38012,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -38089,10 +38052,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -38129,10 +38092,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -38169,10 +38132,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -38209,10 +38172,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -38249,10 +38212,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -38289,10 +38252,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -38329,10 +38292,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -38369,10 +38332,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -38409,10 +38372,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -38449,10 +38412,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -38489,10 +38452,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -38529,10 +38492,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -38569,10 +38532,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -38609,10 +38572,10 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer>.create(_mraw1)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -38653,7 +38616,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicMutableRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -38703,8 +38666,6 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
@@ -38720,79 +38681,79 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _mraw2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _mraw2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
     v.store(_mraw2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w = UnsafeAtomic<UnsafeMutableRawPointer?>.create(_mraw2)
+    let w: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(_mraw2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -38805,7 +38766,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -38818,7 +38779,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -38831,7 +38792,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -38844,7 +38805,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -38858,10 +38819,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       ordering: .relaxed)
@@ -38894,10 +38855,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       ordering: .acquiring)
@@ -38930,10 +38891,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       ordering: .releasing)
@@ -38966,10 +38927,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       ordering: .acquiringAndReleasing)
@@ -39002,10 +38963,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       ordering: .sequentiallyConsistent)
@@ -39039,10 +39000,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39079,10 +39040,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39119,10 +39080,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39159,10 +39120,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39199,10 +39160,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39239,10 +39200,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39279,10 +39240,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39319,10 +39280,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39359,10 +39320,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39399,10 +39360,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -39439,10 +39400,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -39479,10 +39440,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -39519,10 +39480,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -39559,10 +39520,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -39599,10 +39560,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -39639,10 +39600,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39679,10 +39640,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39719,10 +39680,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .relaxed,
@@ -39759,10 +39720,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39799,10 +39760,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39839,10 +39800,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiring,
@@ -39879,10 +39840,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39919,10 +39880,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39959,10 +39920,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .releasing,
@@ -39999,10 +39960,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -40039,10 +40000,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -40079,10 +40040,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .acquiringAndReleasing,
@@ -40119,10 +40080,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -40159,10 +40120,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -40199,10 +40160,10 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<UnsafeMutableRawPointer?>.create(nil)
+    let v: UnsafeAtomic<UnsafeMutableRawPointer?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeMutableRawPointer?) = v.compareExchange(
       expected: nil,
       desired: _mraw2,
       successOrdering: .sequentiallyConsistent,
@@ -40243,7 +40204,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalMutableRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -40293,8 +40254,6 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicUnmanagedTests: XCTestCase {
@@ -40307,79 +40266,79 @@ class BasicAtomicUnmanagedTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _bar2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _bar2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _bar1)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _bar2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _bar1)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _bar2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     v.store(_bar2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     w.store(_bar1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _bar1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     v.store(_bar2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     w.store(_bar1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _bar1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
     v.store(_bar2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar2)
     defer { w.destroy() }
     w.store(_bar1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _bar1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_bar1, ordering: .relaxed), _bar1)
@@ -40392,7 +40351,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_bar1, ordering: .acquiring), _bar1)
@@ -40405,7 +40364,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_bar1, ordering: .releasing), _bar1)
@@ -40418,7 +40377,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_bar1, ordering: .acquiringAndReleasing), _bar1)
@@ -40431,7 +40390,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_bar1, ordering: .sequentiallyConsistent), _bar1)
@@ -40445,10 +40404,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       ordering: .relaxed)
@@ -40481,10 +40440,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       ordering: .acquiring)
@@ -40517,10 +40476,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       ordering: .releasing)
@@ -40553,10 +40512,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       ordering: .acquiringAndReleasing)
@@ -40589,10 +40548,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       ordering: .sequentiallyConsistent)
@@ -40626,10 +40585,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -40666,10 +40625,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -40706,10 +40665,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -40746,10 +40705,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -40786,10 +40745,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -40826,10 +40785,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -40866,10 +40825,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -40906,10 +40865,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -40946,10 +40905,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -40986,10 +40945,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41026,10 +40985,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41066,10 +41025,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41106,10 +41065,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41146,10 +41105,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41186,10 +41145,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41226,10 +41185,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -41266,10 +41225,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -41306,10 +41265,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -41346,10 +41305,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -41386,10 +41345,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -41426,10 +41385,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -41466,10 +41425,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -41506,10 +41465,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -41546,10 +41505,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .releasing,
@@ -41586,10 +41545,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41626,10 +41585,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41666,10 +41625,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -41706,10 +41665,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41746,10 +41705,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41786,10 +41745,10 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>>.create(_bar1)
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.compareExchange(
       expected: _bar1,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -41830,7 +41789,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicUnmanagedTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -41880,8 +41839,6 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalUnmanagedTests: XCTestCase {
@@ -41894,79 +41851,79 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _bar2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _bar2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _bar2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _bar2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     v.store(_bar2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     v.store(_bar2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
     v.store(_bar2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    let w = UnsafeAtomic<Unmanaged<Bar>?>.create(_bar2)
+    let w: UnsafeAtomic<Unmanaged<Bar>?> = .create(_bar2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -41979,7 +41936,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -41992,7 +41949,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -42005,7 +41962,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -42018,7 +41975,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -42032,10 +41989,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       ordering: .relaxed)
@@ -42068,10 +42025,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       ordering: .acquiring)
@@ -42104,10 +42061,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       ordering: .releasing)
@@ -42140,10 +42097,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       ordering: .acquiringAndReleasing)
@@ -42176,10 +42133,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       ordering: .sequentiallyConsistent)
@@ -42213,10 +42170,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42253,10 +42210,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42293,10 +42250,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42333,10 +42290,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -42373,10 +42330,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -42413,10 +42370,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -42453,10 +42410,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -42493,10 +42450,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -42533,10 +42490,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -42573,10 +42530,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -42613,10 +42570,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -42653,10 +42610,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -42693,10 +42650,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -42733,10 +42690,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -42773,10 +42730,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -42813,10 +42770,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42853,10 +42810,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42893,10 +42850,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .relaxed,
@@ -42933,10 +42890,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -42973,10 +42930,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -43013,10 +42970,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiring,
@@ -43053,10 +43010,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -43093,10 +43050,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -43133,10 +43090,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .releasing,
@@ -43173,10 +43130,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -43213,10 +43170,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -43253,10 +43210,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .acquiringAndReleasing,
@@ -43293,10 +43250,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -43333,10 +43290,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -43373,10 +43330,10 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Unmanaged<Bar>?>.create(nil)
+    let v: UnsafeAtomic<Unmanaged<Bar>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Unmanaged<Bar>?) = v.compareExchange(
       expected: nil,
       desired: _bar2,
       successOrdering: .sequentiallyConsistent,
@@ -43417,7 +43374,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalUnmanagedTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -43467,86 +43424,84 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if true
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicRawRepresentableTests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), Fred.one)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), Fred.two)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), Fred.one)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), Fred.two)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     v.store(Fred.two, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     w.store(Fred.one, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     v.store(Fred.two, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     w.store(Fred.one, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
     v.store(Fred.two, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w = UnsafeAtomic<Fred>.create(Fred.two)
+    let w: UnsafeAtomic<Fred> = .create(Fred.two)
     defer { w.destroy() }
     w.store(Fred.one, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .relaxed), Fred.one)
@@ -43559,7 +43514,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiring), Fred.one)
@@ -43572,7 +43527,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .releasing), Fred.one)
@@ -43585,7 +43540,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiringAndReleasing), Fred.one)
@@ -43598,7 +43553,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .sequentiallyConsistent), Fred.one)
@@ -43612,10 +43567,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       ordering: .relaxed)
@@ -43648,10 +43603,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       ordering: .acquiring)
@@ -43684,10 +43639,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       ordering: .releasing)
@@ -43720,10 +43675,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       ordering: .acquiringAndReleasing)
@@ -43756,10 +43711,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       ordering: .sequentiallyConsistent)
@@ -43793,10 +43748,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -43833,10 +43788,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -43873,10 +43828,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -43913,10 +43868,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -43953,10 +43908,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -43993,10 +43948,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -44033,10 +43988,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44073,10 +44028,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44113,10 +44068,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44153,10 +44108,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44193,10 +44148,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44233,10 +44188,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44273,10 +44228,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44313,10 +44268,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44353,10 +44308,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44393,10 +44348,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -44433,10 +44388,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -44473,10 +44428,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .relaxed,
@@ -44513,10 +44468,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -44553,10 +44508,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -44593,10 +44548,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiring,
@@ -44633,10 +44588,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44673,10 +44628,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44713,10 +44668,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .releasing,
@@ -44753,10 +44708,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44793,10 +44748,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44833,10 +44788,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .acquiringAndReleasing,
@@ -44873,10 +44828,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44913,10 +44868,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44953,10 +44908,10 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Fred>.create(Fred.one)
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
       desired: Fred.two,
       successOrdering: .sequentiallyConsistent,
@@ -44997,7 +44952,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicRawRepresentableTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -45047,86 +45002,84 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicDoubleWordTests: XCTestCase {
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), DoubleWord(high: 100, low: 64))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), DoubleWord(high: 50, low: 32))
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), DoubleWord(high: 50, low: 32))
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     v.store(DoubleWord(high: 50, low: 32), ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     w.store(DoubleWord(high: 100, low: 64), ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     v.store(DoubleWord(high: 50, low: 32), ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     w.store(DoubleWord(high: 100, low: 64), ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
     v.store(DoubleWord(high: 50, low: 32), ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
 
-    let w = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 50, low: 32))
+    let w: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 50, low: 32))
     defer { w.destroy() }
     w.store(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .relaxed), DoubleWord(high: 100, low: 64))
@@ -45139,7 +45092,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiring), DoubleWord(high: 100, low: 64))
@@ -45152,7 +45105,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .releasing), DoubleWord(high: 100, low: 64))
@@ -45165,7 +45118,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .acquiringAndReleasing), DoubleWord(high: 100, low: 64))
@@ -45178,7 +45131,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 50, low: 32))
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(DoubleWord(high: 100, low: 64), ordering: .sequentiallyConsistent), DoubleWord(high: 100, low: 64))
@@ -45192,10 +45145,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       ordering: .relaxed)
@@ -45228,10 +45181,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       ordering: .acquiring)
@@ -45264,10 +45217,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       ordering: .releasing)
@@ -45300,10 +45253,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       ordering: .acquiringAndReleasing)
@@ -45336,10 +45289,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       ordering: .sequentiallyConsistent)
@@ -45373,10 +45326,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -45413,10 +45366,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -45453,10 +45406,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -45493,10 +45446,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -45533,10 +45486,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -45573,10 +45526,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -45613,10 +45566,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -45653,10 +45606,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -45693,10 +45646,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -45733,10 +45686,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -45773,10 +45726,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -45813,10 +45766,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -45853,10 +45806,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -45893,10 +45846,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -45933,10 +45886,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -45973,10 +45926,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -46013,10 +45966,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -46053,10 +46006,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .relaxed,
@@ -46093,10 +46046,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -46133,10 +46086,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -46173,10 +46126,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiring,
@@ -46213,10 +46166,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -46253,10 +46206,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -46293,10 +46246,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .releasing,
@@ -46333,10 +46286,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -46373,10 +46326,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -46413,10 +46366,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .acquiringAndReleasing,
@@ -46453,10 +46406,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -46493,10 +46446,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -46533,10 +46486,10 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(high: 100, low: 64))
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<DoubleWord>.create(DoubleWord(high: 100, low: 64))
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(high: 100, low: 64))
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, DoubleWord) = v.compareExchange(
       expected: DoubleWord(high: 100, low: 64),
       desired: DoubleWord(high: 50, low: 32),
       successOrdering: .sequentiallyConsistent,
@@ -46577,7 +46530,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicDoubleWordTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -46627,8 +46580,6 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicReferenceTests: XCTestCase {
@@ -46636,79 +46587,79 @@ class BasicAtomicReferenceTests: XCTestCase {
   private let _baz2 = Baz(2)
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _baz2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _baz2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), _baz1)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _baz2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _baz1)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _baz2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     v.store(_baz2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     w.store(_baz1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _baz1)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     v.store(_baz2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     w.store(_baz1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _baz1)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
     v.store(_baz2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz>.create(_baz2)
+    let w: UnsafeAtomic<Baz> = .create(_baz2)
     defer { w.destroy() }
     w.store(_baz1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _baz1)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_baz1, ordering: .relaxed), _baz1)
@@ -46721,7 +46672,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_baz1, ordering: .acquiring), _baz1)
@@ -46734,7 +46685,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_baz1, ordering: .releasing), _baz1)
@@ -46747,7 +46698,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_baz1, ordering: .acquiringAndReleasing), _baz1)
@@ -46760,7 +46711,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(_baz1, ordering: .sequentiallyConsistent), _baz1)
@@ -46774,10 +46725,10 @@ class BasicAtomicReferenceTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       ordering: .relaxed)
@@ -46810,10 +46761,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       ordering: .acquiring)
@@ -46846,10 +46797,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       ordering: .releasing)
@@ -46882,10 +46833,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       ordering: .acquiringAndReleasing)
@@ -46918,10 +46869,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       ordering: .sequentiallyConsistent)
@@ -46955,10 +46906,10 @@ class BasicAtomicReferenceTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -46995,10 +46946,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -47035,10 +46986,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -47075,10 +47026,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47115,10 +47066,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47155,10 +47106,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47195,10 +47146,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47235,10 +47186,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47275,10 +47226,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47315,10 +47266,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -47355,10 +47306,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -47395,10 +47346,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -47435,10 +47386,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -47475,10 +47426,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -47515,10 +47466,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -47555,10 +47506,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -47595,10 +47546,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -47635,10 +47586,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -47675,10 +47626,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47715,10 +47666,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47755,10 +47706,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -47795,10 +47746,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47835,10 +47786,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47875,10 +47826,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -47915,10 +47866,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -47955,10 +47906,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -47995,10 +47946,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -48035,10 +47986,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -48075,10 +48026,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -48115,10 +48066,10 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz>.create(_baz1)
+    let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.compareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -48159,7 +48110,7 @@ class BasicAtomicReferenceTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicReferenceTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -48209,8 +48160,6 @@ class BasicAtomicReferenceTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomicOptionalReferenceTests: XCTestCase {
@@ -48218,79 +48167,79 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
   private let _baz2 = Baz(2)
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _baz2)
   }
 
   func test_load_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), _baz2)
   }
   func test_load_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .acquiring), nil)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .acquiring), _baz2)
   }
   func test_load_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), nil)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _baz2)
   }
 
   func test_store_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     v.store(_baz2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     w.store(nil, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_releasing() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     v.store(_baz2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     w.store(nil, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
   func test_store_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
     v.store(_baz2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    let w = UnsafeAtomic<Baz?>.create(_baz2)
+    let w: UnsafeAtomic<Baz?> = .create(_baz2)
     defer { w.destroy() }
     w.store(nil, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), nil)
   }
 
   func test_exchange_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .relaxed), nil)
@@ -48303,7 +48252,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiring), nil)
@@ -48316,7 +48265,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_releasing() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .releasing), nil)
@@ -48329,7 +48278,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .acquiringAndReleasing), nil)
@@ -48342,7 +48291,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
   }
   func test_exchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(nil, ordering: .sequentiallyConsistent), nil)
@@ -48356,10 +48305,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       ordering: .relaxed)
@@ -48392,10 +48341,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       ordering: .acquiring)
@@ -48428,10 +48377,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       ordering: .releasing)
@@ -48464,10 +48413,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       ordering: .acquiringAndReleasing)
@@ -48500,10 +48449,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       ordering: .sequentiallyConsistent)
@@ -48537,10 +48486,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -48577,10 +48526,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -48617,10 +48566,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -48657,10 +48606,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -48697,10 +48646,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -48737,10 +48686,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -48777,10 +48726,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -48817,10 +48766,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -48857,10 +48806,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -48897,10 +48846,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -48937,10 +48886,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -48977,10 +48926,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -49017,10 +48966,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49057,10 +49006,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49097,10 +49046,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49137,10 +49086,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -49177,10 +49126,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -49217,10 +49166,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -49257,10 +49206,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -49297,10 +49246,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -49337,10 +49286,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -49377,10 +49326,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -49417,10 +49366,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -49457,10 +49406,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .releasing,
@@ -49497,10 +49446,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -49537,10 +49486,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -49577,10 +49526,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -49617,10 +49566,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49657,10 +49606,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49697,10 +49646,10 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Baz?>.create(nil)
+    let v: UnsafeAtomic<Baz?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz?) = v.compareExchange(
       expected: nil,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -49741,7 +49690,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
 
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomicOptionalReferenceTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
     ("test_load_acquiring", test_load_acquiring),
@@ -49791,4 +49740,3 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
 }
-#endif
