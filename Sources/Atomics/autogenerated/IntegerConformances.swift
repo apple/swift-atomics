@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -4964,20 +4964,7 @@ extension DoubleWord: AtomicValue {
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      // Work around https://github.com/apple/swift-atomics/issues/41
-      #if compiler(>=5.5) && arch(arm64) && DEBUG
-      var copy = self // This is not great
-      var expected = DoubleWord(high: 0, low: 0)
-      withUnsafeMutablePointer(to: &copy) { pointer in
-        _ = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
-          pointer._extract,
-          &expected,
-          DoubleWord(high: 0, low: 0))
-      }
-      return expected
-      #else
       return _sa_dispose_DoubleWord(_storage)
-      #endif
     }
   }
 }
@@ -4999,16 +4986,6 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    // Work around https://github.com/apple/swift-atomics/issues/41
-    #if compiler(>=5.5) && arch(arm64) && DEBUG
-    let (_, original) = atomicCompareExchange(
-      expected: DoubleWord(high: 0, low: 0),
-      desired: DoubleWord(high: 0, low: 0),
-      at: pointer,
-      successOrdering: .relaxed, // Note: this relies on the FIXME below.
-      failureOrdering: ordering)
-    return original
-    #else
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_DoubleWord(pointer._extract)
@@ -5019,7 +4996,6 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     default:
       fatalError("Unsupported ordering")
     }
-    #endif
   }
 
   @_semantics("atomics.requires_constant_orderings")
