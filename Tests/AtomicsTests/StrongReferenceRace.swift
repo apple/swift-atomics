@@ -14,7 +14,6 @@ import XCTest
 import Atomics
 import Dispatch
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
   return 1_000_000
@@ -23,7 +22,7 @@ private var iterations: Int {
   #endif
 }
 
-private class Node: AtomicReference {
+private final class Node: AtomicReference {
   let value: Int
 
   init(_ value: Int = 0) {
@@ -288,4 +287,3 @@ class StrongReferenceRace: XCTestCase {
   ]
 #endif
 }
-#endif

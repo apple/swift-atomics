@@ -76,8 +76,7 @@ private class Bar: Equatable, CustomStringConvertible {
   }
 }
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
-private class Baz: Equatable, CustomStringConvertible, AtomicReference {
+private final class Baz: Equatable, CustomStringConvertible, AtomicReference {
   var value: Int
   init(_ value: Int) { self.value = value }
   var description: String { "Bar(\(value))" }
@@ -85,7 +84,6 @@ private class Baz: Equatable, CustomStringConvertible, AtomicReference {
     left === right
   }
 }
-#endif
 
 private enum Fred: Int, AtomicValue {
   case one
@@ -93,11 +91,6 @@ private enum Fred: Int, AtomicValue {
 }
 
 % for label, type, a, b in types:
-% if label == "DoubleWord" or label == "Reference" or label == "OptionalReference":
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
-% else:
-#if true
-% end
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
 class BasicAtomic${label}Tests: XCTestCase {
@@ -148,22 +141,22 @@ class BasicAtomic${label}Tests: XCTestCase {
 % end
 
   func test_create_destroy() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
 
-    let w = UnsafeAtomic<${type}>.create(${b})
+    let w: UnsafeAtomic<${type}> = .create(${b})
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .relaxed), ${b})
   }
 
 % for (order, _) in loadOrderings:
   func test_load_${order}() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
     XCTAssertEqual(v.load(ordering: .${order}), ${a})
 
-    let w = UnsafeAtomic<${type}>.create(${b})
+    let w: UnsafeAtomic<${type}> = .create(${b})
     defer { w.destroy() }
     XCTAssertEqual(w.load(ordering: .${order}), ${b})
   }
@@ -171,12 +164,12 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % for (order, _) in storeOrderings:
   func test_store_${order}() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
     v.store(${b}, ordering: .${order})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    let w = UnsafeAtomic<${type}>.create(${b})
+    let w: UnsafeAtomic<${type}> = .create(${b})
     defer { w.destroy() }
     w.store(${a}, ordering: .${order})
     XCTAssertEqual(w.load(ordering: .relaxed), ${a})
@@ -185,7 +178,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % for (order, _, _) in updateOrderings:
   func test_exchange_${order}() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
 
     XCTAssertEqual(v.exchange(${a}, ordering: .${order}), ${a})
@@ -201,10 +194,10 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % for (order, _, _) in updateOrderings:
   func test_compareExchange_${order}() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, ${type}) = v.compareExchange(
       expected: ${a},
       desired: ${b},
       ordering: .${order})
@@ -242,10 +235,10 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   for (successorder, _, _) in updateOrderings:
 %     for (failorder, _) in loadOrderings:
   func test_${operation}_${successorder}_${failorder}() {
-    let v = UnsafeAtomic<${type}>.create(${a})
+    let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
 
-    var (exchanged, original) = v.compareExchange(
+    var (exchanged, original): (Bool, ${type}) = v.compareExchange(
       expected: ${a},
       desired: ${b},
       successOrdering: .${successorder},
@@ -346,14 +339,14 @@ class BasicAtomic${label}Tests: XCTestCase {
     let result1: ${type} = a ${operator} b
     let result2: ${type} = result1 ${operator} c
 
-    let v = UnsafeAtomic<${type}>.create(a)
+    let v: UnsafeAtomic<${type}> = .create(a)
     defer { v.destroy() }
 
-    let old1 = v.loadThen${name}(${argLabel(arglabel)}b, ordering: .${order})
+    let old1: ${type} = v.loadThen${name}(${argLabel(arglabel)}b, ordering: .${order})
     XCTAssertEqual(old1, a)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let old2 = v.loadThen${name}(${argLabel(arglabel)}c, ordering: .${order})
+    let old2: ${type} = v.loadThen${name}(${argLabel(arglabel)}c, ordering: .${order})
     XCTAssertEqual(old2, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -369,14 +362,14 @@ class BasicAtomic${label}Tests: XCTestCase {
     let result1: ${type} = a ${operator} b
     let result2: ${type} = result1 ${operator} c
 
-    let v = UnsafeAtomic<${type}>.create(a)
+    let v: UnsafeAtomic<${type}> = .create(a)
     defer { v.destroy() }
 
-    let new1 = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}b, ordering: .${order})
+    let new1: ${type} = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}b, ordering: .${order})
     XCTAssertEqual(new1, result1)
     XCTAssertEqual(v.load(ordering: .relaxed), result1)
 
-    let new2 = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}c, ordering: .${order})
+    let new2: ${type} = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}c, ordering: .${order})
     XCTAssertEqual(new2, result2)
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
@@ -385,7 +378,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 % end
 
 
-  public static var allTests = [
+  public static var allTests: [(String, (BasicAtomic${label}Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
 % for (order, _) in loadOrderings:
     ("test_load_${order}", test_load_${order}),
@@ -432,5 +425,4 @@ class BasicAtomic${label}Tests: XCTestCase {
 % end
   ]
 }
-#endif
 % end

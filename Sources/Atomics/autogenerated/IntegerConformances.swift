@@ -4949,9 +4949,6 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
   }
 }
 
-// Double-wide atomic primitives on x86_64 CPUs aren't available by default
-// on Linux distributions, and we cannot currently enable them automatically.
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 extension DoubleWord: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -5299,5 +5296,3 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
   }
 }
 
-
-#endif // ENABLE_DOUBLEWIDE_ATOMICS

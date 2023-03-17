@@ -28,7 +28,6 @@ import XCTest
 import Dispatch
 import Atomics
 
-#if !(os(Linux) && arch(x86_64)) || ENABLE_DOUBLEWIDE_ATOMICS
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
   return 1_000_000
@@ -40,7 +39,7 @@ private var iterations: Int {
 private let nodeCount = ManagedAtomic<Int>(0)
 
 class LockFreeQueue<Element> {
-  class Node: AtomicReference {
+  final class Node: AtomicReference {
     let next: ManagedAtomic<Node?>
     var value: Element?
 
@@ -194,5 +193,3 @@ class QueueTests: XCTestCase {
   ]
 #endif
 }
-
-#endif

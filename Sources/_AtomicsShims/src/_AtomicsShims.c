@@ -12,7 +12,6 @@
 
 #include "_AtomicsShims.h"
 
-#if ENABLE_DOUBLEWIDE_ATOMICS
 // FIXME: These should be static inline header-only shims, but Swift 5.3 doesn't
 // like calls to swift_retain_n/swift_release_n appearing in Swift code, not
 // even when imported through C. (See https://bugs.swift.org/browse/SR-13708)
@@ -28,4 +27,3 @@ void _sa_release_n(void *object, uint32_t n)
   extern void swift_release_n(void *object, uint32_t n);
   swift_release_n(object, n);
 }
-#endif

@@ -68,10 +68,6 @@ try() {
 # Build using SPM
 try "spm.debug.build" $swift build -c debug $spm_flags --build-path "$build_dir/spm.debug"
 try "spm.release.build" $swift build -c release $spm_flags --build-path "$build_dir/spm.release"
-if [ "$(uname)" = "Linux" ]; then
-    try "spm.release.dword.build" $swift build -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
-fi
-
 # Build with CMake
 cmake_debug_build_dir="$build_dir/cmake.debug"
 try "cmake.debug.generate" cmake -S . -B "$cmake_debug_build_dir" -G Ninja -DCMAKE_BUILD_TYPE=DEBUG
@@ -132,10 +128,6 @@ fi
 try "spm.debug.test" $swift test -c debug $spm_flags --build-path "$build_dir/spm.debug"
 try "spm.release.test" $swift test -c release $spm_flags --build-path "$build_dir/spm.release"
 
-if [ "$(uname)" != "Darwin" ]; then
-    try "spm.release.dword.test" $swift test -c release $spm_flags -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS --build-path "$build_dir/spm.release.dword"
-fi
-
 if [ "$(uname)" != "Darwin" ]; then # We have not hooked up cmake tests on Darwin yet
     try "cmake.release.test" "$cmake_release_build_dir/bin/AtomicsTestBundle"
 fi
@@ -171,13 +163,11 @@ else
         $swift test -c release \
         $spm_flags \
         -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
-        -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
         --build-path "$build_dir/spm.release.test.long"
     try "spm.release.test.long+tsan" \
         $swift test -c release \
         $spm_flags \
         --sanitize=thread \
         -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
-        -Xcc -mcx16 -Xswiftc -DENABLE_DOUBLEWIDE_ATOMICS \
         --build-path "$build_dir/spm.release.test.long+tsan"
 fi
