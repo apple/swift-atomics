@@ -250,5 +250,6 @@ extension ${swiftType}.AtomicRepresentation: AtomicIntegerStorage {
   }
 % end
 }
+
 % end
 % end
