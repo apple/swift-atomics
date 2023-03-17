@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -13,14 +13,14 @@
 import XCTest
 import Atomics
 
-class UnsafeAtomicLazyReferenceTests: XCTestCase {
-  func test_create_destroy() {
+class AtomicLazyReferenceTests: XCTestCase {
+  func test_unsafe_create_destroy() {
     let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
     defer { v.destroy() }
     XCTAssertNil(v.load())
   }
 
-  func test_storeIfNilThenLoad() {
+  func test_unsafe_storeIfNilThenLoad() {
     do {
       let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
       XCTAssertNil(v.load())
@@ -38,10 +38,27 @@ class UnsafeAtomicLazyReferenceTests: XCTestCase {
     XCTAssertEqual(LifetimeTracked.instances, 0)
   }
 
+  func test_managed_storeIfNilThenLoad() {
+    do {
+      let v = ManagedAtomicLazyReference<LifetimeTracked>()
+      XCTAssertNil(v.load())
+
+      let ref = LifetimeTracked(42)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref) === ref)
+      XCTAssertTrue(v.load() === ref)
+
+      let ref2 = LifetimeTracked(23)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref2) === ref)
+      XCTAssertTrue(v.load() === ref)
+    }
+    XCTAssertEqual(LifetimeTracked.instances, 0)
+  }
+
 #if !SWIFT_PACKAGE
   public static var allTests = [
-    ("test_create_destroy", test_create_destroy),
-    ("test_storeIfNilThenLoad", test_storeIfNilThenLoad),
+    ("test_unsafe_create_destroy", test_unsafe_create_destroy),
+    ("test_unsafe_storeIfNilThenLoad", test_unsafe_storeIfNilThenLoad),
+    ("test_managed_storeIfNilThenLoad", test_managed_storeIfNilThenLoad),
   ]
 #endif
 }
