@@ -144,6 +144,12 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
     _storage = _Rep(nil)
   }
 
+  deinit {
+    if let unmanaged = _storage.dispose() {
+      unmanaged.release()
+    }
+  }
+
   @_alwaysEmitIntoClient @inline(__always)
   internal var _ptr: UnsafeMutablePointer<_Rep> {
     _getUnsafePointerToStoredProperties(self).assumingMemoryBound(to: _Rep.self)
