@@ -40,7 +40,7 @@ The only way to access the counter value is to use one of the methods provided b
 To use `Atomics` in your own project, you need to set it up as a package dependency:
 
 ```swift
-// swift-tools-version:5.3
+// swift-tools-version:5.6
 import PackageDescription
 
 let package = Package(
