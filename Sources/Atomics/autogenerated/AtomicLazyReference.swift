@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -50,10 +50,8 @@ public struct UnsafeAtomicLazyReference<Instance: AnyObject> {
   }
 }
 
-#if compiler(>=5.5) && canImport(_Concurrency)
 extension UnsafeAtomicLazyReference: @unchecked Sendable
 where Instance: Sendable {}
-#endif
 
 extension UnsafeAtomicLazyReference {
   /// The storage representation for an atomic lazy reference value.
@@ -155,10 +153,8 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
   }
 }
 
-#if compiler(>=5.5) && canImport(_Concurrency)
 extension ManagedAtomicLazyReference: @unchecked Sendable
 where Instance: Sendable {}
-#endif
 
 extension UnsafeAtomicLazyReference {
   /// Atomically initializes this reference if its current value is nil, then
