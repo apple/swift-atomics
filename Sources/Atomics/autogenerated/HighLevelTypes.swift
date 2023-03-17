@@ -101,6 +101,9 @@ public class ManagedAtomic<Value: AtomicValue> {
   }
 }
 
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension ManagedAtomic: @unchecked Sendable where Value: Sendable {}
+#endif
 
 extension UnsafeAtomic {
   /// Atomically loads and returns the current value, applying the specified

@@ -155,6 +155,11 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
   }
 }
 
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension ManagedAtomicLazyReference: @unchecked Sendable
+where Instance: Sendable {}
+#endif
+
 extension UnsafeAtomicLazyReference {
   /// Atomically initializes this reference if its current value is nil, then
   /// returns the initialized value. If this reference is already initialized,
