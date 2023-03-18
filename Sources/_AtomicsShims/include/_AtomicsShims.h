@@ -203,8 +203,6 @@ SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt32, uint32_t)
 SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt64, uint64_t)
 
 // Atomic boolean
-#define SWIFTATOMIC_ENCODE_Bool(value) (value)
-#define SWIFTATOMIC_DECODE_Bool(value) (value)
 SWIFTATOMIC_DEFINE_TYPE(Bool, bool)
 SWIFTATOMIC_INTEGER_FNS(or, Bool, bool)
 SWIFTATOMIC_INTEGER_FNS(xor, Bool, bool)
