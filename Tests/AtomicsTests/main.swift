@@ -15,51 +15,37 @@ import XCTest
 
 var testCases = [
   // Basics
-  testCase(BasicAtomicIntTests.allTests),
-  testCase(BasicAtomicInt8Tests.allTests),
+  testCase(BasicAtomicBoolTests.allTests),
+  testCase(BasicAtomicDoubleWordTests.allTests),
   testCase(BasicAtomicInt16Tests.allTests),
   testCase(BasicAtomicInt32Tests.allTests),
   testCase(BasicAtomicInt64Tests.allTests),
-  testCase(BasicAtomicUIntTests.allTests),
-  testCase(BasicAtomicUInt8Tests.allTests),
+  testCase(BasicAtomicInt8Tests.allTests),
+  testCase(BasicAtomicIntTests.allTests),
+  testCase(BasicAtomicMutablePointerTests.allTests),
+  testCase(BasicAtomicMutableRawPointerTests.allTests),
+  testCase(BasicAtomicOptionalMutablePointerTests.allTests),
+  testCase(BasicAtomicOptionalMutableRawPointerTests.allTests),
+  testCase(BasicAtomicOptionalPointerTests.allTests),
+  testCase(BasicAtomicOptionalRawPointerTests.allTests),
+  testCase(BasicAtomicOptionalReferenceTests.allTests),
+  testCase(BasicAtomicOptionalUnmanagedTests.allTests),
+  testCase(BasicAtomicPointerTests.allTests),
+  testCase(BasicAtomicRawPointerTests.allTests),
+  testCase(BasicAtomicRawRepresentableTests.allTests),
+  testCase(BasicAtomicReferenceTests.allTests),
   testCase(BasicAtomicUInt16Tests.allTests),
   testCase(BasicAtomicUInt32Tests.allTests),
   testCase(BasicAtomicUInt64Tests.allTests),
-  testCase(BasicAtomicBoolTests.allTests),
-  testCase(BasicAtomicPointerTests.allTests),
-  testCase(BasicAtomicOptionalPointerTests.allTests),
-  testCase(BasicAtomicMutablePointerTests.allTests),
-  testCase(BasicAtomicOptionalMutablePointerTests.allTests),
-  testCase(BasicAtomicRawPointerTests.allTests),
-  testCase(BasicAtomicOptionalRawPointerTests.allTests),
-  testCase(BasicAtomicMutableRawPointerTests.allTests),
-  testCase(BasicAtomicOptionalMutableRawPointerTests.allTests),
+  testCase(BasicAtomicUInt8Tests.allTests),
+  testCase(BasicAtomicUIntTests.allTests),
   testCase(BasicAtomicUnmanagedTests.allTests),
-  testCase(BasicAtomicOptionalUnmanagedTests.allTests),
-  testCase(BasicAtomicRawRepresentableTests.allTests),
 
-  // LockFreeSingleConsumerStackTests
   testCase(LockFreeSingleConsumerStackTests.allTests),
-
-  // DoubleWord
   testCase(DoubleWordTests.allTests),
-
-  // AtomicLazyReference
   testCase(AtomicLazyReferenceTests.allTests),
-]
-
-testCases += [
-  testCase(BasicAtomicDoubleWordTests.allTests),
-  testCase(BasicAtomicReferenceTests.allTests),
-  testCase(BasicAtomicOptionalReferenceTests.allTests),
-
-  // LockFreeQueue
   testCase(QueueTests.allTests),
-
-  // StrongReferenceRace
   testCase(StrongReferenceRace.allTests),
-
-  // StrongReferenceShuffle
   testCase(StrongReferenceShuffleTests.allTests),
 ]
 
