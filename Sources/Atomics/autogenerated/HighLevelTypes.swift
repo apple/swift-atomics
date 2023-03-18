@@ -21,8 +21,15 @@
 /// management of the underlying storage representation.
 @frozen
 public struct UnsafeAtomic<Value: AtomicValue>
-where Value._AtomicValue == Value {
+where Value.AtomicRepresentation.Value == Value {
+  // Note: the Value._AtomicValue == Value requirement could be relaxed,
+  // at the cost of adding a bunch of potentially ambiguous overloads.
+  // (We'd need one set of implementations for `Value == Value._AtomicValue`,
+  // and another for `Value: AtomicReference`.)
+
   public typealias Storage = Value.AtomicRepresentation
+  @usableFromInline
+  internal typealias _Storage = Storage
 
   @usableFromInline
   internal let _ptr: UnsafeMutablePointer<Storage>
@@ -79,15 +86,23 @@ extension UnsafeAtomic: @unchecked Sendable where Value: Sendable {}
 /// A reference type holding an atomic value, with automatic memory management.
 @_fixed_layout
 public class ManagedAtomic<Value: AtomicValue>
-where Value._AtomicValue == Value {
+where Value.AtomicRepresentation.Value == Value {
+  // Note: the Value._AtomicValue == Value requirement could be relaxed,
+  // at the cost of adding a bunch of potentially ambiguous overloads.
+  // (We'd need one set of implementations for `Value == Value._AtomicValue`,
+  // and another for `Value: AtomicReference`.)
+
   @usableFromInline
-  internal var _storage: Value.AtomicRepresentation
+  internal typealias _Storage = Value.AtomicRepresentation
+
+  @usableFromInline
+  internal var _storage: _Storage
 
   /// Initialize a new managed atomic instance holding the specified initial
   /// value.
   @inline(__always) @_alwaysEmitIntoClient
   public init(_ value: Value) {
-    _storage = Value.AtomicRepresentation(value)
+    _storage = _Storage(value)
   }
 
   deinit {
@@ -95,9 +110,9 @@ where Value._AtomicValue == Value {
   }
 
   @_alwaysEmitIntoClient @inline(__always)
-  internal var _ptr: UnsafeMutablePointer<Value.AtomicRepresentation> {
+  internal var _ptr: UnsafeMutablePointer<_Storage> {
     _getUnsafePointerToStoredProperties(self)
-      .assumingMemoryBound(to: Value.AtomicRepresentation.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 }
 
@@ -114,7 +129,7 @@ extension UnsafeAtomic {
   public func load(
     ordering: AtomicLoadOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoad(at: _ptr, ordering: ordering)
+    _Storage.atomicLoad(at: _ptr, ordering: ordering)
   }
 
   /// Atomically sets the current value to `desired`, applying the specified
@@ -128,7 +143,7 @@ extension UnsafeAtomic {
     _ desired: __owned Value,
     ordering: AtomicStoreOrdering
   ) {
-    Value.AtomicRepresentation.atomicStore(desired, at: _ptr, ordering: ordering)
+    _Storage.atomicStore(desired, at: _ptr, ordering: ordering)
   }
 
   /// Atomically sets the current value to `desired` and returns the original
@@ -143,7 +158,7 @@ extension UnsafeAtomic {
     _ desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicExchange(desired, at: _ptr, ordering: ordering)
+    _Storage.atomicExchange(desired, at: _ptr, ordering: ordering)
   }
 
   /// Perform an atomic compare and exchange operation on the current value,
@@ -176,7 +191,7 @@ extension UnsafeAtomic {
     desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicCompareExchange(
+    _Storage.atomicCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -221,7 +236,7 @@ extension UnsafeAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicCompareExchange(
+    _Storage.atomicCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -270,7 +285,7 @@ extension UnsafeAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicWeakCompareExchange(
+    _Storage.atomicWeakCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -295,7 +310,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -315,7 +330,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -332,7 +347,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseAnd(
+    _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -349,7 +364,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseOr(
+    _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -366,7 +381,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseXor(
+    _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -387,7 +402,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    let original = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -408,7 +423,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    let original = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -426,7 +441,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseAnd(
+    let original = _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -444,7 +459,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseOr(
+    let original = _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -462,7 +477,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseXor(
+    let original = _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -483,7 +498,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
-    _ = Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    _ = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -503,7 +518,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
-    _ = Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    _ = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -520,7 +535,7 @@ extension ManagedAtomic {
   public func load(
     ordering: AtomicLoadOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoad(at: _ptr, ordering: ordering)
+    _Storage.atomicLoad(at: _ptr, ordering: ordering)
   }
 
   /// Atomically sets the current value to `desired`, applying the specified
@@ -534,7 +549,7 @@ extension ManagedAtomic {
     _ desired: __owned Value,
     ordering: AtomicStoreOrdering
   ) {
-    Value.AtomicRepresentation.atomicStore(desired, at: _ptr, ordering: ordering)
+    _Storage.atomicStore(desired, at: _ptr, ordering: ordering)
   }
 
   /// Atomically sets the current value to `desired` and returns the original
@@ -549,7 +564,7 @@ extension ManagedAtomic {
     _ desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicExchange(desired, at: _ptr, ordering: ordering)
+    _Storage.atomicExchange(desired, at: _ptr, ordering: ordering)
   }
 
   /// Perform an atomic compare and exchange operation on the current value,
@@ -582,7 +597,7 @@ extension ManagedAtomic {
     desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicCompareExchange(
+    _Storage.atomicCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -627,7 +642,7 @@ extension ManagedAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicCompareExchange(
+    _Storage.atomicCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -676,7 +691,7 @@ extension ManagedAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    Value.AtomicRepresentation.atomicWeakCompareExchange(
+    _Storage.atomicWeakCompareExchange(
       expected: expected,
       desired: desired,
       at: _ptr,
@@ -701,7 +716,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -721,7 +736,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -738,7 +753,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseAnd(
+    _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -755,7 +770,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseOr(
+    _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -772,7 +787,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenBitwiseXor(
+    _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -793,7 +808,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    let original = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -814,7 +829,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    let original = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -832,7 +847,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseAnd(
+    let original = _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -850,7 +865,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseOr(
+    let original = _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -868,7 +883,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenBitwiseXor(
+    let original = _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
@@ -889,7 +904,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
-    _ = Value.AtomicRepresentation.atomicLoadThenWrappingIncrement(
+    _ = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
@@ -909,7 +924,7 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
-    _ = Value.AtomicRepresentation.atomicLoadThenWrappingDecrement(
+    _ = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)

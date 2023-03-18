@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ extension RawRepresentable
 where
   Self: AtomicValue,
   RawValue: AtomicValue,
-  RawValue._AtomicValue == RawValue
+  RawValue.AtomicRepresentation.Value == RawValue
 {
   public typealias _AtomicValue = Self
   public typealias AtomicRepresentation = AtomicRawRepresentableStorage<Self>
@@ -27,15 +27,17 @@ public struct AtomicRawRepresentableStorage<Value>: AtomicStorage
 where
   Value: RawRepresentable,
   Value.RawValue: AtomicValue,
-  Value.RawValue._AtomicValue == Value.RawValue
+  Value.RawValue.AtomicRepresentation.Value == Value.RawValue
 {
-  @usableFromInline internal typealias Storage = Value.RawValue.AtomicRepresentation
   @usableFromInline
-  internal var _storage: Storage
+  internal typealias _Storage = Value.RawValue.AtomicRepresentation
+
+  @usableFromInline
+  internal var _storage: _Storage
 
   @_transparent @_alwaysEmitIntoClient
   public init(_ value: __owned Value) {
-    _storage = Storage(value.rawValue)
+    _storage = _Storage(value.rawValue)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -46,9 +48,9 @@ where
   @_transparent @_alwaysEmitIntoClient
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
-    UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: Storage.self)
+    UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: _Storage.self)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -57,7 +59,7 @@ where
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let raw = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
+    let raw = _Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
     return Value(rawValue: raw)!
   }
 
@@ -68,7 +70,8 @@ where
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(desired.rawValue, at: _extract(pointer), ordering: ordering)
+    _Storage.atomicStore(
+      desired.rawValue, at: _extract(pointer), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -78,7 +81,8 @@ where
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let raw = Storage.atomicExchange(desired.rawValue, at: _extract(pointer), ordering: ordering)
+    let raw = _Storage.atomicExchange(
+      desired.rawValue, at: _extract(pointer), ordering: ordering)
     return Value(rawValue: raw)!
   }
 
@@ -90,7 +94,7 @@ where
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let raw = Storage.atomicCompareExchange(
+    let raw = _Storage.atomicCompareExchange(
             expected: expected.rawValue,
             desired: desired.rawValue,
             at: _extract(pointer),
@@ -107,7 +111,7 @@ where
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let raw = Storage.atomicCompareExchange(
+    let raw = _Storage.atomicCompareExchange(
             expected: expected.rawValue,
             desired: desired.rawValue,
             at: _extract(pointer),
@@ -125,7 +129,7 @@ where
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let raw = Storage.atomicWeakCompareExchange(
+    let raw = _Storage.atomicWeakCompareExchange(
             expected: expected.rawValue,
             desired: desired.rawValue,
             at: _extract(pointer),

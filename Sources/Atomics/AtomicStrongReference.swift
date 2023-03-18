@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -13,12 +13,59 @@
 import _AtomicsShims
 
 /// A class type that supports atomic strong references.
+///
+///     class MyObject: AtomicReference {}
+///
+///     let object = MyObject()
+///     let ref = ManagedAtomic<MyObject>(object)
+///
+///     ref.load(ordering: .relaxed) // Returns `object`.
+///
+/// The conforming class is allowed to be non-final, but `ManagedAtomic` and
+/// `UnsafeAtomic` do not support using a subclass as their generic argument --
+/// the type of an atomic reference must be precisely the same class that
+/// originally conformed to the protocol.
+///
+///
+///     class Derived: MyObject {}
+///
+///     let ref2: ManagedAtomic<Derived>
+///     // error: 'ManagedAtomic' requires the types 'Derived' and 'Base' be equivalent
+///
+/// Note that this limitation only affects the static type of the
+/// `ManagedAtomic`/`UnsafeAtomic` variables. Such references still fully
+/// support holding instances of subclasses of the conforming class. (Returned
+/// may be downcasted from the base type after an `is` check.)
+///
+///     let child = Derived()
+///     ref.store(child, ordering: .relaxed) // OK!
+///     let value = ref.load(ordering: .relaxed)
+///     // `value` is a variable of type `MyObject`, holding a `Derived` instance.
+///     print(value is Derived) // Prints "true"
+///
 public protocol AtomicReference: AnyObject, AtomicOptionalWrappable
 where
-  _AtomicValue: AnyObject,
-  AtomicRepresentation == AtomicReferenceStorage<_AtomicValue>,
-  AtomicOptionalRepresentation == AtomicOptionalReferenceStorage<_AtomicValue>
+  AtomicRepresentation == AtomicReferenceStorage<_AtomicBase>,
+  AtomicOptionalRepresentation == AtomicOptionalReferenceStorage<_AtomicBase>
 {
+  /// This is a utility type that enables non-final classes to conform to
+  /// `AtomicReference`.
+  ///
+  /// This associated type must be left at its default value, `Self`.
+  /// `ManagedAtomic` et al. currently require that `Self == _AtomicBase`,
+  /// so conformances that set this to anything else will technically build,
+  /// but they will not be very practical.
+  ///
+  /// Ideally we could just require that `Self` should be a subtype of
+  /// `AtomicRepresentation.Value`; however we have no good way to
+  /// express that requirement.
+  ///
+  ///     protocol AtomicValue where Self: AtomicRepresentation.Value {
+  ///       associatedtype AtomicRepresentation: AtomicStorage
+  ///     }
+  ///
+  /// See https://github.com/apple/swift-atomics/issues/53 for more details.
+  associatedtype _AtomicBase: AnyObject = Self
 }
 
 /// The maximum number of other threads that can start accessing a
@@ -40,8 +87,7 @@ extension Unmanaged {
 extension Unmanaged {
   fileprivate static func passRetained(_ instance: __owned Instance?) -> Self? {
     guard let instance = instance else { return nil }
-    // Note: Swift 5.2 doesn't like this optional promotion without the explicit cast
-    return .passRetained(instance) as Self
+    return .passRetained(instance)
   }
 }
 
