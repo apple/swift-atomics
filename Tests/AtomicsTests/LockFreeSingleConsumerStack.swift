@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -143,7 +143,7 @@ class LockFreeSingleConsumerStackTests: XCTestCase {
     }
   }
 
-#if !SWIFT_PACKAGE
+#if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test_Basics", test_Basics),
     ("test_ConcurrentPushes", test_ConcurrentPushes),

@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -233,7 +233,7 @@ class StrongReferenceRace: XCTestCase {
   func testLifetimes_08() { checkLifetimes(count: 8, iterations: iterations) }
   func testLifetimes_16() { checkLifetimes(count: 16, iterations: iterations) }
 
-#if !SWIFT_PACKAGE
+#if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("testLoad1", testLoad1),
     ("testLoad2", testLoad2),

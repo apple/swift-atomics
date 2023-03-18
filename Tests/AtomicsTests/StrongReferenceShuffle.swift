@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -264,7 +264,7 @@ class StrongReferenceShuffleTests: XCTestCase {
   func test_sink_04_08() { checkSink(writers: 4, readers: 8, iterations: iterations) }
   func test_sink_08_08() { checkSink(writers: 8, readers: 8, iterations: iterations) }
 
-#if !SWIFT_PACKAGE
+#if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test_sink_01_00", test_sink_01_00),
     ("test_sink_02_00", test_sink_02_00),

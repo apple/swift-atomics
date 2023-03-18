@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -184,7 +184,7 @@ class QueueTests: XCTestCase {
     check(readers: 16, writers: 16, count: iterations)
   }
 
-#if !SWIFT_PACKAGE
+#if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test01_10", test01_10),
     ("test02_10", test02_10),
