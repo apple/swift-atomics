@@ -14,8 +14,8 @@
   from gyb import expand
 
   types = [
-    # Label        Type          a                                 b
-    ("DoubleWord", "DoubleWord", "DoubleWord(high: 100, low: 64)", "DoubleWord(high: 50, low: 32)"),
+    # Label        Type          a                                     b
+    ("DoubleWord", "DoubleWord", "DoubleWord(first: 100, second: 64)", "DoubleWord(first: 50, second: 32)"),
   ]
 }%
 ${expand("BasicTests.gyb-template", line_directive='', types=types)}

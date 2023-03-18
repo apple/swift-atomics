@@ -55,14 +55,14 @@ extension DoubleWord {
     let r = UInt(bitPattern: readers) & Self._readersMask
     assert(r == readers)
     self.init(
-      high: r | (UInt(bitPattern: version) &<< Self._readersBitWidth),
-      low: UInt(bitPattern: _raw))
+      first: UInt(bitPattern: _raw),
+      second: r | (UInt(bitPattern: version) &<< Self._readersBitWidth))
   }
 
   @inline(__always)
   fileprivate var _raw: UnsafeMutableRawPointer? {
-    get { UnsafeMutableRawPointer(bitPattern: low) }
-    set { low = UInt(bitPattern: newValue) }
+    get { UnsafeMutableRawPointer(bitPattern: first) }
+    set { first = UInt(bitPattern: newValue) }
   }
 
   @inline(__always)
@@ -83,22 +83,22 @@ extension DoubleWord {
 
   @inline(__always)
   fileprivate var _readers: Int {
-    get { Int(bitPattern: high & Self._readersMask) }
+    get { Int(bitPattern: second & Self._readersMask) }
     set {
       let n = UInt(bitPattern: newValue) & Self._readersMask
       assert(n == newValue)
-      high = (high & ~Self._readersMask) | n
+      second = (second & ~Self._readersMask) | n
     }
   }
 
   @inline(__always)
   fileprivate var _version: Int {
-    get { Int(bitPattern: high &>> Self._readersBitWidth) }
+    get { Int(bitPattern: second &>> Self._readersBitWidth) }
     set {
       // Silently truncate any high bits we cannot store.
-      high = (
+      second = (
         (UInt(bitPattern: newValue) &<< Self._readersBitWidth) |
-        high & Self._readersMask)
+        second & Self._readersMask)
     }
   }
 }
