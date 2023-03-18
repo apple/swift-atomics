@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if !SWIFT_PACKAGE
+#if MANUAL_TEST_DISCOVERY
 import XCTest
 
 var testCases = [

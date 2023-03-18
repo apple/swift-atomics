@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -2485,7 +2485,7 @@ class BasicAtomicIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicIntTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -2585,6 +2585,7 @@ class BasicAtomicIntTests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -5015,7 +5016,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicInt8Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -5115,6 +5116,7 @@ class BasicAtomicInt8Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -7545,7 +7547,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicInt16Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -7645,6 +7647,7 @@ class BasicAtomicInt16Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -10075,7 +10078,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicInt32Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -10175,6 +10178,7 @@ class BasicAtomicInt32Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -12605,7 +12609,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicInt64Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -12705,6 +12709,7 @@ class BasicAtomicInt64Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -15135,7 +15140,7 @@ class BasicAtomicUIntTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUIntTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -15235,6 +15240,7 @@ class BasicAtomicUIntTests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -17665,7 +17671,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUInt8Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -17765,6 +17771,7 @@ class BasicAtomicUInt8Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -20195,7 +20202,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUInt16Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -20295,6 +20302,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -22725,7 +22733,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUInt32Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -22825,6 +22833,7 @@ class BasicAtomicUInt32Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -25255,7 +25264,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), result2)
   }
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUInt64Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -25355,6 +25364,7 @@ class BasicAtomicUInt64Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -27425,7 +27435,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicBoolTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -27505,6 +27515,7 @@ class BasicAtomicBoolTests: XCTestCase {
     ("test_logicalXorThenLoad_acquiringAndReleasing", test_logicalXorThenLoad_acquiringAndReleasing),
     ("test_logicalXorThenLoad_sequentiallyConsistent", test_logicalXorThenLoad_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -29054,7 +29065,7 @@ class BasicAtomicPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -29104,6 +29115,7 @@ class BasicAtomicPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -30653,7 +30665,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -30703,6 +30715,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -32252,7 +32265,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicMutablePointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -32302,6 +32315,7 @@ class BasicAtomicMutablePointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -33851,7 +33865,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalMutablePointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -33901,6 +33915,7 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -35439,7 +35454,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -35489,6 +35504,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -37027,7 +37043,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -37077,6 +37093,7 @@ class BasicAtomicOptionalRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -38615,7 +38632,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicMutableRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -38665,6 +38682,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -40203,7 +40221,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalMutableRawPointerTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -40253,6 +40271,7 @@ class BasicAtomicOptionalMutableRawPointerTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -41788,7 +41807,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUnmanagedTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -41838,6 +41857,7 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -43373,7 +43393,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalUnmanagedTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -43423,6 +43443,7 @@ class BasicAtomicOptionalUnmanagedTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -44951,7 +44972,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicRawRepresentableTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -45001,6 +45022,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -46529,7 +46551,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicDoubleWordTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -46579,6 +46601,7 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -48109,7 +48132,7 @@ class BasicAtomicReferenceTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicReferenceTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -48159,6 +48182,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }
 /// Exercises all operations in a single-threaded context, verifying
 /// they provide the expected results.
@@ -49689,7 +49713,7 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
 
 
 
-
+#if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicOptionalReferenceTests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
     ("test_load_relaxed", test_load_relaxed),
@@ -49739,4 +49763,5 @@ class BasicAtomicOptionalReferenceTests: XCTestCase {
     ("test_weakCompareExchange_sequentiallyConsistent_acquiring", test_weakCompareExchange_sequentiallyConsistent_acquiring),
     ("test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent", test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent),
   ]
+#endif
 }

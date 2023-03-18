@@ -1,7 +1,7 @@
 #[[
 This source file is part of the Swift Atomics Open Source Project
 
-Copyright (c) 2021 Apple Inc. and the Swift project authors
+Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
 Licensed under Apache License v2.0 with Runtime Library Exception
 
 See https://swift.org/LICENSE.txt for license information
@@ -22,6 +22,8 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin) # FIXME Hook this up on Darwin
     AtomicsTests/StrongReferenceRace.swift
     AtomicsTests/StrongReferenceShuffle.swift
     AtomicsTests/UnsafeAtomicLazyReference.swift)
+
+  target_compile_options(AtomicsTestBundle PRIVATE "-DMANUAL_TEST_DISCOVERY")
 
   target_link_libraries(AtomicsTestBundle PRIVATE
     Atomics
