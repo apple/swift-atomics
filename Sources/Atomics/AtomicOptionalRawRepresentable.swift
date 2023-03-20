@@ -10,8 +10,12 @@
 //
 //===----------------------------------------------------------------------===//
 
-extension RawRepresentable where RawValue: AtomicOptionalWrappable {
-  public typealias AtomicOptionalRepresentation = RawValue.AtomicOptionalRepresentation
+extension RawRepresentable
+where
+  Self: AtomicOptionalWrappable, RawValue: AtomicOptionalWrappable
+{
+  public typealias AtomicOptionalRepresentation =
+    AtomicOptionalRawRepresentableStorage<Self>
 }
 
 /// A default atomic storage representation for a `RawRepresentable` type
