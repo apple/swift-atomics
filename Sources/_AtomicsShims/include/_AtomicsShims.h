@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,10 @@
 
 #ifndef SWIFTATOMIC_HEADER_INCLUDED
 #define SWIFTATOMIC_HEADER_INCLUDED 1
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <assert.h>
 
 // Swift-importable shims for C atomics.
 //
@@ -28,13 +32,10 @@
 // readable here.
 
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <assert.h>
 // The atomic primitives are only needed when this is compiled using Swift's
 // Clang Importer. This allows us to continue reling on some Clang extensions
 // (see https://github.com/apple/swift-atomics/issues/37).
-#if defined(__swift__)
+#if !defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 #  include <stdatomic.h>
 
 #define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
@@ -196,17 +197,6 @@ SWIFTATOMIC_DEFINE_INTEGER_TYPE(Int8, int8_t)
 SWIFTATOMIC_DEFINE_INTEGER_TYPE(Int16, int16_t)
 SWIFTATOMIC_DEFINE_INTEGER_TYPE(Int32, int32_t)
 SWIFTATOMIC_DEFINE_INTEGER_TYPE(Int64, int64_t)
-SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt, uintptr_t)
-SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt8, uint8_t)
-SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt16, uint16_t)
-SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt32, uint32_t)
-SWIFTATOMIC_DEFINE_INTEGER_TYPE(UInt64, uint64_t)
-
-// Atomic boolean
-SWIFTATOMIC_DEFINE_TYPE(Bool, bool)
-SWIFTATOMIC_INTEGER_FNS(or, Bool, bool)
-SWIFTATOMIC_INTEGER_FNS(xor, Bool, bool)
-SWIFTATOMIC_INTEGER_FNS(and, Bool, bool)
 
 // Double wide atomics
 
@@ -226,7 +216,7 @@ typedef struct _sa_dword _sa_dword;
 
 SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 
-#endif // __swift__
+#endif //!defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 
 extern void _sa_retain_n(void *object, uint32_t n);
 extern void _sa_release_n(void *object, uint32_t n);

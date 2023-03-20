@@ -80,7 +80,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(w.load(ordering: .relaxed), ${b})
   }
 
-% for (order, _) in loadOrderings:
+% for (order, _, _, _) in loadOrderings:
   func test_load_${order}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
@@ -93,7 +93,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % end
 
-% for (order, _) in storeOrderings:
+% for (order, _, _, _) in storeOrderings:
   func test_store_${order}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
@@ -108,7 +108,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % end
 
-% for (order, _, _) in updateOrderings:
+% for (order, _, _, _, _) in updateOrderings:
   func test_exchange_${order}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
@@ -125,7 +125,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % end
 
-% for (order, _, _) in updateOrderings:
+% for (order, _, _, _, _) in updateOrderings:
   func test_compareExchange_${order}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
@@ -166,8 +166,8 @@ class BasicAtomic${label}Tests: XCTestCase {
 % end
 
 % for operation in ["compareExchange", "weakCompareExchange"]:
-%   for (successorder, _, _) in updateOrderings:
-%     for (failorder, _) in loadOrderings:
+%   for (successorder, _, _, _, _) in updateOrderings:
+%     for (failorder, _, _, _) in loadOrderings:
   func test_${operation}_${successorder}_${failorder}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
@@ -217,7 +217,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 % if type == "Bool":
   // Bool operations
 %   for (name, _, operator, arglabel, _) in boolOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
   func test_loadThen${name}_${order}() {
     let v = UnsafeAtomic<Bool>.create(false)
     defer { v.destroy() }
@@ -240,7 +240,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   end
 
 %   for (name, _, operator, arglabel, _) in boolOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
   func test_${lowerFirst(name)}ThenLoad_${order}() {
     let v = UnsafeAtomic<Bool>.create(false)
     defer { v.destroy() }
@@ -268,7 +268,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 % if type.startswith("Int") or type.startswith("UInt"):
 // Integer operations
 %   for (name, _, operator, arglabel, _) in integerOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
   func test_loadThen${name}_${order}() {
     let a: ${type} = 3
     let b: ${type} = 8
@@ -292,7 +292,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   end
 
 %   for (name, _, operator, arglabel, _) in integerOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
   func test_${lowerFirst(name)}ThenLoad_${order}() {
     let a: ${type} = 3
     let b: ${type} = 8
@@ -319,45 +319,45 @@ class BasicAtomic${label}Tests: XCTestCase {
 #if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomic${label}Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
-% for (order, _) in loadOrderings:
+% for (order, _, _, _) in loadOrderings:
     ("test_load_${order}", test_load_${order}),
 % end
-% for (order, _) in storeOrderings:
+% for (order, _, _, _) in storeOrderings:
     ("test_store_${order}", test_store_${order}),
 % end
-% for (order, _, _) in updateOrderings:
+% for (order, _, _, _, _) in updateOrderings:
     ("test_exchange_${order}", test_exchange_${order}),
 % end
-% for (order, _, _) in updateOrderings:
+% for (order, _, _, _, _) in updateOrderings:
     ("test_compareExchange_${order}", test_compareExchange_${order}),
 % end
 % for operation in ["compareExchange", "weakCompareExchange"]:
-%   for (successorder, _, _) in updateOrderings:
-%     for (failorder, _) in loadOrderings:
+%   for (successorder, _, _, _, _) in updateOrderings:
+%     for (failorder, _, _, _) in loadOrderings:
     ("test_${operation}_${successorder}_${failorder}", test_${operation}_${successorder}_${failorder}),
 %     end
 %   end
 % end
 % if type == "Bool":
 %   for (name, _, operator, arglabel, _) in boolOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
     ("test_loadThen${name}_${order}", test_loadThen${name}_${order}),
 %     end
 %   end
 %   for (name, _, operator, arglabel, _) in boolOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
     ("test_${lowerFirst(name)}ThenLoad_${order}", test_${lowerFirst(name)}ThenLoad_${order}),
 %     end
 %   end
 % end
 % if type.startswith("Int") or type.startswith("UInt"):
 %   for (name, _, operator, arglabel, _) in integerOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
     ("test_loadThen${name}_${order}", test_loadThen${name}_${order}),
 %     end
 %   end
 %   for (name, _, operator, arglabel, _) in integerOperations:
-%     for (order, _, _) in updateOrderings:
+%     for (order, _, _, _, _) in updateOrderings:
     ("test_${lowerFirst(name)}ThenLoad_${order}", test_${lowerFirst(name)}ThenLoad_${order}),
 %     end
 %   end

@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import _AtomicsShims
+#if ATOMICS_NATIVE_BUILTINS
+import Swift
+#endif
 
 /// A class type that supports atomic strong references.
 ///
@@ -73,23 +75,6 @@ where
 /// retry.
 @inlinable @inline(__always)
 internal var _concurrencyWindow: Int { 20 }
-
-extension Unmanaged {
-  internal func retain(by delta: Int) {
-    _sa_retain_n(toOpaque(), UInt32(delta))
-  }
-
-  internal func release(by delta: Int) {
-    _sa_release_n(toOpaque(), UInt32(delta))
-  }
-}
-
-extension Unmanaged {
-  fileprivate static func passRetained(_ instance: __owned Instance?) -> Self? {
-    guard let instance = instance else { return nil }
-    return .passRetained(instance)
-  }
-}
 
 extension DoubleWord {
   fileprivate init(_raw: UnsafeRawPointer?, readers: Int, version: Int) {
