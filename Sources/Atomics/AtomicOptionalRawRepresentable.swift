@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -54,8 +54,8 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Optional<Wrapped> {
-    let ro = Storage.atomicLoad(at: _extract(pointer),
-                                     ordering: ordering)
+    let ro = Storage.atomicLoad(
+      at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
   }
 
@@ -66,9 +66,8 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(desired?.rawValue,
-                        at: _extract(pointer),
-                        ordering: ordering)
+    Storage.atomicStore(
+      desired?.rawValue, at: _extract(pointer), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -78,9 +77,8 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Optional<Wrapped> {
-    let ro = Storage.atomicExchange(desired?.rawValue,
-                                     at: _extract(pointer),
-                                     ordering: ordering)
+    let ro = Storage.atomicExchange(
+      desired?.rawValue, at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
   }
 
@@ -92,10 +90,11 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicCompareExchange(expected: expected?.rawValue,
-                                           desired: desired?.rawValue,
-                                           at: _extract(pointer),
-                                           ordering: ordering)
+    let ro = Storage.atomicCompareExchange(
+      expected: expected?.rawValue,
+      desired: desired?.rawValue,
+      at: _extract(pointer),
+      ordering: ordering)
     return (ro.exchanged, ro.original.flatMap(Wrapped.init(rawValue:)))
   }
 
@@ -108,11 +107,12 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicCompareExchange(expected: expected?.rawValue,
-                                           desired: desired?.rawValue,
-                                           at: _extract(pointer),
-                                           successOrdering: successOrdering,
-                                           failureOrdering: failureOrdering)
+    let ro = Storage.atomicCompareExchange(
+      expected: expected?.rawValue,
+      desired: desired?.rawValue,
+      at: _extract(pointer),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
     return (ro.exchanged, ro.original.flatMap(Wrapped.init(rawValue:)))
   }
 
@@ -125,11 +125,12 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicWeakCompareExchange(expected: expected?.rawValue,
-                                               desired: desired?.rawValue,
-                                               at: _extract(pointer),
-                                               successOrdering: successOrdering,
-                                               failureOrdering: failureOrdering)
+    let ro = Storage.atomicWeakCompareExchange(
+      expected: expected?.rawValue,
+      desired: desired?.rawValue,
+      at: _extract(pointer),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
     return (ro.exchanged, ro.original.flatMap(Wrapped.init(rawValue:)))
   }
 }
