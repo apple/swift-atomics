@@ -12,7 +12,9 @@
 
 extension RawRepresentable
 where
-  Self: AtomicOptionalWrappable, RawValue: AtomicOptionalWrappable
+  Self: AtomicOptionalWrappable,
+  RawValue: AtomicOptionalWrappable,
+  RawValue.AtomicOptionalRepresentation.Value == RawValue?
 {
   public typealias AtomicOptionalRepresentation =
     AtomicOptionalRawRepresentableStorage<Self>
@@ -22,8 +24,11 @@ where
 /// whose `RawValue` conforms to `AtomicOptionalWrappable`.
 @frozen
 public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
-  where Wrapped: RawRepresentable,
-        Wrapped.RawValue: AtomicOptionalWrappable {
+where
+  Wrapped: RawRepresentable,
+  Wrapped.RawValue: AtomicOptionalWrappable,
+  Wrapped.RawValue.AtomicOptionalRepresentation.Value == Wrapped.RawValue?
+{
 
   public typealias Value = Optional<Wrapped>
 
