@@ -22,9 +22,9 @@
 @frozen
 public struct UnsafeAtomic<Value: AtomicValue>
 where Value.AtomicRepresentation.Value == Value {
-  // Note: the Value._AtomicValue == Value requirement could be relaxed,
+  // Note: the Value.AtomicRepresentation.Value == Value requirement could be relaxed,
   // at the cost of adding a bunch of potentially ambiguous overloads.
-  // (We'd need one set of implementations for `Value == Value._AtomicValue`,
+  // (We'd need one set of implementations for the type equality condition,
   // and another for `Value: AtomicReference`.)
 
   public typealias Storage = Value.AtomicRepresentation
@@ -87,9 +87,9 @@ extension UnsafeAtomic: @unchecked Sendable where Value: Sendable {}
 @_fixed_layout
 public class ManagedAtomic<Value: AtomicValue>
 where Value.AtomicRepresentation.Value == Value {
-  // Note: the Value._AtomicValue == Value requirement could be relaxed,
+  // Note: the Value.AtomicRepresentation.Value == Value requirement could be relaxed,
   // at the cost of adding a bunch of potentially ambiguous overloads.
-  // (We'd need one set of implementations for `Value == Value._AtomicValue`,
+  // (We'd need one set of implementations for the type equality condition,
   // and another for `Value: AtomicReference`.)
 
   @usableFromInline

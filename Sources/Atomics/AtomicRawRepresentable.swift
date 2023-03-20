@@ -16,7 +16,6 @@ where
   RawValue: AtomicValue,
   RawValue.AtomicRepresentation.Value == RawValue
 {
-  public typealias _AtomicValue = Self
   public typealias AtomicRepresentation = AtomicRawRepresentableStorage<Self>
 }
 
