@@ -17,6 +17,7 @@ add_library(Atomics
   AtomicMemoryOrderings.swift
   AtomicOptional.swift
   AtomicRawRepresentable.swift
+  AtomicOptionalRawRepresentable.swift
   AtomicStrongReference.swift
   AtomicValue.swift
   DoubleWord.swift)

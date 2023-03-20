@@ -58,6 +58,7 @@ let package = Package(
         "Basics/BasicAtomicOptionalMutableRawPointerTests.swift.gyb",
         "Basics/BasicAtomicOptionalPointerTests.swift.gyb",
         "Basics/BasicAtomicOptionalRawPointerTests.swift.gyb",
+        "Basics/BasicAtomicOptionalRawRepresentableTests.swift.gyb",
         "Basics/BasicAtomicOptionalReferenceTests.swift.gyb",
         "Basics/BasicAtomicOptionalUnmanagedTests.swift.gyb",
         "Basics/BasicAtomicPointerTests.swift.gyb",

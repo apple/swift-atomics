@@ -10,28 +10,37 @@
 //
 //===----------------------------------------------------------------------===//
 
-extension RawRepresentable where RawValue: AtomicOptionalWrappable {
-  public typealias AtomicOptionalRepresentation = RawValue.AtomicOptionalRepresentation
+extension RawRepresentable
+where
+  Self: AtomicOptionalWrappable,
+  RawValue: AtomicOptionalWrappable,
+  RawValue.AtomicOptionalRepresentation.Value == RawValue?
+{
+  public typealias AtomicOptionalRepresentation =
+    AtomicOptionalRawRepresentableStorage<Self>
 }
 
 /// A default atomic storage representation for a `RawRepresentable` type
 /// whose `RawValue` conforms to `AtomicOptionalWrappable`.
 @frozen
 public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
-  where Wrapped: RawRepresentable,
-        Wrapped.RawValue: AtomicOptionalWrappable {
+where
+  Wrapped: RawRepresentable,
+  Wrapped.RawValue: AtomicOptionalWrappable,
+  Wrapped.RawValue.AtomicOptionalRepresentation.Value == Wrapped.RawValue?
+{
 
   public typealias Value = Optional<Wrapped>
 
   @usableFromInline
-  typealias Storage = Wrapped.RawValue.AtomicOptionalRepresentation
+  internal typealias _Storage = Wrapped.RawValue.AtomicOptionalRepresentation
 
   @usableFromInline
-  var _storage: Storage
+  internal var _storage: _Storage
 
   @_transparent @_alwaysEmitIntoClient
   public init(_ value: __owned Optional<Wrapped>) {
-    _storage = Storage(value?.rawValue)
+    self._storage = _Storage(value?.rawValue)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -43,9 +52,9 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
   @_transparent @_alwaysEmitIntoClient
   static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: Storage.self)
+    return UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: _Storage.self)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -54,7 +63,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Optional<Wrapped> {
-    let ro = Storage.atomicLoad(
+    let ro = _Storage.atomicLoad(
       at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
   }
@@ -66,7 +75,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(
+    _Storage.atomicStore(
       desired?.rawValue, at: _extract(pointer), ordering: ordering)
   }
 
@@ -77,7 +86,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Optional<Wrapped> {
-    let ro = Storage.atomicExchange(
+    let ro = _Storage.atomicExchange(
       desired?.rawValue, at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
   }
@@ -90,7 +99,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicCompareExchange(
+    let ro = _Storage.atomicCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,
       at: _extract(pointer),
@@ -107,7 +116,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicCompareExchange(
+    let ro = _Storage.atomicCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,
       at: _extract(pointer),
@@ -125,7 +134,7 @@ public struct AtomicOptionalRawRepresentableStorage<Wrapped>: AtomicStorage
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Optional<Wrapped>) {
-    let ro = Storage.atomicWeakCompareExchange(
+    let ro = _Storage.atomicWeakCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,
       at: _extract(pointer),
