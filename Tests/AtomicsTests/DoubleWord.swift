@@ -45,26 +45,25 @@ class DoubleWordTests: XCTestCase {
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(1, 2))
   }
 
+  @available(*, deprecated)
   func testHighLowInitializer() {
     let value = DoubleWord(high: 1, low: 2)
-    #if _endian(little)
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(2, 1))
-    #else
-    XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(1, 2))
-    #endif
   }
 
   func testPropertyGetters() {
     let value = DoubleWord(first: UInt.max, second: 0)
     XCTAssertEqual(value.first, UInt.max)
     XCTAssertEqual(value.second, 0)
-    #if _endian(little)
+  }
+
+  @available(*, deprecated)
+  func testPropertyGetters_deprecated() {
+    let value = DoubleWord(first: UInt.max, second: 0)
+    XCTAssertEqual(value.first, UInt.max)
+    XCTAssertEqual(value.second, 0)
     XCTAssertEqual(value.high, 0)
     XCTAssertEqual(value.low, UInt.max)
-    #else
-    XCTAssertEqual(value.high, UInt.max)
-    XCTAssertEqual(value.low, 0)
-    #endif
   }
 
   func testPropertySetters() {
@@ -73,18 +72,15 @@ class DoubleWordTests: XCTestCase {
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(3, 2))
     value.second = 4
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(3, 4))
+  }
+
+  @available(*, deprecated)
+  func testPropertySetters_deprecated() {
+    var value = DoubleWord(first: 3, second: 4)
     value.low = 5
-    #if _endian(little)
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(5, 4))
-    #else
-    XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(3, 5))
-    #endif
     value.high = 6
-    #if _endian(little)
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(5, 6))
-    #else
-    XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(6, 5))
-    #endif
   }
 
 #if MANUAL_TEST_DISCOVERY
