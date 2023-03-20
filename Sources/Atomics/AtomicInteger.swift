@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -21,7 +21,10 @@
 /// exchange operation; however, this depends on the capabilities of
 /// the compiler and the underlying hardware.
 public protocol AtomicInteger: AtomicValue, FixedWidthInteger
-where AtomicRepresentation: AtomicIntegerStorage {}
+where
+  AtomicRepresentation: AtomicIntegerStorage,
+  AtomicRepresentation.Value == Self
+{}
 
 /// The storage representation for an atomic integer value, providing
 /// pointer-based atomic operations.

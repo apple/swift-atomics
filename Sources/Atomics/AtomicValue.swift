@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@
 public protocol AtomicValue {
   /// The atomic storage representation for this value.
   associatedtype AtomicRepresentation: AtomicStorage
-  where AtomicRepresentation.Value == Self
+  /* where Self is a subtype of AtomicRepresentation.Value */
 }
 
 /// The storage representation for an atomic value, providing pointer-based
