@@ -981,7 +981,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -990,7 +990,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -999,7 +999,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1008,7 +1008,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1022,7 +1022,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -1031,7 +1031,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -1040,7 +1040,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1049,7 +1049,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1063,7 +1063,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -1072,7 +1072,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .relaxed,
@@ -1081,7 +1081,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1090,7 +1090,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .relaxed,
@@ -1104,7 +1104,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1113,7 +1113,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1122,7 +1122,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1131,7 +1131,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1145,7 +1145,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1154,7 +1154,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1163,7 +1163,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1172,7 +1172,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1186,7 +1186,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1195,7 +1195,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiring,
@@ -1204,7 +1204,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1213,7 +1213,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiring,
@@ -1227,7 +1227,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1236,7 +1236,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1245,7 +1245,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1254,7 +1254,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1268,7 +1268,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1277,7 +1277,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1286,7 +1286,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1295,7 +1295,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1309,7 +1309,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1318,7 +1318,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .releasing,
@@ -1327,7 +1327,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1336,7 +1336,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .releasing,
@@ -1350,7 +1350,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1359,7 +1359,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1368,7 +1368,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1377,7 +1377,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1391,7 +1391,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1400,7 +1400,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1409,7 +1409,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1418,7 +1418,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1432,7 +1432,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1441,7 +1441,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .acquiringAndReleasing,
@@ -1450,7 +1450,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1459,7 +1459,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .acquiringAndReleasing,
@@ -1473,7 +1473,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1482,7 +1482,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1491,7 +1491,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,
@@ -1500,7 +1500,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,
@@ -1514,7 +1514,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1523,7 +1523,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1532,7 +1532,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,
@@ -1541,7 +1541,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,
@@ -1555,7 +1555,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     let v: UnsafeAtomic<Baz> = .create(_baz1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Baz) = v.compareExchange(
+    var (exchanged, original): (Bool, Baz) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1564,7 +1564,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz1)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz1,
       desired: _baz2,
       successOrdering: .sequentiallyConsistent,
@@ -1573,7 +1573,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,
@@ -1582,7 +1582,7 @@ class BasicAtomicReferenceTests: XCTestCase {
     XCTAssertEqual(original, _baz2)
     XCTAssertEqual(v.load(ordering: .relaxed), _baz1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _baz2,
       desired: _baz1,
       successOrdering: .sequentiallyConsistent,

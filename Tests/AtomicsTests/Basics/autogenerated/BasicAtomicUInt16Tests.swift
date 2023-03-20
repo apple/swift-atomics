@@ -979,7 +979,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -988,7 +988,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -997,7 +997,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1006,7 +1006,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1020,7 +1020,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1029,7 +1029,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1038,7 +1038,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1047,7 +1047,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1061,7 +1061,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1070,7 +1070,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .relaxed,
@@ -1079,7 +1079,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1088,7 +1088,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .relaxed,
@@ -1102,7 +1102,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1111,7 +1111,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1120,7 +1120,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1129,7 +1129,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1143,7 +1143,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1152,7 +1152,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1161,7 +1161,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1170,7 +1170,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1184,7 +1184,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1193,7 +1193,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiring,
@@ -1202,7 +1202,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1211,7 +1211,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiring,
@@ -1225,7 +1225,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1234,7 +1234,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1243,7 +1243,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1252,7 +1252,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1266,7 +1266,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1275,7 +1275,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1284,7 +1284,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1293,7 +1293,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1307,7 +1307,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1316,7 +1316,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .releasing,
@@ -1325,7 +1325,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1334,7 +1334,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .releasing,
@@ -1348,7 +1348,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1357,7 +1357,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1366,7 +1366,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1375,7 +1375,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1389,7 +1389,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1398,7 +1398,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1407,7 +1407,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1416,7 +1416,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1430,7 +1430,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1439,7 +1439,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .acquiringAndReleasing,
@@ -1448,7 +1448,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1457,7 +1457,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .acquiringAndReleasing,
@@ -1471,7 +1471,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1480,7 +1480,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1489,7 +1489,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,
@@ -1498,7 +1498,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,
@@ -1512,7 +1512,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1521,7 +1521,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1530,7 +1530,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,
@@ -1539,7 +1539,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,
@@ -1553,7 +1553,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     let v: UnsafeAtomic<UInt16> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UInt16) = v.compareExchange(
+    var (exchanged, original): (Bool, UInt16) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1562,7 +1562,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 12,
       desired: 23,
       successOrdering: .sequentiallyConsistent,
@@ -1571,7 +1571,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,
@@ -1580,7 +1580,7 @@ class BasicAtomicUInt16Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: 23,
       desired: 12,
       successOrdering: .sequentiallyConsistent,

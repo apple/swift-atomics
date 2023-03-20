@@ -172,7 +172,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, ${type}) = v.compareExchange(
+    var (exchanged, original): (Bool, ${type}) = v.${operation}(
       expected: ${a},
       desired: ${b},
       successOrdering: .${successorder},
@@ -181,7 +181,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${a})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${a},
       desired: ${b},
       successOrdering: .${successorder},
@@ -190,7 +190,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${b})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${b},
       desired: ${a},
       successOrdering: .${successorder},
@@ -199,7 +199,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${b})
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${b},
       desired: ${a},
       successOrdering: .${successorder},
