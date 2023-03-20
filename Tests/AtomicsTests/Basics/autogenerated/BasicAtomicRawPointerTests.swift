@@ -989,7 +989,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -998,7 +998,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -1007,7 +1007,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1016,7 +1016,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1030,7 +1030,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -1039,7 +1039,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -1048,7 +1048,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1057,7 +1057,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1071,7 +1071,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -1080,7 +1080,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .relaxed,
@@ -1089,7 +1089,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1098,7 +1098,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .relaxed,
@@ -1112,7 +1112,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1121,7 +1121,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1130,7 +1130,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1139,7 +1139,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1153,7 +1153,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1162,7 +1162,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1171,7 +1171,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1180,7 +1180,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1194,7 +1194,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1203,7 +1203,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiring,
@@ -1212,7 +1212,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1221,7 +1221,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiring,
@@ -1235,7 +1235,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1244,7 +1244,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1253,7 +1253,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1262,7 +1262,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1276,7 +1276,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1285,7 +1285,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1294,7 +1294,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1303,7 +1303,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1317,7 +1317,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1326,7 +1326,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .releasing,
@@ -1335,7 +1335,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1344,7 +1344,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .releasing,
@@ -1358,7 +1358,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1367,7 +1367,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1376,7 +1376,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1385,7 +1385,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1399,7 +1399,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1408,7 +1408,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1417,7 +1417,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1426,7 +1426,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1440,7 +1440,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1449,7 +1449,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .acquiringAndReleasing,
@@ -1458,7 +1458,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1467,7 +1467,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .acquiringAndReleasing,
@@ -1481,7 +1481,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1490,7 +1490,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1499,7 +1499,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,
@@ -1508,7 +1508,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,
@@ -1522,7 +1522,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1531,7 +1531,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1540,7 +1540,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,
@@ -1549,7 +1549,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,
@@ -1563,7 +1563,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafeRawPointer> = .create(_raw1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafeRawPointer) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafeRawPointer) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1572,7 +1572,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw1,
       desired: _raw2,
       successOrdering: .sequentiallyConsistent,
@@ -1581,7 +1581,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,
@@ -1590,7 +1590,7 @@ class BasicAtomicRawPointerTests: XCTestCase {
     XCTAssertEqual(original, _raw2)
     XCTAssertEqual(v.load(ordering: .relaxed), _raw1)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _raw2,
       desired: _raw1,
       successOrdering: .sequentiallyConsistent,

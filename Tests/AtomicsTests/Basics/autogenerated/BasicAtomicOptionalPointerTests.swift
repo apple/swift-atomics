@@ -1000,7 +1000,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1009,7 +1009,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1018,7 +1018,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1027,7 +1027,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1041,7 +1041,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1050,7 +1050,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1059,7 +1059,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1068,7 +1068,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1082,7 +1082,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1091,7 +1091,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .relaxed,
@@ -1100,7 +1100,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1109,7 +1109,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .relaxed,
@@ -1123,7 +1123,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1132,7 +1132,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1141,7 +1141,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1150,7 +1150,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1164,7 +1164,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1173,7 +1173,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1182,7 +1182,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1191,7 +1191,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1205,7 +1205,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1214,7 +1214,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiring,
@@ -1223,7 +1223,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1232,7 +1232,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiring,
@@ -1246,7 +1246,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1255,7 +1255,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1264,7 +1264,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1273,7 +1273,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1287,7 +1287,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1296,7 +1296,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1305,7 +1305,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1314,7 +1314,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1328,7 +1328,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1337,7 +1337,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .releasing,
@@ -1346,7 +1346,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1355,7 +1355,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .releasing,
@@ -1369,7 +1369,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1378,7 +1378,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1387,7 +1387,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1396,7 +1396,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1410,7 +1410,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1419,7 +1419,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1428,7 +1428,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1437,7 +1437,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1451,7 +1451,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1460,7 +1460,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .acquiringAndReleasing,
@@ -1469,7 +1469,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1478,7 +1478,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .acquiringAndReleasing,
@@ -1492,7 +1492,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1501,7 +1501,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1510,7 +1510,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
@@ -1519,7 +1519,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
@@ -1533,7 +1533,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1542,7 +1542,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1551,7 +1551,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
@@ -1560,7 +1560,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
@@ -1574,7 +1574,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     let v: UnsafeAtomic<UnsafePointer<Foo>?> = .create(nil)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.compareExchange(
+    var (exchanged, original): (Bool, UnsafePointer<Foo>?) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1583,7 +1583,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: nil,
       desired: _foo2,
       successOrdering: .sequentiallyConsistent,
@@ -1592,7 +1592,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
@@ -1601,7 +1601,7 @@ class BasicAtomicOptionalPointerTests: XCTestCase {
     XCTAssertEqual(original, _foo2)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.weakCompareExchange(
       expected: _foo2,
       desired: nil,
       successOrdering: .sequentiallyConsistent,
