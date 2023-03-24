@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import _AtomicsShims
+#if ATOMICS_NATIVE_BUILTINS
+import Swift
+#endif
 
 /// Specifies the memory ordering semantics of an atomic load operation.
 @frozen
@@ -313,12 +315,5 @@ extension AtomicUpdateOrdering: CustomStringConvertible {
 public func atomicMemoryFence(
   ordering: AtomicUpdateOrdering
 ) {
-  switch ordering {
-  case .relaxed: break
-  case .acquiring: _sa_thread_fence_acquire()
-  case .releasing: _sa_thread_fence_release()
-  case .acquiringAndReleasing: _sa_thread_fence_acq_rel()
-  case .sequentiallyConsistent: _sa_thread_fence_seq_cst()
-  default: fatalError()
-  }
+  _atomicMemoryFence(ordering: ordering)
 }

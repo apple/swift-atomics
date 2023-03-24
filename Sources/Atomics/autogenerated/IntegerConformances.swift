@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2023 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -17,1996 +17,47 @@
 // #############################################################################
 
 
+#if ATOMICS_NATIVE_BUILTINS
+import Swift
+#else
 import _AtomicsShims
+#endif
 
-extension Int: AtomicValue {
-  @frozen
-  public struct AtomicRepresentation {
-    public typealias Value = Int
 
-    @usableFromInline
-    var _storage: _AtomicIntStorage
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public init(_ value: Value) {
-      self._storage = _sa_prepare_Int(value)
-    }
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public func dispose() -> Value {
-      return _sa_dispose_Int(_storage)
-    }
-  }
-}
-
-extension UnsafeMutablePointer
-where Pointee == Int.AtomicRepresentation {
-  @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicIntStorage> {
-    // `Int` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicIntStorage.self)
-  }
-}
-
-extension Int.AtomicRepresentation: AtomicStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicLoad(
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Int(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_Int(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Int(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicStore(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicStoreOrdering
-  ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Int(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_Int(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Int(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicExchange(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Int(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Int(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_Int(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Int(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Int(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-}
-
-extension Int: AtomicInteger {}
-
-extension Int.AtomicRepresentation: AtomicIntegerStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_Int(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_Int(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_Int(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_Int(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_Int(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_Int(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_Int(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_Int(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_Int(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_Int(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Int(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Int(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Int(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Int(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Int(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Int(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Int(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Int(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Int(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Int(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Int(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Int(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Int(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Int(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Int(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-}
-
-extension Int64: AtomicValue {
-  @frozen
-  public struct AtomicRepresentation {
-    public typealias Value = Int64
-
-    @usableFromInline
-    var _storage: _AtomicInt64Storage
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public init(_ value: Value) {
-      self._storage = _sa_prepare_Int64(value)
-    }
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public func dispose() -> Value {
-      return _sa_dispose_Int64(_storage)
-    }
-  }
-}
-
-extension UnsafeMutablePointer
-where Pointee == Int64.AtomicRepresentation {
-  @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicInt64Storage> {
-    // `Int64` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt64Storage.self)
-  }
-}
-
-extension Int64.AtomicRepresentation: AtomicStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicLoad(
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Int64(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_Int64(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Int64(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicStore(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicStoreOrdering
-  ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Int64(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_Int64(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Int64(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicExchange(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Int64(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Int64(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_Int64(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Int64(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Int64(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int64(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int64(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int64(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int64(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int64(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-}
-
-extension Int64: AtomicInteger {}
-
-extension Int64.AtomicRepresentation: AtomicIntegerStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_Int64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_Int64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_Int64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_Int64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_Int64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_Int64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_Int64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_Int64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_Int64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_Int64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Int64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Int64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Int64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Int64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Int64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Int64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Int64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Int64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Int64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Int64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Int64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Int64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Int64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Int64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Int64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-}
-
-extension Int32: AtomicValue {
-  @frozen
-  public struct AtomicRepresentation {
-    public typealias Value = Int32
-
-    @usableFromInline
-    var _storage: _AtomicInt32Storage
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public init(_ value: Value) {
-      self._storage = _sa_prepare_Int32(value)
-    }
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public func dispose() -> Value {
-      return _sa_dispose_Int32(_storage)
-    }
-  }
-}
-
-extension UnsafeMutablePointer
-where Pointee == Int32.AtomicRepresentation {
-  @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicInt32Storage> {
-    // `Int32` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt32Storage.self)
-  }
-}
-
-extension Int32.AtomicRepresentation: AtomicStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicLoad(
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Int32(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_Int32(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Int32(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicStore(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicStoreOrdering
-  ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Int32(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_Int32(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Int32(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicExchange(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Int32(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Int32(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_Int32(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Int32(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Int32(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int32(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int32(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int32(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int32(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int32(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-}
-
-extension Int32: AtomicInteger {}
-
-extension Int32.AtomicRepresentation: AtomicIntegerStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_Int32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_Int32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_Int32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_Int32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_Int32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_Int32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_Int32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_Int32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_Int32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_Int32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Int32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Int32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Int32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Int32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Int32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Int32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Int32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Int32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Int32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Int32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Int32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Int32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Int32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Int32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Int32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-}
-
-extension Int16: AtomicValue {
-  @frozen
-  public struct AtomicRepresentation {
-    public typealias Value = Int16
-
-    @usableFromInline
-    var _storage: _AtomicInt16Storage
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public init(_ value: Value) {
-      self._storage = _sa_prepare_Int16(value)
-    }
-
-    @inline(__always) @_alwaysEmitIntoClient
-    public func dispose() -> Value {
-      return _sa_dispose_Int16(_storage)
-    }
-  }
-}
-
-extension UnsafeMutablePointer
-where Pointee == Int16.AtomicRepresentation {
-  @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicInt16Storage> {
-    // `Int16` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt16Storage.self)
-  }
-}
-
-extension Int16.AtomicRepresentation: AtomicStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicLoad(
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Int16(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_Int16(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Int16(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicStore(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicStoreOrdering
-  ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Int16(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_Int16(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Int16(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicExchange(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Int16(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Int16(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_Int16(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Int16(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Int16(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int16(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int16(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int16(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int16(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int16(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-}
-
-extension Int16: AtomicInteger {}
-
-extension Int16.AtomicRepresentation: AtomicIntegerStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_Int16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_Int16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_Int16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_Int16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_Int16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_Int16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_Int16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_Int16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_Int16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_Int16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Int16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Int16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Int16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Int16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Int16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Int16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Int16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Int16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Int16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Int16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Int16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Int16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Int16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Int16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Int16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-}
 
 extension Int8: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int8
 
+#if ATOMICS_NATIVE_BUILTINS
     @usableFromInline
-    var _storage: _AtomicInt8Storage
+    internal typealias _Storage = Int8
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt8Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_Int8(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_Int8(value)
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_Int8(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_Int8(_storage)
+      return v
+#endif
     }
   }
 }
@@ -2014,10 +65,10 @@ extension Int8: AtomicValue {
 extension UnsafeMutablePointer
 where Pointee == Int8.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicInt8Storage> {
-    // `Int8` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt8Storage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Int8.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
@@ -2027,290 +78,83 @@ extension Int8.AtomicRepresentation: AtomicStorage {
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Int8(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_Int8(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Int8(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: Int8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Int8(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_Int8(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Int8(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: Int8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Int8(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Int8(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_Int8(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Int8(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Int8(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int8,
+    desired: Int8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int8(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int8(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int8(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int8(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int8) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int8,
+    desired: Int8,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int8) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int8,
+    desired: Int8,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Int8(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int8) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 }
 
@@ -2321,2157 +165,727 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
+    by operand: Int8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_Int8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_Int8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_Int8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_Int8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_Int8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
+    by operand: Int8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_Int8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_Int8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_Int8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_Int8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_Int8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
+    with operand: Int8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Int8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Int8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Int8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Int8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Int8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
+    with operand: Int8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Int8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Int8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Int8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Int8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Int8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
+    with operand: Int8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Int8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Int8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Int8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Int8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Int8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int8 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand, ordering: ordering)
+    return r
   }
+
 }
 
-extension UInt: AtomicValue {
+
+
+
+
+extension Int16: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
-    public typealias Value = UInt
+    public typealias Value = Int16
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int16
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt16Storage
+#endif
 
     @usableFromInline
-    var _storage: _AtomicUIntStorage
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_UInt(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_Int16(value)
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_UInt(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_Int16(_storage)
+      return v
+#endif
     }
   }
 }
 
 extension UnsafeMutablePointer
-where Pointee == UInt.AtomicRepresentation {
+where Pointee == Int16.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicUIntStorage> {
-    // `UInt` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUIntStorage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Int16.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
-extension UInt.AtomicRepresentation: AtomicStorage {
+extension Int16.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_UInt(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_UInt(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_UInt(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: Int16,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_UInt(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_UInt(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_UInt(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: Int16,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_UInt(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_UInt(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_UInt(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_UInt(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_UInt(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int16,
+    desired: Int16,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int16) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int16,
+    desired: Int16,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int16) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int16,
+    desired: Int16,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int16) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 }
 
-extension UInt: AtomicInteger {}
+extension Int16: AtomicInteger {}
 
-extension UInt.AtomicRepresentation: AtomicIntegerStorage {
+extension Int16.AtomicRepresentation: AtomicIntegerStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
+    by operand: Int16 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_UInt(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_UInt(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_UInt(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_UInt(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_UInt(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
+    by operand: Int16 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_UInt(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_UInt(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_UInt(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_UInt(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_UInt(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
+    with operand: Int16 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_UInt(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_UInt(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_UInt(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_UInt(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_UInt(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
+    with operand: Int16 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_UInt(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_UInt(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_UInt(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_UInt(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_UInt(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
+    with operand: Int16 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_UInt(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_UInt(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_UInt(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_UInt(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_UInt(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int16 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand, ordering: ordering)
+    return r
   }
+
 }
 
-extension UInt64: AtomicValue {
+
+
+
+
+extension Int32: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
-    public typealias Value = UInt64
+    public typealias Value = Int32
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int32
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt32Storage
+#endif
 
     @usableFromInline
-    var _storage: _AtomicUInt64Storage
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_UInt64(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_Int32(value)
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_UInt64(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_Int32(_storage)
+      return v
+#endif
     }
   }
 }
 
 extension UnsafeMutablePointer
-where Pointee == UInt64.AtomicRepresentation {
+where Pointee == Int32.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicUInt64Storage> {
-    // `UInt64` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt64Storage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Int32.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
-extension UInt64.AtomicRepresentation: AtomicStorage {
+extension Int32.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_UInt64(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_UInt64(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_UInt64(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: Int32,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_UInt64(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_UInt64(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_UInt64(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: Int32,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_UInt64(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_UInt64(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_UInt64(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_UInt64(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_UInt64(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int32,
+    desired: Int32,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt64(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt64(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt64(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt64(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int32) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int32,
+    desired: Int32,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int32) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int32,
+    desired: Int32,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt64(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int32) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 }
 
-extension UInt64: AtomicInteger {}
+extension Int32: AtomicInteger {}
 
-extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
+extension Int32.AtomicRepresentation: AtomicIntegerStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
+    by operand: Int32 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_UInt64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_UInt64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_UInt64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
+    by operand: Int32 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_UInt64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_UInt64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_UInt64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
+    with operand: Int32 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_UInt64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_UInt64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_UInt64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
+    with operand: Int32 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_UInt64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_UInt64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_UInt64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
+    with operand: Int32 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_UInt64(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_UInt64(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_UInt64(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_UInt64(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int32 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand, ordering: ordering)
+    return r
   }
+
 }
 
-extension UInt32: AtomicValue {
+
+
+
+
+extension Int64: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
-    public typealias Value = UInt32
+    public typealias Value = Int64
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int64
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt64Storage
+#endif
 
     @usableFromInline
-    var _storage: _AtomicUInt32Storage
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_UInt32(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_Int64(value)
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_UInt32(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_Int64(_storage)
+      return v
+#endif
     }
   }
 }
 
 extension UnsafeMutablePointer
-where Pointee == UInt32.AtomicRepresentation {
+where Pointee == Int64.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicUInt32Storage> {
-    // `UInt32` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt32Storage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Int64.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
-extension UInt32.AtomicRepresentation: AtomicStorage {
+extension Int64.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_UInt32(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_UInt32(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_UInt32(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: Int64,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_UInt32(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_UInt32(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_UInt32(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: Int64,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_UInt32(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_UInt32(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_UInt32(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_UInt32(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_UInt32(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int64,
+    desired: Int64,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt32(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt32(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt32(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt32(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int64) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int64,
+    desired: Int64,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int64) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: Int64,
+    desired: Int64,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt32(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: Int64) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
   }
 }
 
-extension UInt32: AtomicInteger {}
+extension Int64: AtomicInteger {}
 
-extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
+extension Int64.AtomicRepresentation: AtomicIntegerStorage {
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
+    by operand: Int64 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_UInt32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_UInt32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_UInt32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
+    by operand: Int64 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_UInt32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_UInt32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_UInt32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
+    with operand: Int64 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_UInt32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_UInt32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_UInt32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
+    with operand: Int64 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_UInt32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_UInt32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_UInt32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand, ordering: ordering)
+    return r
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
+    with operand: Int64 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_UInt32(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_UInt32(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_UInt32(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_UInt32(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> Int64 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand, ordering: ordering)
+    return r
   }
+
 }
 
-extension UInt16: AtomicValue {
-  @frozen
-  public struct AtomicRepresentation {
-    public typealias Value = UInt16
 
-    @usableFromInline
-    var _storage: _AtomicUInt16Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
-    public init(_ value: Value) {
-      self._storage = _sa_prepare_UInt16(value)
-    }
 
-    @inline(__always) @_alwaysEmitIntoClient
-    public func dispose() -> Value {
-      return _sa_dispose_UInt16(_storage)
-    }
-  }
-}
-
-extension UnsafeMutablePointer
-where Pointee == UInt16.AtomicRepresentation {
-  @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicUInt16Storage> {
-    // `UInt16` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt16Storage.self)
-  }
-}
-
-extension UInt16.AtomicRepresentation: AtomicStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicLoad(
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_UInt16(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_UInt16(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_UInt16(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicStore(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicStoreOrdering
-  ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_UInt16(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_UInt16(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_UInt16(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicExchange(
-    _ desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_UInt16(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_UInt16(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_UInt16(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_UInt16(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_UInt16(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt16(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt16(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt16(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt16(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
-    at pointer: UnsafeMutablePointer<Self>,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt16(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
-  }
-}
-
-extension UInt16: AtomicInteger {}
-
-extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_UInt16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_UInt16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_UInt16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_UInt16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_UInt16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_UInt16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_UInt16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_UInt16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_UInt16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_UInt16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_UInt16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_UInt16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  @discardableResult
-  public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
-    at pointer: UnsafeMutablePointer<Self>,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_UInt16(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_UInt16(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_UInt16(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_UInt16(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
-  }
-}
 
 extension UInt8: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = UInt8
 
+#if ATOMICS_NATIVE_BUILTINS
     @usableFromInline
-    var _storage: _AtomicUInt8Storage
+    internal typealias _Storage = Int8
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt8Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_UInt8(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Int8(bitPattern: value)
+#else
+      _storage = _sa_prepare_Int8(Int8(bitPattern: value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_UInt8(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return UInt8(bitPattern: _storage)
+#else
+      let v = _sa_dispose_Int8(_storage)
+      return UInt8(bitPattern: v)
+#endif
     }
   }
 }
@@ -4479,10 +893,10 @@ extension UInt8: AtomicValue {
 extension UnsafeMutablePointer
 where Pointee == UInt8.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicUInt8Storage> {
-    // `UInt8` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt8Storage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `UInt8.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
@@ -4492,290 +906,83 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_UInt8(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_UInt8(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_UInt8(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return UInt8(bitPattern: r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: UInt8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_UInt8(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_UInt8(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_UInt8(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      Int8(bitPattern: desired),
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: UInt8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_UInt8(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_UInt8(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_UInt8(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_UInt8(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_UInt8(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicExchange(
+      Int8(bitPattern: desired),
+      ordering: ordering)
+    return UInt8(bitPattern: r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: UInt8,
+    desired: UInt8,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt8(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt8(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt8(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt8(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: UInt8) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int8(bitPattern: expected),
+      desired: Int8(bitPattern: desired),
+      ordering: ordering)
+    return (r.exchanged, UInt8(bitPattern: r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: UInt8,
+    desired: UInt8,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: UInt8) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int8(bitPattern: expected),
+      desired: Int8(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt8(bitPattern: r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: UInt8,
+    desired: UInt8,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_UInt8(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: UInt8) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: Int8(bitPattern: expected),
+      desired: Int8(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt8(bitPattern: r.original))
   }
 }
 
@@ -4786,185 +993,1141 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingIncrement(
-    by operand: Value = 1,
+    by operand: UInt8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_add_relaxed_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_add_acquire_UInt8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_add_release_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_add_acq_rel_UInt8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_add_seq_cst_UInt8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: Int8(bitPattern: operand), ordering: ordering)
+    return UInt8(bitPattern: r)
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenWrappingDecrement(
-    by operand: Value = 1,
+    by operand: UInt8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_sub_relaxed_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_sub_acquire_UInt8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_sub_release_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_sub_acq_rel_UInt8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_sub_seq_cst_UInt8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: Int8(bitPattern: operand), ordering: ordering)
+    return UInt8(bitPattern: r)
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseAnd(
-    with operand: Value = 1,
+    with operand: UInt8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_UInt8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_UInt8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_UInt8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: Int8(bitPattern: operand), ordering: ordering)
+    return UInt8(bitPattern: r)
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseOr(
-    with operand: Value = 1,
+    with operand: UInt8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_UInt8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_UInt8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_UInt8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: Int8(bitPattern: operand), ordering: ordering)
+    return UInt8(bitPattern: r)
   }
+
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   @discardableResult
   public static func atomicLoadThenBitwiseXor(
-    with operand: Value = 1,
+    with operand: UInt8 = 1,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_UInt8(
-        pointer._extract,
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_UInt8(
-        pointer._extract,
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_UInt8(
-        pointer._extract,
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_UInt8(
-        pointer._extract,
-        operand)
-    default:
-      fatalError("Unsupported ordering")
+  ) -> UInt8 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: Int8(bitPattern: operand), ordering: ordering)
+    return UInt8(bitPattern: r)
+  }
+
+}
+
+
+
+
+
+extension UInt16: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = UInt16
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int16
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt16Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Int16(bitPattern: value)
+#else
+      _storage = _sa_prepare_Int16(Int16(bitPattern: value))
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return UInt16(bitPattern: _storage)
+#else
+      let v = _sa_dispose_Int16(_storage)
+      return UInt16(bitPattern: v)
+#endif
     }
   }
 }
 
+extension UnsafeMutablePointer
+where Pointee == UInt16.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `UInt16.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt16.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: UInt16,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      Int16(bitPattern: desired),
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: UInt16,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicExchange(
+      Int16(bitPattern: desired),
+      ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt16,
+    desired: UInt16,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: UInt16) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int16(bitPattern: expected),
+      desired: Int16(bitPattern: desired),
+      ordering: ordering)
+    return (r.exchanged, UInt16(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt16,
+    desired: UInt16,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt16) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int16(bitPattern: expected),
+      desired: Int16(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt16(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: UInt16,
+    desired: UInt16,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt16) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: Int16(bitPattern: expected),
+      desired: Int16(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt16(bitPattern: r.original))
+  }
+}
+
+extension UInt16: AtomicInteger {}
+
+extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingIncrement(
+    by operand: UInt16 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: Int16(bitPattern: operand), ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingDecrement(
+    by operand: UInt16 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: Int16(bitPattern: operand), ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseAnd(
+    with operand: UInt16 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: Int16(bitPattern: operand), ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseOr(
+    with operand: UInt16 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: Int16(bitPattern: operand), ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseXor(
+    with operand: UInt16 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt16 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: Int16(bitPattern: operand), ordering: ordering)
+    return UInt16(bitPattern: r)
+  }
+
+}
+
+
+
+
+
+extension UInt32: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = UInt32
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int32
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt32Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Int32(bitPattern: value)
+#else
+      _storage = _sa_prepare_Int32(Int32(bitPattern: value))
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return UInt32(bitPattern: _storage)
+#else
+      let v = _sa_dispose_Int32(_storage)
+      return UInt32(bitPattern: v)
+#endif
+    }
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == UInt32.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `UInt32.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt32.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: UInt32,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      Int32(bitPattern: desired),
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: UInt32,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicExchange(
+      Int32(bitPattern: desired),
+      ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt32,
+    desired: UInt32,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: UInt32) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int32(bitPattern: expected),
+      desired: Int32(bitPattern: desired),
+      ordering: ordering)
+    return (r.exchanged, UInt32(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt32,
+    desired: UInt32,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt32) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int32(bitPattern: expected),
+      desired: Int32(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt32(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: UInt32,
+    desired: UInt32,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt32) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: Int32(bitPattern: expected),
+      desired: Int32(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt32(bitPattern: r.original))
+  }
+}
+
+extension UInt32: AtomicInteger {}
+
+extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingIncrement(
+    by operand: UInt32 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: Int32(bitPattern: operand), ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingDecrement(
+    by operand: UInt32 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: Int32(bitPattern: operand), ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseAnd(
+    with operand: UInt32 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: Int32(bitPattern: operand), ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseOr(
+    with operand: UInt32 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: Int32(bitPattern: operand), ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseXor(
+    with operand: UInt32 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt32 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: Int32(bitPattern: operand), ordering: ordering)
+    return UInt32(bitPattern: r)
+  }
+
+}
+
+
+
+
+
+extension UInt64: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = UInt64
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int64
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt64Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Int64(bitPattern: value)
+#else
+      _storage = _sa_prepare_Int64(Int64(bitPattern: value))
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return UInt64(bitPattern: _storage)
+#else
+      let v = _sa_dispose_Int64(_storage)
+      return UInt64(bitPattern: v)
+#endif
+    }
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == UInt64.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `UInt64.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt64.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: UInt64,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      Int64(bitPattern: desired),
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: UInt64,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicExchange(
+      Int64(bitPattern: desired),
+      ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt64,
+    desired: UInt64,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: UInt64) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int64(bitPattern: expected),
+      desired: Int64(bitPattern: desired),
+      ordering: ordering)
+    return (r.exchanged, UInt64(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt64,
+    desired: UInt64,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt64) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int64(bitPattern: expected),
+      desired: Int64(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt64(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: UInt64,
+    desired: UInt64,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt64) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: Int64(bitPattern: expected),
+      desired: Int64(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt64(bitPattern: r.original))
+  }
+}
+
+extension UInt64: AtomicInteger {}
+
+extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingIncrement(
+    by operand: UInt64 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: Int64(bitPattern: operand), ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingDecrement(
+    by operand: UInt64 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: Int64(bitPattern: operand), ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseAnd(
+    with operand: UInt64 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: Int64(bitPattern: operand), ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseOr(
+    with operand: UInt64 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: Int64(bitPattern: operand), ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseXor(
+    with operand: UInt64 = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt64 {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: Int64(bitPattern: operand), ordering: ordering)
+    return UInt64(bitPattern: r)
+  }
+
+}
+
+
+
+
+
+extension Int: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = Int
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_Int(value)
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_Int(_storage)
+      return v
+#endif
+    }
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == Int.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Int.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: Int,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: Int,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: Int,
+    desired: Int,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: Int) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: Int,
+    desired: Int,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: Int) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: Int,
+    desired: Int,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: Int) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
+  }
+}
+
+extension Int: AtomicInteger {}
+
+extension Int.AtomicRepresentation: AtomicIntegerStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingIncrement(
+    by operand: Int = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: operand, ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingDecrement(
+    by operand: Int = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: operand, ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseAnd(
+    with operand: Int = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand, ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseOr(
+    with operand: Int = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand, ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseXor(
+    with operand: Int = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> Int {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand, ordering: ordering)
+    return r
+  }
+
+}
+
+
+
+
+
+extension UInt: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = UInt
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Int(bitPattern: value)
+#else
+      _storage = _sa_prepare_Int(Int(bitPattern: value))
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return UInt(bitPattern: _storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return UInt(bitPattern: v)
+#endif
+    }
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == UInt.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `UInt.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: UInt,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      Int(bitPattern: desired),
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: UInt,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicExchange(
+      Int(bitPattern: desired),
+      ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt,
+    desired: UInt,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: UInt) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int(bitPattern: expected),
+      desired: Int(bitPattern: desired),
+      ordering: ordering)
+    return (r.exchanged, UInt(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: UInt,
+    desired: UInt,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: Int(bitPattern: expected),
+      desired: Int(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt(bitPattern: r.original))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: UInt,
+    desired: UInt,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: UInt) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: Int(bitPattern: expected),
+      desired: Int(bitPattern: desired),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, UInt(bitPattern: r.original))
+  }
+}
+
+extension UInt: AtomicInteger {}
+
+extension UInt.AtomicRepresentation: AtomicIntegerStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingIncrement(
+    by operand: UInt = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoadThenWrappingIncrement(
+      by: Int(bitPattern: operand), ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenWrappingDecrement(
+    by operand: UInt = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoadThenWrappingDecrement(
+      by: Int(bitPattern: operand), ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseAnd(
+    with operand: UInt = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoadThenBitwiseAnd(
+      with: Int(bitPattern: operand), ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseOr(
+    with operand: UInt = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoadThenBitwiseOr(
+      with: Int(bitPattern: operand), ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  @discardableResult
+  public static func atomicLoadThenBitwiseXor(
+    with operand: UInt = 1,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> UInt {
+    let r = pointer._extract._atomicLoadThenBitwiseXor(
+      with: Int(bitPattern: operand), ordering: ordering)
+    return UInt(bitPattern: r)
+  }
+
+}
+
+
+
+
+#if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
 extension DoubleWord: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = DoubleWord
 
+#if ATOMICS_NATIVE_BUILTINS
     @usableFromInline
-    var _storage: _AtomicDoubleWordStorage
+    internal typealias _Storage = Int64
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt64Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = _sa_prepare_DoubleWord(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = unsafeBitCast(value, to: Int64.self)
+#else
+      _storage = _sa_prepare_Int64(unsafeBitCast(value, to: Int64.self))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      return _sa_dispose_DoubleWord(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return unsafeBitCast(_storage, to: DoubleWord.self)
+#else
+      let v = _sa_dispose_Int64(_storage)
+      return unsafeBitCast(v, to: DoubleWord.self)
+#endif
     }
   }
 }
@@ -4972,10 +2135,10 @@ extension DoubleWord: AtomicValue {
 extension UnsafeMutablePointer
 where Pointee == DoubleWord.AtomicRepresentation {
   @inlinable @inline(__always)
-  internal var _extract: UnsafeMutablePointer<_AtomicDoubleWordStorage> {
-    // `DoubleWord` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicDoubleWordStorage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `DoubleWord.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
@@ -4985,290 +2148,222 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_DoubleWord(pointer._extract)
-    case .acquiring:
-      return _sa_load_acquire_DoubleWord(pointer._extract)
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_DoubleWord(pointer._extract)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> DoubleWord {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return unsafeBitCast(r, to: DoubleWord.self)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: Value,
+    _ desired: DoubleWord,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_DoubleWord(pointer._extract, desired)
-    case .releasing:
-      _sa_store_release_DoubleWord(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_DoubleWord(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(
+      unsafeBitCast(desired, to: Int64.self),
+      ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: Value,
+    _ desired: DoubleWord,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_DoubleWord(pointer._extract, desired)
-    case .acquiring:
-      return _sa_exchange_acquire_DoubleWord(pointer._extract, desired)
-    case .releasing:
-      return _sa_exchange_release_DoubleWord(pointer._extract, desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_DoubleWord(pointer._extract, desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_DoubleWord(pointer._extract, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+  ) -> DoubleWord {
+    let r = pointer._extract._atomicExchange(
+      unsafeBitCast(desired, to: Int64.self),
+      ordering: ordering)
+    return unsafeBitCast(r, to: DoubleWord.self)
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: DoubleWord,
+    desired: DoubleWord,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
-        pointer._extract,
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_DoubleWord(
-        pointer._extract,
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_DoubleWord(
-        pointer._extract,
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_DoubleWord(
-        pointer._extract,
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: unsafeBitCast(expected, to: Int64.self),
+      desired: unsafeBitCast(desired, to: Int64.self),
+      ordering: ordering)
+    return (r.exchanged, unsafeBitCast(r.original, to: DoubleWord.self))
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: DoubleWord,
+    desired: DoubleWord,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: unsafeBitCast(expected, to: Int64.self),
+      desired: unsafeBitCast(desired, to: Int64.self),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, unsafeBitCast(r.original, to: DoubleWord.self))
   }
 
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Value,
-    desired: Value,
+    expected: DoubleWord,
+    desired: DoubleWord,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_DoubleWord(
-        pointer._extract,
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: unsafeBitCast(expected, to: Int64.self),
+      desired: unsafeBitCast(desired, to: Int64.self),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, unsafeBitCast(r.original, to: DoubleWord.self))
   }
 }
+
+
+
+
+#else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+extension DoubleWord: AtomicValue {
+  @frozen
+  public struct AtomicRepresentation {
+    public typealias Value = DoubleWord
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = DoubleWord
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicDoubleWordStorage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value
+#else
+      _storage = _sa_prepare_DoubleWord(value)
+#endif
+    }
+
+    @inline(__always) @_alwaysEmitIntoClient
+    public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage
+#else
+      let v = _sa_dispose_DoubleWord(_storage)
+      return v
+#endif
+    }
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == DoubleWord.AtomicRepresentation {
+  @inlinable @inline(__always)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `DoubleWord.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension DoubleWord.AtomicRepresentation: AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicLoad(
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicLoadOrdering
+  ) -> DoubleWord {
+    let r = pointer._extract._atomicLoad(ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicStore(
+    _ desired: DoubleWord,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicStoreOrdering
+  ) {
+    pointer._extract._atomicStore(
+      desired,
+      ordering: ordering)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicExchange(
+    _ desired: DoubleWord,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> DoubleWord {
+    let r = pointer._extract._atomicExchange(
+      desired,
+      ordering: ordering)
+    return r
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: DoubleWord,
+    desired: DoubleWord,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      ordering: ordering)
+    return (r.exchanged, r.original)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: DoubleWord,
+    desired: DoubleWord,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: DoubleWord,
+    desired: DoubleWord,
+    at pointer: UnsafeMutablePointer<Self>,
+    successOrdering: AtomicUpdateOrdering,
+    failureOrdering: AtomicLoadOrdering
+  ) -> (exchanged: Bool, original: DoubleWord) {
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original)
+  }
+}
+
+#endif /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
 

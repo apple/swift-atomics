@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -18,23 +18,45 @@
 // #############################################################################
 
 
+#if ATOMICS_NATIVE_BUILTINS
+import Swift
+#else
+import _AtomicsShims
+#endif
+
 extension UnsafeRawPointer: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = UnsafeRawPointer
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -44,10 +66,10 @@ extension UnsafeRawPointer.AtomicRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -68,8 +90,7 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -79,7 +100,7 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -89,7 +110,9 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    let v = _extract(pointer)._atomicExchange(
+      _encode(desired), ordering: ordering)
+    return _decode(v)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -100,10 +123,9 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -117,10 +139,9 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -135,10 +156,9 @@ extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -148,19 +168,35 @@ extension UnsafeMutableRawPointer: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = UnsafeMutableRawPointer
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -170,10 +206,10 @@ extension UnsafeMutableRawPointer.AtomicRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -194,8 +230,7 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -205,7 +240,7 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -215,7 +250,9 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    let v = _extract(pointer)._atomicExchange(
+      _encode(desired), ordering: ordering)
+    return _decode(v)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -226,10 +263,9 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -243,10 +279,9 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -261,10 +296,9 @@ extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -274,19 +308,35 @@ extension UnsafePointer: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = UnsafePointer
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -296,10 +346,10 @@ extension UnsafePointer.AtomicRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -320,8 +370,7 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -331,7 +380,7 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -341,7 +390,9 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    let v = _extract(pointer)._atomicExchange(
+      _encode(desired), ordering: ordering)
+    return _decode(v)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -352,10 +403,9 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -369,10 +419,9 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -387,10 +436,9 @@ extension UnsafePointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -400,19 +448,35 @@ extension UnsafeMutablePointer: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = UnsafeMutablePointer
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -422,10 +486,10 @@ extension UnsafeMutablePointer.AtomicRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -446,8 +510,7 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -457,7 +520,7 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -467,7 +530,9 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    let v = _extract(pointer)._atomicExchange(
+      _encode(desired), ordering: ordering)
+    return _decode(v)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -478,10 +543,9 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -495,10 +559,9 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -513,10 +576,9 @@ extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -526,19 +588,35 @@ extension Unmanaged: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = Unmanaged
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -548,10 +626,10 @@ extension Unmanaged.AtomicRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -572,8 +650,7 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -583,7 +660,7 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -593,7 +670,9 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    let v = _extract(pointer)._atomicExchange(
+      _encode(desired), ordering: ordering)
+    return _decode(v)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -604,10 +683,9 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -621,10 +699,9 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -639,10 +716,9 @@ extension Unmanaged.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -654,19 +730,35 @@ extension UnsafeRawPointer: AtomicOptionalWrappable {
   @frozen
   public struct AtomicOptionalRepresentation {
     public typealias Value = UnsafeRawPointer?
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -676,10 +768,10 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -701,8 +793,7 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -712,7 +803,7 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -722,7 +813,7 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    _decode(_extract(pointer)._atomicExchange(_encode(desired), ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -733,10 +824,9 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -750,10 +840,9 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -768,10 +857,9 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -781,19 +869,35 @@ extension UnsafeMutableRawPointer: AtomicOptionalWrappable {
   @frozen
   public struct AtomicOptionalRepresentation {
     public typealias Value = UnsafeMutableRawPointer?
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -803,10 +907,10 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -828,8 +932,7 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -839,7 +942,7 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -849,7 +952,7 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    _decode(_extract(pointer)._atomicExchange(_encode(desired), ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -860,10 +963,9 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -877,10 +979,9 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -895,10 +996,9 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -908,19 +1008,35 @@ extension UnsafePointer: AtomicOptionalWrappable {
   @frozen
   public struct AtomicOptionalRepresentation {
     public typealias Value = UnsafePointer?
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -930,10 +1046,10 @@ extension UnsafePointer.AtomicOptionalRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -955,8 +1071,7 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -966,7 +1081,7 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -976,7 +1091,7 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    _decode(_extract(pointer)._atomicExchange(_encode(desired), ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -987,10 +1102,9 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -1004,10 +1118,9 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -1022,10 +1135,9 @@ extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -1035,19 +1147,35 @@ extension UnsafeMutablePointer: AtomicOptionalWrappable {
   @frozen
   public struct AtomicOptionalRepresentation {
     public typealias Value = UnsafeMutablePointer?
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -1057,10 +1185,10 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -1082,8 +1210,7 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1093,7 +1220,7 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1103,7 +1230,7 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    _decode(_extract(pointer)._atomicExchange(_encode(desired), ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1114,10 +1241,9 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -1131,10 +1257,9 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -1149,10 +1274,9 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -1162,19 +1286,35 @@ extension Unmanaged: AtomicOptionalWrappable {
   @frozen
   public struct AtomicOptionalRepresentation {
     public typealias Value = Unmanaged?
-    @usableFromInline internal typealias Storage = Int.AtomicRepresentation
+
+#if ATOMICS_NATIVE_BUILTINS
+    @usableFromInline
+    internal typealias _Storage = Int
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicIntStorage
+#endif
 
     @usableFromInline
-    internal let _storage: Storage
+    internal let _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
-      self._storage = .init(Self._encode(value))
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage.dispose())
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      let v = _sa_dispose_Int(_storage)
+      return Self._decode(v)
+#endif
     }
   }
 }
@@ -1184,10 +1324,10 @@ extension Unmanaged.AtomicOptionalRepresentation {
   @usableFromInline
   internal static func _extract(
     _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<Storage> {
+  ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: Storage.self)
+      .assumingMemoryBound(to: _Storage.self)
   }
 
   @_transparent @_alwaysEmitIntoClient
@@ -1212,8 +1352,7 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
   ) -> Value {
-    let encoded = Storage.atomicLoad(at: _extract(pointer), ordering: ordering)
-    return _decode(encoded)
+    _decode(_extract(pointer)._atomicLoad(ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1223,7 +1362,7 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
-    Storage.atomicStore(_encode(desired), at: _extract(pointer), ordering: ordering)
+    _extract(pointer)._atomicStore(_encode(desired), ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1233,7 +1372,7 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _decode(Storage.atomicExchange(_encode(desired), at: _extract(pointer), ordering: ordering))
+    _decode(_extract(pointer)._atomicExchange(_encode(desired), ordering: ordering))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1244,10 +1383,9 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       ordering: ordering)
     return (exchanged, _decode(original))
   }
@@ -1261,10 +1399,9 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))
@@ -1279,10 +1416,9 @@ extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
-    let (exchanged, original) = Storage.atomicWeakCompareExchange(
+    let (exchanged, original) = _extract(pointer)._atomicWeakCompareExchange(
       expected: _encode(expected),
       desired: _encode(desired),
-      at: _extract(pointer),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
     return (exchanged, _decode(original))

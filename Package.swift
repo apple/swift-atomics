@@ -13,6 +13,24 @@
 
 import PackageDescription
 
+// Enables the use of native Swift compiler builtins instead of C atomics.
+// This requires the use of an unsafe compiler flag, so it cannot currently
+// be enabled when this package is built as a regular SwiftPM dependency.
+let useNativeBuiltins = false
+
+var _cSettings: [CSetting] = []
+var _swiftSettings: [SwiftSetting] = []
+
+if useNativeBuiltins {
+  _cSettings += [
+    .define("ATOMICS_NATIVE_BUILTINS"),
+  ]
+  _swiftSettings += [
+    .define("ATOMICS_NATIVE_BUILTINS"),
+    .unsafeFlags(["-Xfrontend", "-parse-stdlib"]),
+  ]
+}
+
 let package = Package(
   name: "swift-atomics",
   products: [
@@ -32,12 +50,15 @@ let package = Package(
       dependencies: ["_AtomicsShims"],
       exclude: [
         "CMakeLists.txt",
+        "Builtins.swift.gyb",
         "HighLevelTypes.swift.gyb",
         "PointerConformances.swift.gyb",
         "IntegerConformances.swift.gyb",
         "AtomicBool.swift.gyb",
         "AtomicLazyReference.swift.gyb",
-      ]
+      ],
+      cSettings: _cSettings,
+      swiftSettings: _swiftSettings
     ),
     .testTarget(
       name: "AtomicsTests",

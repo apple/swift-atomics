@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -18,36 +18,68 @@
 // #############################################################################
 
 
+#if ATOMICS_NATIVE_BUILTINS
+import Swift
+#else
 import _AtomicsShims
+#endif
 
 extension Bool: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = Bool
+
+#if ATOMICS_NATIVE_BUILTINS
     @usableFromInline
-    internal var _storage: _AtomicBoolStorage
+    internal typealias _Storage = Int8
+#else
+    @usableFromInline
+    internal typealias _Storage = _AtomicInt8Storage
+#endif
+
+    @usableFromInline
+    internal var _storage: _Storage
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Bool) {
-      _storage = _sa_prepare_Bool(value)
+#if ATOMICS_NATIVE_BUILTINS
+      _storage = value._atomicValue
+#else
+      _storage = _sa_prepare_Int8(value._atomicValue)
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      _sa_dispose_Bool(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return _storage._atomicBoolValue
+#else
+      return _sa_dispose_Int8(_storage)._atomicBoolValue
+#endif
     }
+  }
+
+  @_alwaysEmitIntoClient @inline(__always)
+  internal var _atomicValue: Int8 {
+    self ? 1 : 0
   }
 }
 
-extension Bool.AtomicRepresentation {
+extension Int8 {
+  @_alwaysEmitIntoClient @inline(__always)
+  internal var _atomicBoolValue: Bool {
+    (self & 1) != 0
+  }
+}
+
+extension UnsafeMutablePointer
+where Pointee == Bool.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   @usableFromInline
-  static func _extract(
-    _ ptr: UnsafeMutablePointer<Self>
-  ) -> UnsafeMutablePointer<_AtomicBoolStorage> {
-    // `Self` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(ptr)
-      .assumingMemoryBound(to: _AtomicBoolStorage.self)
+  internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
+    // `Bool.AtomicRepresentation` is layout-compatible with
+    // its only stored property.
+    UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
   }
 }
 
@@ -58,16 +90,7 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicLoadOrdering
   ) -> Bool {
-    switch ordering {
-    case .relaxed:
-      return _sa_load_relaxed_Bool(_extract(pointer))
-    case .acquiring:
-      return _sa_load_acquire_Bool(_extract(pointer))
-    case .sequentiallyConsistent:
-      return _sa_load_seq_cst_Bool(_extract(pointer))
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicLoad(ordering: ordering)._atomicBoolValue
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -77,16 +100,7 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicStoreOrdering
   ) {
-    switch ordering {
-    case .relaxed:
-      _sa_store_relaxed_Bool(_extract(pointer), desired)
-    case .releasing:
-      _sa_store_release_Bool(_extract(pointer), desired)
-    case .sequentiallyConsistent:
-      _sa_store_seq_cst_Bool(_extract(pointer), desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicStore(desired._atomicValue, ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -96,20 +110,9 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicUpdateOrdering
   ) -> Bool {
-    switch ordering {
-    case .relaxed:
-      return _sa_exchange_relaxed_Bool(_extract(pointer), desired)
-    case .acquiring:
-      return _sa_exchange_acquire_Bool(_extract(pointer), desired)
-    case .releasing:
-      return _sa_exchange_release_Bool(_extract(pointer), desired)
-    case .acquiringAndReleasing:
-      return _sa_exchange_acq_rel_Bool(_extract(pointer), desired)
-    case .sequentiallyConsistent:
-      return _sa_exchange_seq_cst_Bool(_extract(pointer), desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicExchange(
+      desired._atomicValue, ordering: ordering
+    )._atomicBoolValue
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -120,33 +123,11 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Bool) {
-    var expected = expected
-    let exchanged: Bool
-    switch ordering {
-    case .relaxed:
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Bool(
-        _extract(pointer),
-        &expected, desired)
-    case .acquiring:
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Bool(
-        _extract(pointer),
-        &expected, desired)
-    case .releasing:
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Bool(
-        _extract(pointer),
-        &expected, desired)
-    case .acquiringAndReleasing:
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Bool(
-        _extract(pointer),
-        &expected, desired)
-    case .sequentiallyConsistent:
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected, desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected._atomicValue,
+      desired: desired._atomicValue,
+      ordering: ordering)
+    return (r.exchanged, r.original._atomicBoolValue)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -158,92 +139,12 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Bool) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acquire_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acquire_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_release_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_strong_acq_rel_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_strong_acq_rel_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_strong_seq_cst_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_strong_seq_cst_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_strong_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+    let r = pointer._extract._atomicCompareExchange(
+      expected: expected._atomicValue,
+      desired: desired._atomicValue,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original._atomicBoolValue)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -255,92 +156,12 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Bool) {
-    var expected = expected
-    let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
-    switch (successOrdering, failureOrdering) {
-    case (.relaxed, .relaxed):
-      exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.relaxed, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.relaxed, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acquire_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acquire_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiring, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_release_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.releasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .relaxed):
-      exchanged = _sa_cmpxchg_weak_acq_rel_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .acquiring):
-      exchanged = _sa_cmpxchg_weak_acq_rel_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.acquiringAndReleasing, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .relaxed):
-      exchanged = _sa_cmpxchg_weak_seq_cst_relaxed_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .acquiring):
-      exchanged = _sa_cmpxchg_weak_seq_cst_acquire_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    case (.sequentiallyConsistent, .sequentiallyConsistent):
-      exchanged = _sa_cmpxchg_weak_seq_cst_seq_cst_Bool(
-        _extract(pointer),
-        &expected,
-        desired)
-    default:
-      fatalError("Unsupported ordering")
-    }
-    return (exchanged, expected)
+    let r = pointer._extract._atomicWeakCompareExchange(
+      expected: expected._atomicValue,
+      desired: desired._atomicValue,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+    return (r.exchanged, r.original._atomicBoolValue)
   }
 }
 
@@ -364,30 +185,9 @@ extension Bool.AtomicRepresentation {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_and_relaxed_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiring:
-      return _sa_fetch_and_acquire_Bool(
-        _extract(pointer),
-        operand)
-    case .releasing:
-      return _sa_fetch_and_release_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_and_acq_rel_Bool(
-        _extract(pointer),
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_and_seq_cst_Bool(
-        _extract(pointer),
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicLoadThenBitwiseAnd(
+      with: operand._atomicValue, ordering: ordering
+    )._atomicBoolValue
   }
   /// Perform an atomic logical OR operation on the value referenced by
   /// `pointer` and return the original value, applying the specified memory
@@ -405,30 +205,9 @@ extension Bool.AtomicRepresentation {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_or_relaxed_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiring:
-      return _sa_fetch_or_acquire_Bool(
-        _extract(pointer),
-        operand)
-    case .releasing:
-      return _sa_fetch_or_release_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_or_acq_rel_Bool(
-        _extract(pointer),
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_or_seq_cst_Bool(
-        _extract(pointer),
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicLoadThenBitwiseOr(
+      with: operand._atomicValue, ordering: ordering
+    )._atomicBoolValue
   }
   /// Perform an atomic logical XOR operation on the value referenced by
   /// `pointer` and return the original value, applying the specified memory
@@ -446,30 +225,9 @@ extension Bool.AtomicRepresentation {
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    switch ordering {
-    case .relaxed:
-      return _sa_fetch_xor_relaxed_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiring:
-      return _sa_fetch_xor_acquire_Bool(
-        _extract(pointer),
-        operand)
-    case .releasing:
-      return _sa_fetch_xor_release_Bool(
-        _extract(pointer),
-        operand)
-    case .acquiringAndReleasing:
-      return _sa_fetch_xor_acq_rel_Bool(
-        _extract(pointer),
-        operand)
-    case .sequentiallyConsistent:
-      return _sa_fetch_xor_seq_cst_Bool(
-        _extract(pointer),
-        operand)
-    default:
-      fatalError("Unsupported ordering")
-    }
+    pointer._extract._atomicLoadThenBitwiseXor(
+      with: operand._atomicValue, ordering: ordering
+    )._atomicBoolValue
   }
 }
 
