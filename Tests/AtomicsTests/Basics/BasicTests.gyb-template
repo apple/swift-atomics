@@ -125,12 +125,13 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % end
 
-% for (order, _, _, _, _) in updateOrderings:
-  func test_compareExchange_${order}() {
+% for operation in ["compareExchange", "weakCompareExchange"]:
+%   for (order, _, _, _, _) in updateOrderings:
+  func test_${operation}_${order}() {
     let v: UnsafeAtomic<${type}> = .create(${a})
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, ${type}) = v.compareExchange(
+    var (exchanged, original): (Bool, ${type}) = v.${operation}(
       expected: ${a},
       desired: ${b},
       ordering: .${order})
@@ -138,7 +139,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${a})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${a},
       desired: ${b},
       ordering: .${order})
@@ -146,7 +147,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${b})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${b},
       desired: ${a},
       ordering: .${order})
@@ -154,7 +155,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(original, ${b})
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
 
-    (exchanged, original) = v.compareExchange(
+    (exchanged, original) = v.${operation}(
       expected: ${b},
       desired: ${a},
       ordering: .${order})
@@ -163,6 +164,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
   }
 
+%   end
 % end
 
 % for operation in ["compareExchange", "weakCompareExchange"]:

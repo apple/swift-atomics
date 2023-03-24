@@ -177,6 +177,43 @@ public protocol AtomicStorage {
   ) -> (exchanged: Bool, original: Value)
 
   /// Perform an atomic weak compare and exchange operation on the value
+  /// referenced by `pointer`, applying the specified memory orderings.
+  /// This compare-exchange variant is allowed to spuriously fail; it
+  /// is designed to be called in a loop until it indicates a successful
+  /// exchange has happened.
+  ///
+  /// This operation performs the following algorithm as a single atomic
+  /// transaction:
+  ///
+  /// ```
+  /// atomic(self) { currentValue in
+  ///   let original = currentValue
+  ///   guard original == expected else { return (false, original) }
+  ///   currentValue = desired
+  ///   return (true, original)
+  /// }
+  /// ```
+  ///
+  /// (In this weak form, transient conditions may cause the `original ==
+  /// expected` check to sometimes return false when the two values are in fact
+  /// the same.)
+  ///
+  /// - Parameter expected: The expected current value.
+  /// - Parameter desired: The desired new value.
+  /// - Parameter pointer: A memory location previously initialized with a value
+  ///   returned by `prepareAtomicRepresentation(for:)`.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
+  ///   the exchange was successful, and `original` is the original value.
+  @_semantics("atomics.requires_constant_orderings")
+  static func atomicWeakCompareExchange(
+    expected: Value,
+    desired: __owned Value,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: Value)
+
+  /// Perform an atomic weak compare and exchange operation on the value
   /// referenced by `pointer`, applying the specified success/failure memory
   /// orderings. This compare-exchange variant is allowed to spuriously fail; it
   /// is designed to be called in a loop until it indicates a successful
@@ -220,4 +257,38 @@ public protocol AtomicStorage {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value)
+}
+
+extension AtomicStorage {
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicCompareExchange(
+    expected: Value,
+    desired: __owned Value,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: Value) {
+    atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: pointer,
+      successOrdering: ordering,
+      failureOrdering: ._failureOrdering(for: ordering))
+  }
+
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public static func atomicWeakCompareExchange(
+    expected: Value,
+    desired: __owned Value,
+    at pointer: UnsafeMutablePointer<Self>,
+    ordering: AtomicUpdateOrdering
+  ) -> (exchanged: Bool, original: Value) {
+    atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: pointer,
+      successOrdering: ordering,
+      failureOrdering: ._failureOrdering(for: ordering))
+  }
 }

@@ -289,6 +289,24 @@ extension AtomicUpdateOrdering: CustomStringConvertible {
   }
 }
 
+extension AtomicLoadOrdering {
+  @_semantics("constant_evaluable")
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  static func _failureOrdering(
+    for ordering: AtomicUpdateOrdering
+  ) -> AtomicLoadOrdering {
+    switch ordering {
+    case .relaxed: return .relaxed
+    case .acquiring: return .acquiring
+    case .releasing: return .relaxed
+    case .acquiringAndReleasing: return .acquiring
+    case .sequentiallyConsistent: return .sequentiallyConsistent
+    default: fatalError("Unsupported ordering")
+    }
+  }
+}
+
 /// Establishes a memory ordering without associating it with a
 /// particular atomic operation.
 ///

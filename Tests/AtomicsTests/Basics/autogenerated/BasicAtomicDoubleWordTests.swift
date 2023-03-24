@@ -359,6 +359,191 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
   }
 
+  func test_weakCompareExchange_relaxed() {
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+  }
+
+  func test_weakCompareExchange_acquiring() {
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+  }
+
+  func test_weakCompareExchange_releasing() {
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+  }
+
+  func test_weakCompareExchange_acquiringAndReleasing() {
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+  }
+
+  func test_weakCompareExchange_sequentiallyConsistent() {
+    let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 100, second: 64),
+      desired: DoubleWord(first: 50, second: 32),
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: DoubleWord(first: 50, second: 32),
+      desired: DoubleWord(first: 100, second: 64),
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
+    XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
+  }
+
 
   func test_compareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
