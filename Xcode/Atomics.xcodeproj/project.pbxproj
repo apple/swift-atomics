@@ -1,0 +1,732 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7D489E4829CE969D00499B21 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D489E3F29CE969D00499B21 /* Atomics.framework */; };
+		7D489EDB29CE96DA00499B21 /* AtomicStrongReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */; };
+		7D489EDC29CE96DA00499B21 /* AtomicInteger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5B29CE96D900499B21 /* AtomicInteger.swift */; };
+		7D489EDF29CE96DA00499B21 /* AtomicOptionalRawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */; };
+		7D489EE029CE96DA00499B21 /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5F29CE96D900499B21 /* AtomicValue.swift */; };
+		7D489EE329CE96DA00499B21 /* AtomicRawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */; };
+		7D489EE429CE96DA00499B21 /* DoubleWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6329CE96D900499B21 /* DoubleWord.swift */; };
+		7D489EE629CE96DA00499B21 /* Unmanaged extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */; };
+		7D489EE829CE96DA00499B21 /* AtomicOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6729CE96D900499B21 /* AtomicOptional.swift */; };
+		7D489EEA29CE96DA00499B21 /* AtomicMemoryOrderings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */; };
+		7D489EED29CE96DA00499B21 /* AtomicLazyReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */; };
+		7D489EEE29CE96DA00499B21 /* IntegerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6E29CE96D900499B21 /* IntegerConformances.swift */; };
+		7D489EEF29CE96DA00499B21 /* PointerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6F29CE96D900499B21 /* PointerConformances.swift */; };
+		7D489EF029CE96DA00499B21 /* Primitives.native.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7029CE96D900499B21 /* Primitives.native.swift */; };
+		7D489EF129CE96DA00499B21 /* Primitives.shims.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7129CE96D900499B21 /* Primitives.shims.swift */; };
+		7D489EF229CE96DA00499B21 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7229CE96D900499B21 /* AtomicBool.swift */; };
+		7D489EF329CE96DA00499B21 /* HighLevelTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7329CE96D900499B21 /* HighLevelTypes.swift */; };
+		7D489EF529CE96DA00499B21 /* _AtomicsShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D489E7729CE96D900499B21 /* _AtomicsShims.h */; };
+		7D489EF629CE96DA00499B21 /* _AtomicsShims.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7A29CE96D900499B21 /* _AtomicsShims.c */; };
+		7D489F4A29CE976800499B21 /* StrongReferenceShuffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EBC29CE96DA00499B21 /* StrongReferenceShuffle.swift */; };
+		7D489F4B29CE976800499B21 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EBD29CE96DA00499B21 /* main.swift */; };
+		7D489F4C29CE976800499B21 /* LockFreeSingleConsumerStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB929CE96DA00499B21 /* LockFreeSingleConsumerStack.swift */; };
+		7D489F4D29CE976800499B21 /* StrongReferenceSubclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB729CE96DA00499B21 /* StrongReferenceSubclass.swift */; };
+		7D489F4E29CE976800499B21 /* LifetimeTracked.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB629CE96DA00499B21 /* LifetimeTracked.swift */; };
+		7D489F4F29CE976800499B21 /* DoubleWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EBB29CE96DA00499B21 /* DoubleWord.swift */; };
+		7D489F5029CE976800499B21 /* StrongReferenceRace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB829CE96DA00499B21 /* StrongReferenceRace.swift */; };
+		7D489F5129CE976800499B21 /* LockFreeQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EBA29CE96DA00499B21 /* LockFreeQueue.swift */; };
+		7D489F5229CE976B00499B21 /* AtomicLazyReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7D29CE96D900499B21 /* AtomicLazyReference.swift */; };
+		7D489F5329CE977200499B21 /* BasicTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E8729CE96D900499B21 /* BasicTestSupport.swift */; };
+		7D489F5429CE978100499B21 /* BasicAtomicInt16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAA29CE96DA00499B21 /* BasicAtomicInt16Tests.swift */; };
+		7D489F5529CE978100499B21 /* BasicAtomicMutablePointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E9F29CE96D900499B21 /* BasicAtomicMutablePointerTests.swift */; };
+		7D489F5629CE978100499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAF29CE96DA00499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift */; };
+		7D489F5729CE978100499B21 /* BasicAtomicOptionalPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAB29CE96DA00499B21 /* BasicAtomicOptionalPointerTests.swift */; };
+		7D489F5829CE978100499B21 /* BasicAtomicOptionalMutablePointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E9D29CE96D900499B21 /* BasicAtomicOptionalMutablePointerTests.swift */; };
+		7D489F5929CE978100499B21 /* BasicAtomicRawPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA029CE96DA00499B21 /* BasicAtomicRawPointerTests.swift */; };
+		7D489F5A29CE978100499B21 /* BasicAtomicMutableRawPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB529CE96DA00499B21 /* BasicAtomicMutableRawPointerTests.swift */; };
+		7D489F5B29CE978100499B21 /* BasicAtomicUInt64Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA829CE96DA00499B21 /* BasicAtomicUInt64Tests.swift */; };
+		7D489F5C29CE978100499B21 /* BasicAtomicUInt32Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAC29CE96DA00499B21 /* BasicAtomicUInt32Tests.swift */; };
+		7D489F5D29CE978100499B21 /* BasicAtomicBoolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA229CE96DA00499B21 /* BasicAtomicBoolTests.swift */; };
+		7D489F5E29CE978100499B21 /* BasicAtomicOptionalUnmanagedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA729CE96DA00499B21 /* BasicAtomicOptionalUnmanagedTests.swift */; };
+		7D489F5F29CE978100499B21 /* BasicAtomicOptionalRawPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAE29CE96DA00499B21 /* BasicAtomicOptionalRawPointerTests.swift */; };
+		7D489F6029CE978100499B21 /* BasicAtomicUInt16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB229CE96DA00499B21 /* BasicAtomicUInt16Tests.swift */; };
+		7D489F6129CE978100499B21 /* BasicAtomicInt32Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB329CE96DA00499B21 /* BasicAtomicInt32Tests.swift */; };
+		7D489F6229CE978100499B21 /* BasicAtomicUIntTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB429CE96DA00499B21 /* BasicAtomicUIntTests.swift */; };
+		7D489F6329CE978100499B21 /* BasicAtomicInt64Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E9E29CE96D900499B21 /* BasicAtomicInt64Tests.swift */; };
+		7D489F6429CE978100499B21 /* BasicAtomicReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA329CE96DA00499B21 /* BasicAtomicReferenceTests.swift */; };
+		7D489F6529CE978100499B21 /* BasicAtomicInt8Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E9C29CE96D900499B21 /* BasicAtomicInt8Tests.swift */; };
+		7D489F6629CE978100499B21 /* BasicAtomicDoubleWordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB029CE96DA00499B21 /* BasicAtomicDoubleWordTests.swift */; };
+		7D489F6729CE978100499B21 /* BasicAtomicPointerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EB129CE96DA00499B21 /* BasicAtomicPointerTests.swift */; };
+		7D489F6829CE978100499B21 /* BasicAtomicOptionalRawRepresentableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EAD29CE96DA00499B21 /* BasicAtomicOptionalRawRepresentableTests.swift */; };
+		7D489F6929CE978100499B21 /* BasicAtomicIntTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA529CE96DA00499B21 /* BasicAtomicIntTests.swift */; };
+		7D489F6A29CE978100499B21 /* BasicAtomicUInt8Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA929CE96DA00499B21 /* BasicAtomicUInt8Tests.swift */; };
+		7D489F6B29CE978100499B21 /* BasicAtomicOptionalReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA629CE96DA00499B21 /* BasicAtomicOptionalReferenceTests.swift */; };
+		7D489F6C29CE978100499B21 /* BasicAtomicUnmanagedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA129CE96DA00499B21 /* BasicAtomicUnmanagedTests.swift */; };
+		7D489F6D29CE978100499B21 /* BasicAtomicRawRepresentableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA429CE96DA00499B21 /* BasicAtomicRawRepresentableTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7D489E4929CE969D00499B21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D489E3629CE969D00499B21 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D489E3E29CE969D00499B21;
+			remoteInfo = Atomics;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		7D489E3F29CE969D00499B21 /* Atomics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D489E4729CE969D00499B21 /* AtomicsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AtomicsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D489E5829CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicStrongReference.swift; sourceTree = "<group>"; };
+		7D489E5B29CE96D900499B21 /* AtomicInteger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicInteger.swift; sourceTree = "<group>"; };
+		7D489E5C29CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		7D489E5D29CE96D900499B21 /* AtomicLazyReference.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicLazyReference.swift.gyb; sourceTree = "<group>"; };
+		7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicOptionalRawRepresentable.swift; sourceTree = "<group>"; };
+		7D489E5F29CE96D900499B21 /* AtomicValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicValue.swift; sourceTree = "<group>"; };
+		7D489E6029CE96D900499B21 /* Primitives.shims.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.shims.swift.gyb; sourceTree = "<group>"; };
+		7D489E6129CE96D900499B21 /* AtomicBool.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicBool.swift.gyb; sourceTree = "<group>"; };
+		7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicRawRepresentable.swift; sourceTree = "<group>"; };
+		7D489E6329CE96D900499B21 /* DoubleWord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleWord.swift; sourceTree = "<group>"; };
+		7D489E6429CE96D900499B21 /* HighLevelTypes.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighLevelTypes.swift.gyb; sourceTree = "<group>"; };
+		7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Unmanaged extensions.swift"; sourceTree = "<group>"; };
+		7D489E6629CE96D900499B21 /* PointerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PointerConformances.swift.gyb; sourceTree = "<group>"; };
+		7D489E6729CE96D900499B21 /* AtomicOptional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicOptional.swift; sourceTree = "<group>"; };
+		7D489E6829CE96D900499B21 /* Primitives.native.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.native.swift.gyb; sourceTree = "<group>"; };
+		7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicMemoryOrderings.swift; sourceTree = "<group>"; };
+		7D489E6A29CE96D900499B21 /* Atomics.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Atomics.docc; sourceTree = "<group>"; };
+		7D489E6B29CE96D900499B21 /* IntegerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IntegerConformances.swift.gyb; sourceTree = "<group>"; };
+		7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicLazyReference.swift; sourceTree = "<group>"; };
+		7D489E6E29CE96D900499B21 /* IntegerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerConformances.swift; sourceTree = "<group>"; };
+		7D489E6F29CE96D900499B21 /* PointerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerConformances.swift; sourceTree = "<group>"; };
+		7D489E7029CE96D900499B21 /* Primitives.native.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.native.swift; sourceTree = "<group>"; };
+		7D489E7129CE96D900499B21 /* Primitives.shims.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.shims.swift; sourceTree = "<group>"; };
+		7D489E7229CE96D900499B21 /* AtomicBool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
+		7D489E7329CE96D900499B21 /* HighLevelTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighLevelTypes.swift; sourceTree = "<group>"; };
+		7D489E7529CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		7D489E7729CE96D900499B21 /* _AtomicsShims.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _AtomicsShims.h; sourceTree = "<group>"; };
+		7D489E7829CE96D900499B21 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		7D489E7A29CE96D900499B21 /* _AtomicsShims.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = _AtomicsShims.c; sourceTree = "<group>"; };
+		7D489E7D29CE96D900499B21 /* AtomicLazyReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicLazyReference.swift; sourceTree = "<group>"; };
+		7D489E7F29CE96D900499B21 /* BasicAtomicIntTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicIntTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8029CE96D900499B21 /* BasicAtomicUInt8Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUInt8Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8129CE96D900499B21 /* BasicTests.gyb-template */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "BasicTests.gyb-template"; sourceTree = "<group>"; };
+		7D489E8229CE96D900499B21 /* BasicAtomicInt32Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicInt32Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8329CE96D900499B21 /* BasicAtomicPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8429CE96D900499B21 /* BasicAtomicInt8Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicInt8Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8529CE96D900499B21 /* BasicAtomicOptionalPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8629CE96D900499B21 /* BasicAtomicBoolTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicBoolTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8729CE96D900499B21 /* BasicTestSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTestSupport.swift; sourceTree = "<group>"; };
+		7D489E8829CE96D900499B21 /* BasicAtomicMutableRawPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicMutableRawPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8929CE96D900499B21 /* BasicAtomicMutablePointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicMutablePointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8A29CE96D900499B21 /* BasicAtomicUInt32Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUInt32Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8B29CE96D900499B21 /* BasicAtomicOptionalRawPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalRawPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8C29CE96D900499B21 /* BasicAtomicDoubleWordTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicDoubleWordTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8D29CE96D900499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalMutableRawPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8E29CE96D900499B21 /* BasicAtomicReferenceTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicReferenceTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E8F29CE96D900499B21 /* BasicAtomicUInt64Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUInt64Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9029CE96D900499B21 /* BasicAtomicOptionalUnmanagedTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalUnmanagedTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9129CE96D900499B21 /* BasicAtomicOptionalMutablePointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalMutablePointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9229CE96D900499B21 /* BasicAtomicInt16Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicInt16Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9329CE96D900499B21 /* BasicAtomicOptionalRawRepresentableTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalRawRepresentableTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9429CE96D900499B21 /* BasicAtomicRawRepresentableTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicRawRepresentableTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9529CE96D900499B21 /* BasicAtomicRawPointerTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicRawPointerTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9629CE96D900499B21 /* BasicAtomicUIntTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUIntTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9729CE96D900499B21 /* BasicAtomicUnmanagedTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUnmanagedTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9829CE96D900499B21 /* BasicAtomicOptionalReferenceTests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicOptionalReferenceTests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9929CE96D900499B21 /* BasicAtomicInt64Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicInt64Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9A29CE96D900499B21 /* BasicAtomicUInt16Tests.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicAtomicUInt16Tests.swift.gyb; sourceTree = "<group>"; };
+		7D489E9C29CE96D900499B21 /* BasicAtomicInt8Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicInt8Tests.swift; sourceTree = "<group>"; };
+		7D489E9D29CE96D900499B21 /* BasicAtomicOptionalMutablePointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalMutablePointerTests.swift; sourceTree = "<group>"; };
+		7D489E9E29CE96D900499B21 /* BasicAtomicInt64Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicInt64Tests.swift; sourceTree = "<group>"; };
+		7D489E9F29CE96D900499B21 /* BasicAtomicMutablePointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicMutablePointerTests.swift; sourceTree = "<group>"; };
+		7D489EA029CE96DA00499B21 /* BasicAtomicRawPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicRawPointerTests.swift; sourceTree = "<group>"; };
+		7D489EA129CE96DA00499B21 /* BasicAtomicUnmanagedTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUnmanagedTests.swift; sourceTree = "<group>"; };
+		7D489EA229CE96DA00499B21 /* BasicAtomicBoolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicBoolTests.swift; sourceTree = "<group>"; };
+		7D489EA329CE96DA00499B21 /* BasicAtomicReferenceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicReferenceTests.swift; sourceTree = "<group>"; };
+		7D489EA429CE96DA00499B21 /* BasicAtomicRawRepresentableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicRawRepresentableTests.swift; sourceTree = "<group>"; };
+		7D489EA529CE96DA00499B21 /* BasicAtomicIntTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicIntTests.swift; sourceTree = "<group>"; };
+		7D489EA629CE96DA00499B21 /* BasicAtomicOptionalReferenceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalReferenceTests.swift; sourceTree = "<group>"; };
+		7D489EA729CE96DA00499B21 /* BasicAtomicOptionalUnmanagedTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalUnmanagedTests.swift; sourceTree = "<group>"; };
+		7D489EA829CE96DA00499B21 /* BasicAtomicUInt64Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUInt64Tests.swift; sourceTree = "<group>"; };
+		7D489EA929CE96DA00499B21 /* BasicAtomicUInt8Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUInt8Tests.swift; sourceTree = "<group>"; };
+		7D489EAA29CE96DA00499B21 /* BasicAtomicInt16Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicInt16Tests.swift; sourceTree = "<group>"; };
+		7D489EAB29CE96DA00499B21 /* BasicAtomicOptionalPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalPointerTests.swift; sourceTree = "<group>"; };
+		7D489EAC29CE96DA00499B21 /* BasicAtomicUInt32Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUInt32Tests.swift; sourceTree = "<group>"; };
+		7D489EAD29CE96DA00499B21 /* BasicAtomicOptionalRawRepresentableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalRawRepresentableTests.swift; sourceTree = "<group>"; };
+		7D489EAE29CE96DA00499B21 /* BasicAtomicOptionalRawPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalRawPointerTests.swift; sourceTree = "<group>"; };
+		7D489EAF29CE96DA00499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicOptionalMutableRawPointerTests.swift; sourceTree = "<group>"; };
+		7D489EB029CE96DA00499B21 /* BasicAtomicDoubleWordTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicDoubleWordTests.swift; sourceTree = "<group>"; };
+		7D489EB129CE96DA00499B21 /* BasicAtomicPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicPointerTests.swift; sourceTree = "<group>"; };
+		7D489EB229CE96DA00499B21 /* BasicAtomicUInt16Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUInt16Tests.swift; sourceTree = "<group>"; };
+		7D489EB329CE96DA00499B21 /* BasicAtomicInt32Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicInt32Tests.swift; sourceTree = "<group>"; };
+		7D489EB429CE96DA00499B21 /* BasicAtomicUIntTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicUIntTests.swift; sourceTree = "<group>"; };
+		7D489EB529CE96DA00499B21 /* BasicAtomicMutableRawPointerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAtomicMutableRawPointerTests.swift; sourceTree = "<group>"; };
+		7D489EB629CE96DA00499B21 /* LifetimeTracked.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LifetimeTracked.swift; sourceTree = "<group>"; };
+		7D489EB729CE96DA00499B21 /* StrongReferenceSubclass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrongReferenceSubclass.swift; sourceTree = "<group>"; };
+		7D489EB829CE96DA00499B21 /* StrongReferenceRace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrongReferenceRace.swift; sourceTree = "<group>"; };
+		7D489EB929CE96DA00499B21 /* LockFreeSingleConsumerStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockFreeSingleConsumerStack.swift; sourceTree = "<group>"; };
+		7D489EBA29CE96DA00499B21 /* LockFreeQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockFreeQueue.swift; sourceTree = "<group>"; };
+		7D489EBB29CE96DA00499B21 /* DoubleWord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleWord.swift; sourceTree = "<group>"; };
+		7D489EBC29CE96DA00499B21 /* StrongReferenceShuffle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrongReferenceShuffle.swift; sourceTree = "<group>"; };
+		7D489EBD29CE96DA00499B21 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		7D489EBE29CE96DA00499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		7D489EC029CE96DA00499B21 /* UnsafeAtomicInitializers.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UnsafeAtomicInitializers.swift.gyb; sourceTree = "<group>"; };
+		7D489EC129CE96DA00499B21 /* AtomicsFolding.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicsFolding.swift.gyb; sourceTree = "<group>"; };
+		7D489EC329CE96DA00499B21 /* UnsafeAtomicInitializers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafeAtomicInitializers.swift; sourceTree = "<group>"; };
+		7D489EC429CE96DA00499B21 /* AtomicsFolding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicsFolding.swift; sourceTree = "<group>"; };
+		7D489EC529CE96DA00499B21 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../Package.swift; sourceTree = "<group>"; };
+		7D489EC629CE96DA00499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = ../CMakeLists.txt; sourceTree = "<group>"; };
+		7D489EC829CE96DA00499B21 /* gyb.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gyb.py; sourceTree = "<group>"; };
+		7D489EC929CE96DA00499B21 /* run-full-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-full-tests.sh"; sourceTree = "<group>"; };
+		7D489ECD29CE96DA00499B21 /* gyb_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gyb_utils.py; sourceTree = "<group>"; };
+		7D489ECE29CE96DA00499B21 /* gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gyb; sourceTree = "<group>"; };
+		7D489ECF29CE96DA00499B21 /* generate-sources.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "generate-sources.sh"; sourceTree = "<group>"; };
+		7D489ED029CE96DA00499B21 /* generate-docs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "generate-docs.sh"; sourceTree = "<group>"; };
+		7D489ED129CE96DA00499B21 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = ../LICENSE.txt; sourceTree = "<group>"; };
+		7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Atomics.xcodeproj; sourceTree = "<group>"; };
+		7D489ED629CE96DA00499B21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		7D489ED729CE96DA00499B21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		7D489ED829CE96DA00499B21 /* CONTRIBUTING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CONTRIBUTING.md; path = ../CONTRIBUTING.md; sourceTree = "<group>"; };
+		7D489ED929CE96DA00499B21 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ../CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
+		7D489F6F29CE986A00499B21 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		7D489F7029CE986A00499B21 /* Atomics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Atomics.xcconfig; sourceTree = "<group>"; };
+		7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AtomicsTests.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7D489E3C29CE969D00499B21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D489E4429CE969D00499B21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D489E4829CE969D00499B21 /* Atomics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7D489E3529CE969D00499B21 = {
+			isa = PBXGroup;
+			children = (
+				7D489EC529CE96DA00499B21 /* Package.swift */,
+				7D489EC629CE96DA00499B21 /* CMakeLists.txt */,
+				7D489ED929CE96DA00499B21 /* CODE_OF_CONDUCT.md */,
+				7D489ED829CE96DA00499B21 /* CONTRIBUTING.md */,
+				7D489ED129CE96DA00499B21 /* LICENSE.txt */,
+				7D489ED729CE96DA00499B21 /* README.md */,
+				7D489E5729CE96D900499B21 /* Sources */,
+				7D489E7B29CE96D900499B21 /* Tests */,
+				7D489EC729CE96DA00499B21 /* Utilities */,
+				7D489ED229CE96DA00499B21 /* Xcode */,
+				7D489E4029CE969D00499B21 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7D489E4029CE969D00499B21 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E3F29CE969D00499B21 /* Atomics.framework */,
+				7D489E4729CE969D00499B21 /* AtomicsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7D489E5729CE96D900499B21 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E5829CE96D900499B21 /* CMakeLists.txt */,
+				7D489E5929CE96D900499B21 /* Atomics */,
+				7D489E7429CE96D900499B21 /* _AtomicsShims */,
+			);
+			name = Sources;
+			path = ../Sources;
+			sourceTree = "<group>";
+		};
+		7D489E5929CE96D900499B21 /* Atomics */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E6C29CE96D900499B21 /* autogenerated */,
+				7D489E6129CE96D900499B21 /* AtomicBool.swift.gyb */,
+				7D489E5B29CE96D900499B21 /* AtomicInteger.swift */,
+				7D489E5D29CE96D900499B21 /* AtomicLazyReference.swift.gyb */,
+				7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */,
+				7D489E6729CE96D900499B21 /* AtomicOptional.swift */,
+				7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */,
+				7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */,
+				7D489E6A29CE96D900499B21 /* Atomics.docc */,
+				7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */,
+				7D489E5F29CE96D900499B21 /* AtomicValue.swift */,
+				7D489E5C29CE96D900499B21 /* CMakeLists.txt */,
+				7D489E6329CE96D900499B21 /* DoubleWord.swift */,
+				7D489E6429CE96D900499B21 /* HighLevelTypes.swift.gyb */,
+				7D489E6B29CE96D900499B21 /* IntegerConformances.swift.gyb */,
+				7D489E6629CE96D900499B21 /* PointerConformances.swift.gyb */,
+				7D489E6829CE96D900499B21 /* Primitives.native.swift.gyb */,
+				7D489E6029CE96D900499B21 /* Primitives.shims.swift.gyb */,
+				7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */,
+			);
+			path = Atomics;
+			sourceTree = "<group>";
+		};
+		7D489E6C29CE96D900499B21 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7229CE96D900499B21 /* AtomicBool.swift */,
+				7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */,
+				7D489E7329CE96D900499B21 /* HighLevelTypes.swift */,
+				7D489E6E29CE96D900499B21 /* IntegerConformances.swift */,
+				7D489E6F29CE96D900499B21 /* PointerConformances.swift */,
+				7D489E7029CE96D900499B21 /* Primitives.native.swift */,
+				7D489E7129CE96D900499B21 /* Primitives.shims.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
+		7D489E7429CE96D900499B21 /* _AtomicsShims */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7529CE96D900499B21 /* CMakeLists.txt */,
+				7D489E7629CE96D900499B21 /* include */,
+				7D489E7929CE96D900499B21 /* src */,
+			);
+			path = _AtomicsShims;
+			sourceTree = "<group>";
+		};
+		7D489E7629CE96D900499B21 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7729CE96D900499B21 /* _AtomicsShims.h */,
+				7D489E7829CE96D900499B21 /* module.modulemap */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7D489E7929CE96D900499B21 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7A29CE96D900499B21 /* _AtomicsShims.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		7D489E7B29CE96D900499B21 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				7D489EBE29CE96DA00499B21 /* CMakeLists.txt */,
+				7D489E7C29CE96D900499B21 /* AtomicsTests */,
+				7D489EBF29CE96DA00499B21 /* lit */,
+			);
+			name = Tests;
+			path = ../Tests;
+			sourceTree = "<group>";
+		};
+		7D489E7C29CE96D900499B21 /* AtomicsTests */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7D29CE96D900499B21 /* AtomicLazyReference.swift */,
+				7D489E7E29CE96D900499B21 /* Basics */,
+				7D489EBB29CE96DA00499B21 /* DoubleWord.swift */,
+				7D489EB629CE96DA00499B21 /* LifetimeTracked.swift */,
+				7D489EBA29CE96DA00499B21 /* LockFreeQueue.swift */,
+				7D489EB929CE96DA00499B21 /* LockFreeSingleConsumerStack.swift */,
+				7D489EBD29CE96DA00499B21 /* main.swift */,
+				7D489EB829CE96DA00499B21 /* StrongReferenceRace.swift */,
+				7D489EBC29CE96DA00499B21 /* StrongReferenceShuffle.swift */,
+				7D489EB729CE96DA00499B21 /* StrongReferenceSubclass.swift */,
+			);
+			path = AtomicsTests;
+			sourceTree = "<group>";
+		};
+		7D489E7E29CE96D900499B21 /* Basics */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E7F29CE96D900499B21 /* BasicAtomicIntTests.swift.gyb */,
+				7D489E8029CE96D900499B21 /* BasicAtomicUInt8Tests.swift.gyb */,
+				7D489E8129CE96D900499B21 /* BasicTests.gyb-template */,
+				7D489E8229CE96D900499B21 /* BasicAtomicInt32Tests.swift.gyb */,
+				7D489E8329CE96D900499B21 /* BasicAtomicPointerTests.swift.gyb */,
+				7D489E8429CE96D900499B21 /* BasicAtomicInt8Tests.swift.gyb */,
+				7D489E8529CE96D900499B21 /* BasicAtomicOptionalPointerTests.swift.gyb */,
+				7D489E8629CE96D900499B21 /* BasicAtomicBoolTests.swift.gyb */,
+				7D489E8729CE96D900499B21 /* BasicTestSupport.swift */,
+				7D489E8829CE96D900499B21 /* BasicAtomicMutableRawPointerTests.swift.gyb */,
+				7D489E8929CE96D900499B21 /* BasicAtomicMutablePointerTests.swift.gyb */,
+				7D489E8A29CE96D900499B21 /* BasicAtomicUInt32Tests.swift.gyb */,
+				7D489E8B29CE96D900499B21 /* BasicAtomicOptionalRawPointerTests.swift.gyb */,
+				7D489E8C29CE96D900499B21 /* BasicAtomicDoubleWordTests.swift.gyb */,
+				7D489E8D29CE96D900499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift.gyb */,
+				7D489E8E29CE96D900499B21 /* BasicAtomicReferenceTests.swift.gyb */,
+				7D489E8F29CE96D900499B21 /* BasicAtomicUInt64Tests.swift.gyb */,
+				7D489E9029CE96D900499B21 /* BasicAtomicOptionalUnmanagedTests.swift.gyb */,
+				7D489E9129CE96D900499B21 /* BasicAtomicOptionalMutablePointerTests.swift.gyb */,
+				7D489E9229CE96D900499B21 /* BasicAtomicInt16Tests.swift.gyb */,
+				7D489E9329CE96D900499B21 /* BasicAtomicOptionalRawRepresentableTests.swift.gyb */,
+				7D489E9429CE96D900499B21 /* BasicAtomicRawRepresentableTests.swift.gyb */,
+				7D489E9529CE96D900499B21 /* BasicAtomicRawPointerTests.swift.gyb */,
+				7D489E9629CE96D900499B21 /* BasicAtomicUIntTests.swift.gyb */,
+				7D489E9729CE96D900499B21 /* BasicAtomicUnmanagedTests.swift.gyb */,
+				7D489E9829CE96D900499B21 /* BasicAtomicOptionalReferenceTests.swift.gyb */,
+				7D489E9929CE96D900499B21 /* BasicAtomicInt64Tests.swift.gyb */,
+				7D489E9A29CE96D900499B21 /* BasicAtomicUInt16Tests.swift.gyb */,
+				7D489E9B29CE96D900499B21 /* autogenerated */,
+			);
+			path = Basics;
+			sourceTree = "<group>";
+		};
+		7D489E9B29CE96D900499B21 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7D489E9C29CE96D900499B21 /* BasicAtomicInt8Tests.swift */,
+				7D489E9D29CE96D900499B21 /* BasicAtomicOptionalMutablePointerTests.swift */,
+				7D489E9E29CE96D900499B21 /* BasicAtomicInt64Tests.swift */,
+				7D489E9F29CE96D900499B21 /* BasicAtomicMutablePointerTests.swift */,
+				7D489EA029CE96DA00499B21 /* BasicAtomicRawPointerTests.swift */,
+				7D489EA129CE96DA00499B21 /* BasicAtomicUnmanagedTests.swift */,
+				7D489EA229CE96DA00499B21 /* BasicAtomicBoolTests.swift */,
+				7D489EA329CE96DA00499B21 /* BasicAtomicReferenceTests.swift */,
+				7D489EA429CE96DA00499B21 /* BasicAtomicRawRepresentableTests.swift */,
+				7D489EA529CE96DA00499B21 /* BasicAtomicIntTests.swift */,
+				7D489EA629CE96DA00499B21 /* BasicAtomicOptionalReferenceTests.swift */,
+				7D489EA729CE96DA00499B21 /* BasicAtomicOptionalUnmanagedTests.swift */,
+				7D489EA829CE96DA00499B21 /* BasicAtomicUInt64Tests.swift */,
+				7D489EA929CE96DA00499B21 /* BasicAtomicUInt8Tests.swift */,
+				7D489EAA29CE96DA00499B21 /* BasicAtomicInt16Tests.swift */,
+				7D489EAB29CE96DA00499B21 /* BasicAtomicOptionalPointerTests.swift */,
+				7D489EAC29CE96DA00499B21 /* BasicAtomicUInt32Tests.swift */,
+				7D489EAD29CE96DA00499B21 /* BasicAtomicOptionalRawRepresentableTests.swift */,
+				7D489EAE29CE96DA00499B21 /* BasicAtomicOptionalRawPointerTests.swift */,
+				7D489EAF29CE96DA00499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift */,
+				7D489EB029CE96DA00499B21 /* BasicAtomicDoubleWordTests.swift */,
+				7D489EB129CE96DA00499B21 /* BasicAtomicPointerTests.swift */,
+				7D489EB229CE96DA00499B21 /* BasicAtomicUInt16Tests.swift */,
+				7D489EB329CE96DA00499B21 /* BasicAtomicInt32Tests.swift */,
+				7D489EB429CE96DA00499B21 /* BasicAtomicUIntTests.swift */,
+				7D489EB529CE96DA00499B21 /* BasicAtomicMutableRawPointerTests.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
+		7D489EBF29CE96DA00499B21 /* lit */ = {
+			isa = PBXGroup;
+			children = (
+				7D489EC029CE96DA00499B21 /* UnsafeAtomicInitializers.swift.gyb */,
+				7D489EC129CE96DA00499B21 /* AtomicsFolding.swift.gyb */,
+				7D489EC229CE96DA00499B21 /* autogenerated */,
+			);
+			path = lit;
+			sourceTree = "<group>";
+		};
+		7D489EC229CE96DA00499B21 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7D489EC329CE96DA00499B21 /* UnsafeAtomicInitializers.swift */,
+				7D489EC429CE96DA00499B21 /* AtomicsFolding.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
+		7D489EC729CE96DA00499B21 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7D489EC829CE96DA00499B21 /* gyb.py */,
+				7D489EC929CE96DA00499B21 /* run-full-tests.sh */,
+				7D489ECD29CE96DA00499B21 /* gyb_utils.py */,
+				7D489ECE29CE96DA00499B21 /* gyb */,
+				7D489ECF29CE96DA00499B21 /* generate-sources.sh */,
+				7D489ED029CE96DA00499B21 /* generate-docs.sh */,
+			);
+			name = Utilities;
+			path = ../Utilities;
+			sourceTree = "<group>";
+		};
+		7D489ED229CE96DA00499B21 /* Xcode */ = {
+			isa = PBXGroup;
+			children = (
+				7D489F6F29CE986A00499B21 /* Shared.xcconfig */,
+				7D489F7029CE986A00499B21 /* Atomics.xcconfig */,
+				7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */,
+				7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */,
+				7D489ED629CE96DA00499B21 /* README.md */,
+			);
+			name = Xcode;
+			sourceTree = "<group>";
+		};
+		7D489ED429CE96DA00499B21 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7D489E3A29CE969D00499B21 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D489EF529CE96DA00499B21 /* _AtomicsShims.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		7D489E3E29CE969D00499B21 /* Atomics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D489E5129CE969D00499B21 /* Build configuration list for PBXNativeTarget "Atomics" */;
+			buildPhases = (
+				7D489E3A29CE969D00499B21 /* Headers */,
+				7D489E3B29CE969D00499B21 /* Sources */,
+				7D489E3C29CE969D00499B21 /* Frameworks */,
+				7D489E3D29CE969D00499B21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Atomics;
+			productName = Atomics;
+			productReference = 7D489E3F29CE969D00499B21 /* Atomics.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		7D489E4629CE969D00499B21 /* AtomicsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D489E5429CE969D00499B21 /* Build configuration list for PBXNativeTarget "AtomicsTests" */;
+			buildPhases = (
+				7D489E4329CE969D00499B21 /* Sources */,
+				7D489E4429CE969D00499B21 /* Frameworks */,
+				7D489E4529CE969D00499B21 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7D489E4A29CE969D00499B21 /* PBXTargetDependency */,
+			);
+			name = AtomicsTests;
+			productName = AtomicsTests;
+			productReference = 7D489E4729CE969D00499B21 /* AtomicsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7D489E3629CE969D00499B21 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					7D489E3E29CE969D00499B21 = {
+						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1420;
+					};
+					7D489E4629CE969D00499B21 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 7D489E3929CE969D00499B21 /* Build configuration list for PBXProject "Atomics" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7D489E3529CE969D00499B21;
+			productRefGroup = 7D489E4029CE969D00499B21 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7D489ED429CE96DA00499B21 /* Products */;
+					ProjectRef = 7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				7D489E3E29CE969D00499B21 /* Atomics */,
+				7D489E4629CE969D00499B21 /* AtomicsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7D489E3D29CE969D00499B21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D489E4529CE969D00499B21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7D489E3B29CE969D00499B21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D489EEE29CE96DA00499B21 /* IntegerConformances.swift in Sources */,
+				7D489EF629CE96DA00499B21 /* _AtomicsShims.c in Sources */,
+				7D489EDF29CE96DA00499B21 /* AtomicOptionalRawRepresentable.swift in Sources */,
+				7D489EDB29CE96DA00499B21 /* AtomicStrongReference.swift in Sources */,
+				7D489EE829CE96DA00499B21 /* AtomicOptional.swift in Sources */,
+				7D489EF229CE96DA00499B21 /* AtomicBool.swift in Sources */,
+				7D489EEF29CE96DA00499B21 /* PointerConformances.swift in Sources */,
+				7D489EE029CE96DA00499B21 /* AtomicValue.swift in Sources */,
+				7D489EDC29CE96DA00499B21 /* AtomicInteger.swift in Sources */,
+				7D489EED29CE96DA00499B21 /* AtomicLazyReference.swift in Sources */,
+				7D489EF329CE96DA00499B21 /* HighLevelTypes.swift in Sources */,
+				7D489EE629CE96DA00499B21 /* Unmanaged extensions.swift in Sources */,
+				7D489EE429CE96DA00499B21 /* DoubleWord.swift in Sources */,
+				7D489EEA29CE96DA00499B21 /* AtomicMemoryOrderings.swift in Sources */,
+				7D489EE329CE96DA00499B21 /* AtomicRawRepresentable.swift in Sources */,
+				7D489EF029CE96DA00499B21 /* Primitives.native.swift in Sources */,
+				7D489EF129CE96DA00499B21 /* Primitives.shims.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D489E4329CE969D00499B21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D489F6129CE978100499B21 /* BasicAtomicInt32Tests.swift in Sources */,
+				7D489F5929CE978100499B21 /* BasicAtomicRawPointerTests.swift in Sources */,
+				7D489F6529CE978100499B21 /* BasicAtomicInt8Tests.swift in Sources */,
+				7D489F5B29CE978100499B21 /* BasicAtomicUInt64Tests.swift in Sources */,
+				7D489F5529CE978100499B21 /* BasicAtomicMutablePointerTests.swift in Sources */,
+				7D489F4D29CE976800499B21 /* StrongReferenceSubclass.swift in Sources */,
+				7D489F5C29CE978100499B21 /* BasicAtomicUInt32Tests.swift in Sources */,
+				7D489F6229CE978100499B21 /* BasicAtomicUIntTests.swift in Sources */,
+				7D489F5E29CE978100499B21 /* BasicAtomicOptionalUnmanagedTests.swift in Sources */,
+				7D489F4E29CE976800499B21 /* LifetimeTracked.swift in Sources */,
+				7D489F6029CE978100499B21 /* BasicAtomicUInt16Tests.swift in Sources */,
+				7D489F6429CE978100499B21 /* BasicAtomicReferenceTests.swift in Sources */,
+				7D489F5729CE978100499B21 /* BasicAtomicOptionalPointerTests.swift in Sources */,
+				7D489F5229CE976B00499B21 /* AtomicLazyReference.swift in Sources */,
+				7D489F4B29CE976800499B21 /* main.swift in Sources */,
+				7D489F5329CE977200499B21 /* BasicTestSupport.swift in Sources */,
+				7D489F5029CE976800499B21 /* StrongReferenceRace.swift in Sources */,
+				7D489F6929CE978100499B21 /* BasicAtomicIntTests.swift in Sources */,
+				7D489F5D29CE978100499B21 /* BasicAtomicBoolTests.swift in Sources */,
+				7D489F5A29CE978100499B21 /* BasicAtomicMutableRawPointerTests.swift in Sources */,
+				7D489F5F29CE978100499B21 /* BasicAtomicOptionalRawPointerTests.swift in Sources */,
+				7D489F6629CE978100499B21 /* BasicAtomicDoubleWordTests.swift in Sources */,
+				7D489F5629CE978100499B21 /* BasicAtomicOptionalMutableRawPointerTests.swift in Sources */,
+				7D489F5429CE978100499B21 /* BasicAtomicInt16Tests.swift in Sources */,
+				7D489F4A29CE976800499B21 /* StrongReferenceShuffle.swift in Sources */,
+				7D489F6B29CE978100499B21 /* BasicAtomicOptionalReferenceTests.swift in Sources */,
+				7D489F4F29CE976800499B21 /* DoubleWord.swift in Sources */,
+				7D489F6729CE978100499B21 /* BasicAtomicPointerTests.swift in Sources */,
+				7D489F5129CE976800499B21 /* LockFreeQueue.swift in Sources */,
+				7D489F6829CE978100499B21 /* BasicAtomicOptionalRawRepresentableTests.swift in Sources */,
+				7D489F4C29CE976800499B21 /* LockFreeSingleConsumerStack.swift in Sources */,
+				7D489F6A29CE978100499B21 /* BasicAtomicUInt8Tests.swift in Sources */,
+				7D489F5829CE978100499B21 /* BasicAtomicOptionalMutablePointerTests.swift in Sources */,
+				7D489F6D29CE978100499B21 /* BasicAtomicRawRepresentableTests.swift in Sources */,
+				7D489F6C29CE978100499B21 /* BasicAtomicUnmanagedTests.swift in Sources */,
+				7D489F6329CE978100499B21 /* BasicAtomicInt64Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7D489E4A29CE969D00499B21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D489E3E29CE969D00499B21 /* Atomics */;
+			targetProxy = 7D489E4929CE969D00499B21 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7D489E4F29CE969D00499B21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F6F29CE986A00499B21 /* Shared.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D489E5029CE969D00499B21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F6F29CE986A00499B21 /* Shared.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D489E5229CE969D00499B21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F7029CE986A00499B21 /* Atomics.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D489E5329CE969D00499B21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F7029CE986A00499B21 /* Atomics.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D489E5529CE969D00499B21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D489E5629CE969D00499B21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D489E3929CE969D00499B21 /* Build configuration list for PBXProject "Atomics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D489E4F29CE969D00499B21 /* Debug */,
+				7D489E5029CE969D00499B21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D489E5129CE969D00499B21 /* Build configuration list for PBXNativeTarget "Atomics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D489E5229CE969D00499B21 /* Debug */,
+				7D489E5329CE969D00499B21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D489E5429CE969D00499B21 /* Build configuration list for PBXNativeTarget "AtomicsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D489E5529CE969D00499B21 /* Debug */,
+				7D489E5629CE969D00499B21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7D489E3629CE969D00499B21 /* Project object */;
+}
