@@ -380,6 +380,191 @@ class BasicAtomicOptionalMutablePointerTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
   }
 
+  func test_weakCompareExchange_relaxed() {
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+  }
+
+  func test_weakCompareExchange_acquiring() {
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+  }
+
+  func test_weakCompareExchange_releasing() {
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+  }
+
+  func test_weakCompareExchange_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+  }
+
+  func test_weakCompareExchange_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UnsafeMutablePointer<Foo>?) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: nil,
+      desired: _mfoo2,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _mfoo2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _mfoo2)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _mfoo2,
+      desired: nil,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, nil)
+    XCTAssertEqual(v.load(ordering: .relaxed), nil)
+  }
+
 
   func test_compareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<UnsafeMutablePointer<Foo>?> = .create(nil)

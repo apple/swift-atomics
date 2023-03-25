@@ -12,6 +12,8 @@
 
 #if ATOMICS_NATIVE_BUILTINS
 import Swift
+#else
+import _AtomicsShims
 #endif
 
 /// A class type that supports atomic strong references.

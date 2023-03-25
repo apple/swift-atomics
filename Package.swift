@@ -50,12 +50,13 @@ let package = Package(
       dependencies: ["_AtomicsShims"],
       exclude: [
         "CMakeLists.txt",
-        "Builtins.swift.gyb",
-        "HighLevelTypes.swift.gyb",
-        "PointerConformances.swift.gyb",
-        "IntegerConformances.swift.gyb",
         "AtomicBool.swift.gyb",
         "AtomicLazyReference.swift.gyb",
+        "HighLevelTypes.swift.gyb",
+        "IntegerConformances.swift.gyb",
+        "PointerConformances.swift.gyb",
+        "Primitives.native.swift.gyb",
+        "Primitives.shims.swift.gyb",
       ],
       cSettings: _cSettings,
       swiftSettings: _swiftSettings

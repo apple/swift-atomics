@@ -359,6 +359,191 @@ class BasicAtomicUInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
 
+  func test_weakCompareExchange_relaxed() {
+    let v: UnsafeAtomic<UInt32> = .create(12)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UInt32) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+  }
+
+  func test_weakCompareExchange_acquiring() {
+    let v: UnsafeAtomic<UInt32> = .create(12)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UInt32) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+  }
+
+  func test_weakCompareExchange_releasing() {
+    let v: UnsafeAtomic<UInt32> = .create(12)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UInt32) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+  }
+
+  func test_weakCompareExchange_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt32> = .create(12)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UInt32) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+  }
+
+  func test_weakCompareExchange_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt32> = .create(12)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, UInt32) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 12,
+      desired: 23,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 23)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, 23)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: 23,
+      desired: 12,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, 12)
+    XCTAssertEqual(v.load(ordering: .relaxed), 12)
+  }
+
 
   func test_compareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<UInt32> = .create(12)

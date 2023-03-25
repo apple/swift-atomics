@@ -366,6 +366,191 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
 
+  func test_weakCompareExchange_relaxed() {
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+  }
+
+  func test_weakCompareExchange_acquiring() {
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+  }
+
+  func test_weakCompareExchange_releasing() {
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+  }
+
+  func test_weakCompareExchange_acquiringAndReleasing() {
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+  }
+
+  func test_weakCompareExchange_sequentiallyConsistent() {
+    let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar1,
+      desired: _bar2,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, _bar2)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: _bar2,
+      desired: _bar1,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, _bar1)
+    XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
+  }
+
 
   func test_compareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)

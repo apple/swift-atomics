@@ -359,6 +359,191 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
 
+  func test_weakCompareExchange_relaxed() {
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .relaxed)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .relaxed)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_weakCompareExchange_acquiring() {
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiring)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiring)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_weakCompareExchange_releasing() {
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .releasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .releasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_weakCompareExchange_acquiringAndReleasing() {
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiringAndReleasing)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .acquiringAndReleasing)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
+  func test_weakCompareExchange_sequentiallyConsistent() {
+    let v: UnsafeAtomic<Fred> = .create(Fred.one)
+    defer { v.destroy() }
+
+    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.one,
+      desired: Fred.two,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .sequentiallyConsistent)
+    XCTAssertTrue(exchanged)
+    XCTAssertEqual(original, Fred.two)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+
+    (exchanged, original) = v.weakCompareExchange(
+      expected: Fred.two,
+      desired: Fred.one,
+      ordering: .sequentiallyConsistent)
+    XCTAssertFalse(exchanged)
+    XCTAssertEqual(original, Fred.one)
+    XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
+  }
+
 
   func test_compareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
