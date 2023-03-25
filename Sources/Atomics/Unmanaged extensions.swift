@@ -13,7 +13,9 @@
 #if ATOMICS_NATIVE_BUILTINS
 import Swift
 #endif
+#if !ATOMICS_SINGLE_MODULE
 import _AtomicsShims
+#endif
 
 extension Unmanaged {
   internal func retain(by delta: Int) {

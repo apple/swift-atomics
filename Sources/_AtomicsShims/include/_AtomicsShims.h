@@ -17,6 +17,20 @@
 #include <stdint.h>
 #include <assert.h>
 
+#define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
+#define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
+#define SWIFTATOMIC_ALIGNED(alignment) __attribute__((aligned(alignment)))
+
+#if ATOMICS_SINGLE_MODULE
+#  if __has_attribute(visibility) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(_WIN32)
+#    define SWIFTATOMIC_SHIMS_EXPORT __attribute__((visibility("hidden")))
+#  else
+#    define SWIFTATOMIC_SHIMS_EXPORT
+#  endif
+#else
+#  define SWIFTATOMIC_SHIMS_EXPORT extern
+#endif
+
 // Swift-importable shims for C atomics.
 //
 // Swift cannot import C's atomic types or any operations over them, so we need
@@ -37,10 +51,6 @@
 // (see https://github.com/apple/swift-atomics/issues/37).
 #if !defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 #  include <stdatomic.h>
-
-#define SWIFTATOMIC_INLINE static inline __attribute__((__always_inline__))
-#define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
-#define SWIFTATOMIC_ALIGNED(alignment) __attribute__((aligned(alignment)))
 
 // Atomic fences
 #define SWIFTATOMIC_THREAD_FENCE_FN(order)                              \
@@ -218,7 +228,7 @@ SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 
 #endif //!defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 
-extern void _sa_retain_n(void *object, uint32_t n);
-extern void _sa_release_n(void *object, uint32_t n);
+SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
+SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
 
 #endif //SWIFTATOMIC_HEADER_INCLUDED
