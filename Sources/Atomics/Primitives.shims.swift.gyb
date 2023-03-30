@@ -38,7 +38,7 @@ internal func _atomicMemoryFence(
 }
 
 % for (swiftType, builtin64, builtin32, shimType) in atomicTypes:
-extension UnsafeMutablePointer<${shimType}> {
+extension UnsafeMutablePointer where Pointee == ${shimType} {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")

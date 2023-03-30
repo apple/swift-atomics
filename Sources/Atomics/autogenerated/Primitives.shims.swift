@@ -42,7 +42,7 @@ internal func _atomicMemoryFence(
   }
 }
 
-extension UnsafeMutablePointer<_AtomicInt8Storage> {
+extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -492,7 +492,7 @@ extension UnsafeMutablePointer<_AtomicInt8Storage> {
     }
   }
 }
-extension UnsafeMutablePointer<_AtomicInt16Storage> {
+extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -942,7 +942,7 @@ extension UnsafeMutablePointer<_AtomicInt16Storage> {
     }
   }
 }
-extension UnsafeMutablePointer<_AtomicInt32Storage> {
+extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -1392,7 +1392,7 @@ extension UnsafeMutablePointer<_AtomicInt32Storage> {
     }
   }
 }
-extension UnsafeMutablePointer<_AtomicInt64Storage> {
+extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -1842,7 +1842,7 @@ extension UnsafeMutablePointer<_AtomicInt64Storage> {
     }
   }
 }
-extension UnsafeMutablePointer<_AtomicIntStorage> {
+extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -2292,7 +2292,7 @@ extension UnsafeMutablePointer<_AtomicIntStorage> {
     }
   }
 }
-extension UnsafeMutablePointer<_AtomicDoubleWordStorage> {
+extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
