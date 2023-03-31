@@ -99,7 +99,7 @@ internal func _atomicMemoryFence(
 }
 
 
-extension UnsafeMutablePointer<Int8> {
+extension UnsafeMutablePointer where Pointee == Int8 {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -612,7 +612,7 @@ extension UnsafeMutablePointer<Int8> {
 }
 
 
-extension UnsafeMutablePointer<Int16> {
+extension UnsafeMutablePointer where Pointee == Int16 {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -1125,7 +1125,7 @@ extension UnsafeMutablePointer<Int16> {
 }
 
 
-extension UnsafeMutablePointer<Int32> {
+extension UnsafeMutablePointer where Pointee == Int32 {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -1638,7 +1638,7 @@ extension UnsafeMutablePointer<Int32> {
 }
 
 
-extension UnsafeMutablePointer<Int64> {
+extension UnsafeMutablePointer where Pointee == Int64 {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -2151,7 +2151,7 @@ extension UnsafeMutablePointer<Int64> {
 }
 
 #if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
-extension UnsafeMutablePointer<Int> {
+extension UnsafeMutablePointer where Pointee == Int {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -2664,7 +2664,7 @@ extension UnsafeMutablePointer<Int> {
 }
 
 #else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
-extension UnsafeMutablePointer<Int> {
+extension UnsafeMutablePointer where Pointee == Int {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -3177,7 +3177,7 @@ extension UnsafeMutablePointer<Int> {
 }
 #endif /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
 #if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
-extension UnsafeMutablePointer<DoubleWord> {
+extension UnsafeMutablePointer where Pointee == DoubleWord {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
@@ -3494,7 +3494,7 @@ extension UnsafeMutablePointer<DoubleWord> {
 }
 
 #else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
-extension UnsafeMutablePointer<DoubleWord> {
+extension UnsafeMutablePointer where Pointee == DoubleWord {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
