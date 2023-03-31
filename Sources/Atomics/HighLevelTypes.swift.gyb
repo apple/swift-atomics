@@ -97,6 +97,10 @@ where Value.AtomicRepresentation.Value == Value {
   @usableFromInline
   internal typealias _Storage = Value.AtomicRepresentation
 
+  /// The atomic representation of the value stored inside.
+  ///
+  /// Warning: This ivar must only ever be accessed via `_ptr` after
+  /// its initialization.
   @usableFromInline
   internal var _storage: _Storage
 
@@ -108,7 +112,7 @@ where Value.AtomicRepresentation.Value == Value {
   }
 
   deinit {
-    _ = _storage.dispose()
+    _ = _ptr.pointee.dispose()
   }
 
   @_alwaysEmitIntoClient @inline(__always)

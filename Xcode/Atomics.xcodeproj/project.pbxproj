@@ -182,9 +182,7 @@
 		7D489ECD29CE96DA00499B21 /* gyb_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gyb_utils.py; sourceTree = "<group>"; };
 		7D489ECE29CE96DA00499B21 /* gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gyb; sourceTree = "<group>"; };
 		7D489ECF29CE96DA00499B21 /* generate-sources.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "generate-sources.sh"; sourceTree = "<group>"; };
-		7D489ED029CE96DA00499B21 /* generate-docs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "generate-docs.sh"; sourceTree = "<group>"; };
 		7D489ED129CE96DA00499B21 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = ../LICENSE.txt; sourceTree = "<group>"; };
-		7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Atomics.xcodeproj; sourceTree = "<group>"; };
 		7D489ED629CE96DA00499B21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7D489ED729CE96DA00499B21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		7D489ED829CE96DA00499B21 /* CONTRIBUTING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CONTRIBUTING.md; path = ../CONTRIBUTING.md; sourceTree = "<group>"; };
@@ -192,6 +190,7 @@
 		7D489F6F29CE986A00499B21 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		7D489F7029CE986A00499B21 /* Atomics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Atomics.xcconfig; sourceTree = "<group>"; };
 		7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AtomicsTests.xcconfig; sourceTree = "<group>"; };
+		BB63DC6A29D782010054E9C2 /* Atomics.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Atomics.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -441,7 +440,6 @@
 				7D489ECD29CE96DA00499B21 /* gyb_utils.py */,
 				7D489ECE29CE96DA00499B21 /* gyb */,
 				7D489ECF29CE96DA00499B21 /* generate-sources.sh */,
-				7D489ED029CE96DA00499B21 /* generate-docs.sh */,
 			);
 			name = Utilities;
 			path = ../Utilities;
@@ -450,18 +448,13 @@
 		7D489ED229CE96DA00499B21 /* Xcode */ = {
 			isa = PBXGroup;
 			children = (
+				BB63DC6A29D782010054E9C2 /* Atomics.xctestplan */,
 				7D489F6F29CE986A00499B21 /* Shared.xcconfig */,
 				7D489F7029CE986A00499B21 /* Atomics.xcconfig */,
 				7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */,
-				7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */,
 				7D489ED629CE96DA00499B21 /* README.md */,
 			);
 			name = Xcode;
-			sourceTree = "<group>";
-		};
-		7D489ED429CE96DA00499B21 /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -544,12 +537,6 @@
 			mainGroup = 7D489E3529CE969D00499B21;
 			productRefGroup = 7D489E4029CE969D00499B21 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 7D489ED429CE96DA00499B21 /* Products */;
-					ProjectRef = 7D489ED329CE96DA00499B21 /* Atomics.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				7D489E3E29CE969D00499B21 /* Atomics */,

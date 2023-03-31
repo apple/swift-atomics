@@ -15,12 +15,17 @@ import Atomics
 
 class AtomicLazyReferenceTests: XCTestCase {
   func test_unsafe_create_destroy() {
+    XCTAssertEqual(LifetimeTracked.instances, 0)
     let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
-    defer { v.destroy() }
+    defer {
+      v.destroy()
+      XCTAssertEqual(LifetimeTracked.instances, 0)
+    }
     XCTAssertNil(v.load())
   }
 
   func test_unsafe_storeIfNilThenLoad() {
+    XCTAssertEqual(LifetimeTracked.instances, 0)
     do {
       let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
       XCTAssertNil(v.load())
@@ -39,6 +44,7 @@ class AtomicLazyReferenceTests: XCTestCase {
   }
 
   func test_managed_storeIfNilThenLoad() {
+    XCTAssertEqual(LifetimeTracked.instances, 0)
     do {
       let v = ManagedAtomicLazyReference<LifetimeTracked>()
       XCTAssertNil(v.load())
