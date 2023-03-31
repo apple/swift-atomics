@@ -90,6 +90,18 @@ try_xcodebuild() {
         -derivedDataPath "$build_dir/xcodebuild" \
         "$@"
 }
+try_xcodeproj() {
+    label="$1"
+    destination="$2"
+    shift 2
+    
+    try "$label" \
+        xcrun xcodebuild \
+        -configuration Release \
+        -destination "$destination" \
+        -derivedDataPath "$build_dir/xcodebuild" \
+        "$@"
+}
 
 if [ "$(uname)" = "Darwin" ]; then
     try_xcodebuild "xcodebuild.build.macOS" "generic/platform=macOS" build
@@ -100,6 +112,11 @@ if [ "$(uname)" = "Darwin" ]; then
     try_xcodebuild "xcodebuild.build.watchOS-simulator" "generic/platform=watchOS Simulator" build
     try_xcodebuild "xcodebuild.build.tvOS" "generic/platform=tvOS" build
     try_xcodebuild "xcodebuild.build.tvOS-simulator" "generic/platform=tvOS Simulator" build
+
+    try_xcodeproj "xcodeproj.build.macOS" "generic/platform=macOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
+    try_xcodeproj "xcodeproj.build.iOS" "generic/platform=iOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
+    try_xcodeproj "xcodeproj.build.watchOS" "generic/platform=watchOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
+    try_xcodeproj "xcodeproj.build.watchOS" "generic/platform=tvOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
 fi
 
 # Build with custom configurations
@@ -136,8 +153,10 @@ if [ "$(uname)" = "Darwin" ]; then
     try_xcodebuild "xcodebuild.test.macOS" "platform=macOS" test
     try_xcodebuild "xcodebuild.test.macCatalyst" "platform=macOS,variant=Mac Catalyst" test
     try_xcodebuild "xcodebuild.test.iOS-simulator" "platform=iOS Simulator,name=iPhone 12" test
-    try_xcodebuild "xcodebuild.test.watchOS-simulator" "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm" test
-    try_xcodebuild "xcodebuild.test.tvOS-simulator" "platform=tvOS Simulator,name=Apple TV 4K (at 1080p) (2nd generation)" test
+    try_xcodebuild "xcodebuild.test.watchOS-simulator" "platform=watchOS Simulator,name=Apple Watch Series 6 (44mm)" test
+    try_xcodebuild "xcodebuild.test.tvOS-simulator" "platform=tvOS Simulator,name=Apple TV 4K (at 1080p)" test
+
+    try_xcodeproj "xcodeproj.test.macOS" "platform=macOS" -project Xcode/Atomics.xcodeproj -scheme Atomics test
 fi
 
 # Run long tests

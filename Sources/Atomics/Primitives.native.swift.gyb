@@ -96,7 +96,7 @@ internal func _atomicMemoryFence(
 % for (swiftType, builtin64, builtin32, shimType) in atomicTypes:
 %  for (variant, builtinType) in bitwidth_variants(builtin64, builtin32):
 ${archConditionStart(variant)}
-extension UnsafeMutablePointer<${swiftType}> {
+extension UnsafeMutablePointer where Pointee == ${swiftType} {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
