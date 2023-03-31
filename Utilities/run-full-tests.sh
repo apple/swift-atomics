@@ -99,7 +99,7 @@ try_xcodeproj() {
         xcrun xcodebuild \
         -configuration Release \
         -destination "$destination" \
-        -derivedDataPath "$build_dir/xcodebuild" \
+        -derivedDataPath "$build_dir/xcodeproj" \
         "$@"
 }
 
