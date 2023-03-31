@@ -139,6 +139,10 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
   @usableFromInline
   internal typealias _Rep = Optional<Unmanaged<Instance>>.AtomicRepresentation
 
+  /// The atomic representation of the value stored inside.
+  ///
+  /// Warning: This ivar must only ever be accessed via `_ptr` after
+  /// its initialization.
   @usableFromInline
   internal let _storage: _Rep
 
@@ -149,7 +153,7 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
   }
 
   deinit {
-    if let unmanaged = _storage.dispose() {
+    if let unmanaged = _ptr.pointee.dispose() {
       unmanaged.release()
     }
   }
