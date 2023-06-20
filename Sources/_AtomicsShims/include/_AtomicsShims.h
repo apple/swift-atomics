@@ -21,6 +21,12 @@
 #define SWIFTATOMIC_SWIFT_NAME(name) __attribute__((swift_name(#name)))
 #define SWIFTATOMIC_ALIGNED(alignment) __attribute__((aligned(alignment)))
 
+#if __has_attribute(swiftcall)
+#  define SWIFTATOMIC_SWIFTCC __attribute__((swiftcall))
+#else
+#  define SWIFTATOMIC_SWIFTCC
+#endif
+
 #if ATOMICS_SINGLE_MODULE
 #  if __has_attribute(visibility) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(_WIN32)
 #    define SWIFTATOMIC_SHIMS_EXPORT __attribute__((visibility("hidden")))
@@ -228,7 +234,7 @@ SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 
 #endif //!defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 
-SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
-SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
+SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
+SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
 
 #endif //SWIFTATOMIC_HEADER_INCLUDED
