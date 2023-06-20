@@ -13,7 +13,14 @@
 #if ATOMICS_NATIVE_BUILTINS
 import Swift
 #endif
-#if !ATOMICS_SINGLE_MODULE
+
+#if ATOMICS_SINGLE_MODULE
+@_silgen_name("_sa_retain_n")
+internal func _sa_retain_n(_ object: UnsafeMutableRawPointer, _ delta: UInt32)
+
+@_silgen_name("_sa_release_n")
+internal func _sa_release_n(_ object: UnsafeMutableRawPointer, _ delta: UInt32)
+#else
 import _AtomicsShims
 #endif
 
