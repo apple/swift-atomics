@@ -17,10 +17,6 @@
 // #############################################################################
 
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#endif
-
 /// An unsafe reference type holding a lazily initializable atomic
 /// strong reference, requiring manual memory management of the
 /// underlying storage representation.

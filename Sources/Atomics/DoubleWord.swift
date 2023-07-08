@@ -10,9 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#else
+#if !ATOMICS_NATIVE_BUILTINS
 import _AtomicsShims
 public typealias DoubleWord = _AtomicsShims.DoubleWord
 #endif

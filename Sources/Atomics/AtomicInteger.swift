@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#endif
-
 /// A type that supports atomic integer operations through a separate
 /// atomic storage representation.
 ///

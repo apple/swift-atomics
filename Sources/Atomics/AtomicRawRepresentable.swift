@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#endif
-
 extension RawRepresentable
 where
   Self: AtomicValue,

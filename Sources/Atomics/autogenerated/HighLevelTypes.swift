@@ -17,10 +17,6 @@
 // #############################################################################
 
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#endif
-
 /// An unsafe reference type holding an atomic value, requiring manual memory
 /// management of the underlying storage representation.
 @frozen

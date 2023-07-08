@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#endif
-
 /// Specifies the memory ordering semantics of an atomic load operation.
 @frozen
 public struct AtomicLoadOrdering {

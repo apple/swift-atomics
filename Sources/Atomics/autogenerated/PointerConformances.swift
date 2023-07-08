@@ -18,9 +18,7 @@
 // #############################################################################
 
 
-#if ATOMICS_NATIVE_BUILTINS
-import Builtin
-#else
+#if !ATOMICS_NATIVE_BUILTINS
 import _AtomicsShims
 #endif
 
