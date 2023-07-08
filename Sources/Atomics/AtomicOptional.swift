@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 #endif
 
 /// An atomic value that also supports atomic operations when wrapped

@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 #endif
 
 /// Specifies the memory ordering semantics of an atomic load operation.

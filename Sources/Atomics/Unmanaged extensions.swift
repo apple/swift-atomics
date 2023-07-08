@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 #endif
 
 #if ATOMICS_SINGLE_MODULE

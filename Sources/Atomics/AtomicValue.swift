@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 #endif
 
 /// A type that supports atomic operations through a separate atomic storage

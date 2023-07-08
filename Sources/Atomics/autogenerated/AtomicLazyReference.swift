@@ -18,7 +18,7 @@
 
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 #endif
 
 /// An unsafe reference type holding a lazily initializable atomic
