@@ -17,9 +17,7 @@
 // #############################################################################
 
 
-#if ATOMICS_NATIVE_BUILTINS
-import Swift
-#else
+#if !ATOMICS_NATIVE_BUILTINS
 import _AtomicsShims
 #endif
 

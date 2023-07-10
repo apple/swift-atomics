@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.6
 //===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
@@ -16,14 +16,8 @@ import PackageDescription
 var _cSettings: [CSetting] = []
 var _swiftSettings: [SwiftSetting] = []
 
-// Enable the use of native Swift compiler builtins instead of C atomics.
-_cSettings += [
-  .define("ATOMICS_NATIVE_BUILTINS"),
-]
-_swiftSettings += [
-  .define("ATOMICS_NATIVE_BUILTINS"),
-  .enableExperimentalFeature("BuiltinModule")
-]
+// Note: ATOMICS_NATIVE_BUILTINS works via the BuiltinModule language feature,
+// so it is not usable in language versions below 5.9.
 
 let package = Package(
   name: "swift-atomics",

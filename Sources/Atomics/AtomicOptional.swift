@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Swift
-#endif
-
 /// An atomic value that also supports atomic operations when wrapped
 /// in an `Optional`. Atomic optional wrappable types come with a
 /// standalone atomic representation for their optional-wrapped

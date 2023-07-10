@@ -19,7 +19,7 @@
 
 
 #if ATOMICS_NATIVE_BUILTINS
-import Swift
+import Builtin
 
 #if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
 @frozen

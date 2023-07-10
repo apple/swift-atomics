@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
-import Swift
-#endif
-
 extension RawRepresentable
 where
   Self: AtomicOptionalWrappable,

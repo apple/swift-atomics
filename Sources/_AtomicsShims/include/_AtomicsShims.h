@@ -13,6 +13,8 @@
 #ifndef SWIFTATOMIC_HEADER_INCLUDED
 #define SWIFTATOMIC_HEADER_INCLUDED 1
 
+#ifndef __cplusplus
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <assert.h>
@@ -237,4 +239,5 @@ SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
 
+#endif // __cplusplus
 #endif //SWIFTATOMIC_HEADER_INCLUDED
