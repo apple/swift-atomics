@@ -177,16 +177,16 @@ extension UnsafeAtomicLazyReference {
   ///
   /// ```
   /// class Image {
-  ///   var _histogram: UnsafeAtomicLazyReference<Histogram> = ...
+  ///   var _histogram: UnsafeAtomicLazyReference<Histogram> = .init()
   ///
   ///   // This is safe to call concurrently from multiple threads.
   ///   var atomicLazyHistogram: Histogram {
-  ///     if let histogram = _histogram.load() { return foo }
+  ///     if let histogram = _histogram.load() { return histogram }
   ///     // Note that code here may run concurrently on
   ///     // multiple threads, but only one of them will get to
   ///     // succeed setting the reference.
   ///     let histogram = ...
-  ///     return _histogram.storeIfNilThenLoad(foo)
+  ///     return _histogram.storeIfNilThenLoad(histogram)
   /// }
   /// ```
   ///
@@ -227,16 +227,16 @@ extension ManagedAtomicLazyReference {
   ///
   /// ```
   /// class Image {
-  ///   var _histogram: UnsafeAtomicLazyReference<Histogram> = ...
+  ///   var _histogram: UnsafeAtomicLazyReference<Histogram> = .init()
   ///
   ///   // This is safe to call concurrently from multiple threads.
   ///   var atomicLazyHistogram: Histogram {
-  ///     if let histogram = _histogram.load() { return foo }
+  ///     if let histogram = _histogram.load() { return histogram }
   ///     // Note that code here may run concurrently on
   ///     // multiple threads, but only one of them will get to
   ///     // succeed setting the reference.
   ///     let histogram = ...
-  ///     return _histogram.storeIfNilThenLoad(foo)
+  ///     return _histogram.storeIfNilThenLoad(histogram)
   /// }
   /// ```
   ///
