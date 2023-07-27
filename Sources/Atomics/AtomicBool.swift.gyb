@@ -189,7 +189,7 @@ extension Bool.AtomicRepresentation {
 % end
 }
 
-% for construct in ["UnsafeAtomic", "ManagedAtomic"]:
+% for construct in ["Atomic", "UnsafeAtomic", "ManagedAtomic"]:
 extension ${construct} where Value == Bool {
 % for (name, iname, op, label, doc) in boolOperations:
   /// Perform an atomic ${doc} operation and return the original value, applying

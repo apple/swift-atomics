@@ -71,23 +71,19 @@ class BasicAtomic${label}Tests: XCTestCase {
 % end
 
   func test_create_destroy() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
 
-    let w: UnsafeAtomic<${type}> = .create(${b})
-    defer { w.destroy() }
+    let w = Atomic<${type}>(${b})
     XCTAssertEqual(w.load(ordering: .relaxed), ${b})
   }
 
 % for (order, _, _, _) in loadOrderings:
   func test_load_${order}() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
     XCTAssertEqual(v.load(ordering: .${order}), ${a})
 
-    let w: UnsafeAtomic<${type}> = .create(${b})
-    defer { w.destroy() }
+    let w = Atomic<${type}>(${b})
     XCTAssertEqual(w.load(ordering: .${order}), ${b})
   }
 
@@ -95,13 +91,11 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % for (order, _, _, _) in storeOrderings:
   func test_store_${order}() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
     v.store(${b}, ordering: .${order})
     XCTAssertEqual(v.load(ordering: .relaxed), ${b})
 
-    let w: UnsafeAtomic<${type}> = .create(${b})
-    defer { w.destroy() }
+    let w = Atomic<${type}>(${b})
     w.store(${a}, ordering: .${order})
     XCTAssertEqual(w.load(ordering: .relaxed), ${a})
   }
@@ -110,8 +104,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 % for (order, _, _, _, _) in updateOrderings:
   func test_exchange_${order}() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
 
     XCTAssertEqual(v.exchange(${a}, ordering: .${order}), ${a})
     XCTAssertEqual(v.load(ordering: .relaxed), ${a})
@@ -128,8 +121,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 % for operation in ["compareExchange", "weakCompareExchange"]:
 %   for (order, _, _, _, _) in updateOrderings:
   func test_${operation}_${order}() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
 
     var (exchanged, original): (Bool, ${type}) = v.${operation}(
       expected: ${a},
@@ -171,8 +163,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   for (successorder, _, _, _, _) in updateOrderings:
 %     for (failorder, _, _, _) in loadOrderings:
   func test_${operation}_${successorder}_${failorder}() {
-    let v: UnsafeAtomic<${type}> = .create(${a})
-    defer { v.destroy() }
+    let v = Atomic<${type}>(${a})
 
     var (exchanged, original): (Bool, ${type}) = v.${operation}(
       expected: ${a},
@@ -221,8 +212,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   for (name, _, operator, arglabel, _) in boolOperations:
 %     for (order, _, _, _, _) in updateOrderings:
   func test_loadThen${name}_${order}() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<${type}>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -244,8 +234,7 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   for (name, _, operator, arglabel, _) in boolOperations:
 %     for (order, _, _, _, _) in updateOrderings:
   func test_${lowerFirst(name)}ThenLoad_${order}() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<${type}>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -278,8 +267,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     let result1: ${type} = a ${operator} b
     let result2: ${type} = result1 ${operator} c
 
-    let v: UnsafeAtomic<${type}> = .create(a)
-    defer { v.destroy() }
+    let v = Atomic<${type}>(a)
 
     let old1: ${type} = v.loadThen${name}(${argLabel(arglabel)}b, ordering: .${order})
     XCTAssertEqual(old1, a)
@@ -302,8 +290,7 @@ class BasicAtomic${label}Tests: XCTestCase {
     let result1: ${type} = a ${operator} b
     let result2: ${type} = result1 ${operator} c
 
-    let v: UnsafeAtomic<${type}> = .create(a)
-    defer { v.destroy() }
+    let v = Atomic<${type}>(a)
 
     let new1: ${type} = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}b, ordering: .${order})
     XCTAssertEqual(new1, result1)

@@ -22,7 +22,8 @@ _cSettings += [
 ]
 _swiftSettings += [
   .define("ATOMICS_NATIVE_BUILTINS"),
-  .enableExperimentalFeature("BuiltinModule")
+  .enableExperimentalFeature("BuiltinModule"),
+  .enableExperimentalFeature("RawLayout")
 ]
 
 let package = Package(
