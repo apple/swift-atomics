@@ -36,86 +36,71 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
 
   func test_load_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw2)
   }
 
   func test_load_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     XCTAssertEqual(v.load(ordering: .acquiring), _mraw1)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     XCTAssertEqual(w.load(ordering: .acquiring), _mraw2)
   }
 
   func test_load_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _mraw1)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _mraw2)
   }
 
 
   func test_store_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     v.store(_mraw2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     w.store(_mraw1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
 
   func test_store_releasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     v.store(_mraw2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     w.store(_mraw1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
 
   func test_store_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
     v.store(_mraw2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw2)
 
-    let w: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafeMutableRawPointer>(_mraw2)
     w.store(_mraw1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _mraw1)
   }
 
 
   func test_exchange_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .relaxed), _mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
@@ -128,8 +113,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_exchange_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .acquiring), _mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
@@ -142,8 +126,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_exchange_releasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .releasing), _mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
@@ -156,8 +139,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_exchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .acquiringAndReleasing), _mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
@@ -170,8 +152,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_exchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     XCTAssertEqual(v.exchange(_mraw1, ordering: .sequentiallyConsistent), _mraw1)
     XCTAssertEqual(v.load(ordering: .relaxed), _mraw1)
@@ -185,8 +166,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
 
 
   func test_compareExchange_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -222,8 +202,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -259,8 +238,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -296,8 +274,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -333,8 +310,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -370,8 +346,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -407,8 +382,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -444,8 +418,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -481,8 +454,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -518,8 +490,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -556,8 +527,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
 
 
   func test_compareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -597,8 +567,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -638,8 +607,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -679,8 +647,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -720,8 +687,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -761,8 +727,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -802,8 +767,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -843,8 +807,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -884,8 +847,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -925,8 +887,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -966,8 +927,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -1007,8 +967,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -1048,8 +1007,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -1089,8 +1047,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -1130,8 +1087,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.compareExchange(
       expected: _mraw1,
@@ -1171,8 +1127,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1212,8 +1167,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1253,8 +1207,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1294,8 +1247,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1335,8 +1287,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1376,8 +1327,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1417,8 +1367,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1458,8 +1407,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1499,8 +1447,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1540,8 +1487,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1581,8 +1527,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1622,8 +1567,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1663,8 +1607,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1704,8 +1647,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,
@@ -1745,8 +1687,7 @@ class BasicAtomicMutableRawPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafeMutableRawPointer> = .create(_mraw1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafeMutableRawPointer>(_mraw1)
 
     var (exchanged, original): (Bool, UnsafeMutableRawPointer) = v.weakCompareExchange(
       expected: _mraw1,

@@ -229,6 +229,116 @@ extension Bool.AtomicRepresentation {
   }
 }
 
+extension Atomic where Value == Bool {
+  /// Perform an atomic logical AND operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThenLogicalAnd(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+  /// Perform an atomic logical OR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThenLogicalOr(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+  /// Perform an atomic logical XOR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThenLogicalXor(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+}
+
+extension Atomic where Value == Bool {
+  /// Perform an atomic logical AND operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func logicalAndThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original && operand
+  }
+  /// Perform an atomic logical OR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func logicalOrThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original || operand
+  }
+  /// Perform an atomic logical XOR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func logicalXorThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original != operand
+  }
+}
 extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
