@@ -236,8 +236,62 @@ SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 
 #endif //!defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__)
 
+#if defined(__APPLE__) && defined(__MACH__)
+
+SWIFTATOMIC_INLINE
+void _sa_retain_n(void *object, uint32_t n) {
+#if defined(__aarch64__)
+  register void *x0 asm ("x0") = object;
+  register uint32_t x1 asm ("x1") = n;
+  asm volatile (
+                "bl _swift_retain_n\n"
+                :: "r" (x0), "r" (x1)
+                : "memory", /*"x0", "x1",*/ "x2", "x3", "x4", "x5", "x6", "x7", "x8"
+                );
+#elif defined(__x86_64__)
+  asm volatile (
+                "call _swift_retain_n\n"
+                :: "D" (object), "S" (n)
+                : "memory", "rax", /*"rdi", "rsi",*/ "rbx", "rcx", "r8", "r9", "r10", "r11"
+                );
+#elif defined(__arm__)
+#  error FIXME
+#elif defined(__i386__)
+#  error FIXME
+#else
+#  error Unsupported target architecture
+#endif
+}
+
+SWIFTATOMIC_INLINE
+void _sa_release_n(void *object, uint32_t n) {
+#if defined(__aarch64__)
+  register void *x0 asm ("x0") = object;
+  register uint32_t x1 asm ("x1") = n;
+  asm volatile (
+                "bl _swift_release_n\n"
+                :: "r" (x0), "r" (x1)
+                : "memory", /*"x0", "x1",*/ "x2", "x3", "x4", "x5", "x6", "x7", "x8"
+                );
+#elif defined(__x86_64__)
+  asm volatile (
+                "call _swift_release_n\n"
+                :: "D" (object), "S" (n)
+                : "memory", "rax", /*"rdi", "rsi",*/ "rbx", "rcx", "r8", "r9", "r10", "r11"
+                );
+#elif defined(__arm__)
+#  error FIXME
+#elif defined(__i386__)
+#  error FIXME
+#else
+#  error Unsupported target architecture
+#endif
+}
+
+#else
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
+#endif
 
 #endif // __cplusplus
 #endif //SWIFTATOMIC_HEADER_INCLUDED
