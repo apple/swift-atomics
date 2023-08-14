@@ -20,7 +20,6 @@
 // Ensure we link with libswiftCore.dylib even when the build system decides
 // to build this module as a standalone library.
 // (See https://github.com/apple/swift-atomics/issues/55)
-__asm__(".linker_option \"-L/usr/lib/swift\"\n");
 __asm__(".linker_option \"-lswiftCore\"\n");
 #endif
 
