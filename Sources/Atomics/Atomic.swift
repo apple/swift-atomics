@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
+// Copyright (c) 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -13,6 +13,7 @@
 #if compiler(>=5.9) && $RawLayout
 import Builtin
 
+/// An atomic value.
 @_rawLayout(like: Value.AtomicRepresentation)
 @frozen
 public struct Atomic<Value: AtomicValue>: ~Copyable
@@ -30,6 +31,16 @@ where Value.AtomicRepresentation.Value == Value
     _ptr.initialize(to: _Storage(initialValue))
   }
 
+  #if false // FIXME: This doesn't work correctly yet
+  public consuming func destroy() -> Value {
+    let value = _ptr.pointee.dispose()
+    _ptr.deinitialize(count: 1)
+    discard self // Doesn't yet work for raw layout types
+    return value
+  }
+  #endif
+
+  @inlinable
   deinit {
     _ = _ptr.pointee.dispose()
     _ptr.deinitialize(count: 1)
@@ -251,236 +262,4 @@ extension Atomic {
       failureOrdering: failureOrdering)
   }
 }
-
-extension Atomic where Value: AtomicInteger {
-  /// Perform an atomic wrapping add operation and return the original value, applying
-  /// the specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&+` operator does on `Int` values.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func loadThenWrappingIncrement(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicLoadThenWrappingIncrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-  /// Perform an atomic wrapping subtract operation and return the original value, applying
-  /// the specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&-` operator does on `Int` values.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func loadThenWrappingDecrement(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicLoadThenWrappingDecrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-  /// Perform an atomic bitwise AND operation and return the original value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func loadThenBitwiseAnd(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicLoadThenBitwiseAnd(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-  /// Perform an atomic bitwise OR operation and return the original value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func loadThenBitwiseOr(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicLoadThenBitwiseOr(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-  /// Perform an atomic bitwise XOR operation and return the original value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func loadThenBitwiseXor(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicLoadThenBitwiseXor(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-
-  /// Perform an atomic wrapping add operation and return the new value, applying
-  /// the specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&+` operator does on `Int` values.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The new value after the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func wrappingIncrementThenLoad(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    let original = _Storage.atomicLoadThenWrappingIncrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-    return original &+ operand
-  }
-  /// Perform an atomic wrapping subtract operation and return the new value, applying
-  /// the specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&-` operator does on `Int` values.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The new value after the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func wrappingDecrementThenLoad(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    let original = _Storage.atomicLoadThenWrappingDecrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-    return original &- operand
-  }
-  /// Perform an atomic bitwise AND operation and return the new value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The new value after the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func bitwiseAndThenLoad(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    let original = _Storage.atomicLoadThenBitwiseAnd(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-    return original & operand
-  }
-  /// Perform an atomic bitwise OR operation and return the new value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The new value after the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func bitwiseOrThenLoad(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    let original = _Storage.atomicLoadThenBitwiseOr(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-    return original | operand
-  }
-  /// Perform an atomic bitwise XOR operation and return the new value, applying
-  /// the specified memory ordering.
-  ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The new value after the operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func bitwiseXorThenLoad(
-    with operand: Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    let original = _Storage.atomicLoadThenBitwiseXor(
-      with: operand,
-      at: _ptr,
-      ordering: ordering)
-    return original ^ operand
-  }
-
-  /// Perform an atomic wrapping increment operation applying the
-  /// specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&+=` operator does on `Int` values.
-  ///
-  /// - Parameter operand: The value to add to the current value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func wrappingIncrement(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) {
-    _ = _Storage.atomicLoadThenWrappingIncrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-
-  /// Perform an atomic wrapping decrement operation applying the
-  /// specified memory ordering.
-  ///
-  /// Note: This operation silently wraps around on overflow, like the
-  /// `&-=` operator does on `Int` values.
-  ///
-  /// - Parameter operand: The value to subtract from the current value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func wrappingDecrement(
-    by operand: Value = 1,
-    ordering: AtomicUpdateOrdering
-  ) {
-    _ = _Storage.atomicLoadThenWrappingDecrement(
-      by: operand,
-      at: _ptr,
-      ordering: ordering)
-  }
-}
-
 #endif
