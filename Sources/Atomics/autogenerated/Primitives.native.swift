@@ -21,62 +21,6 @@
 #if ATOMICS_NATIVE_BUILTINS
 import Builtin
 
-#if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
-@frozen
-@_alignment(8)
-public struct DoubleWord {
-  @usableFromInline
-  internal typealias _Builtin = Builtin.Int64
-
-  public var first: UInt
-  public var second: UInt
-
-  @inlinable @inline(__always)
-  public init(first: UInt, second: UInt) {
-    self.first = first
-    self.second = second
-  }
-}
-#else
-@frozen
-@_alignment(16)
-public struct DoubleWord {
-  @usableFromInline
-  internal typealias _Builtin = Builtin.Int128
-
-  public var first: UInt
-  public var second: UInt
-
-  @inlinable @inline(__always)
-  public init(first: UInt, second: UInt) {
-    self.first = first
-    self.second = second
-  }
-}
-#endif
-
-extension DoubleWord {
-  @_alwaysEmitIntoClient
-  @inline(__always)
-  internal init(_ builtin: _Builtin) {
-    self = unsafeBitCast(builtin, to: DoubleWord.self)
-  }
-
-  @_alwaysEmitIntoClient
-  @inline(__always)
-  internal var _value: _Builtin {
-    unsafeBitCast(self, to: _Builtin.self)
-  }
-}
-
-extension Bool {
-  @_alwaysEmitIntoClient
-  @inline(__always)
-  internal init(_ builtin: Builtin.Int1) {
-    self = unsafeBitCast(builtin, to: Bool.self)
-  }
-}
-
 @_alwaysEmitIntoClient
 @_transparent
 internal func _atomicMemoryFence(
@@ -2150,7 +2094,7 @@ extension UnsafeMutablePointer where Pointee == Int64 {
   }
 }
 
-#if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
+#if (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)))
 extension UnsafeMutablePointer where Pointee == Int {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
@@ -2663,7 +2607,7 @@ extension UnsafeMutablePointer where Pointee == Int {
   }
 }
 
-#else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+#else /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
 extension UnsafeMutablePointer where Pointee == Int {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
@@ -3175,8 +3119,8 @@ extension UnsafeMutablePointer where Pointee == Int {
     }
   }
 }
-#endif /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
-#if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
+#endif /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
+#if (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)))
 extension UnsafeMutablePointer where Pointee == DoubleWord {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
@@ -3493,7 +3437,7 @@ extension UnsafeMutablePointer where Pointee == DoubleWord {
 
 }
 
-#else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+#else /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
 extension UnsafeMutablePointer where Pointee == DoubleWord {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
@@ -3809,5 +3753,5 @@ extension UnsafeMutablePointer where Pointee == DoubleWord {
   }
 
 }
-#endif /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+#endif /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
 #endif // ATOMICS_NATIVE_BUILTINS
