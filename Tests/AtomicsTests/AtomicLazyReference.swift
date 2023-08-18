@@ -14,6 +14,23 @@ import XCTest
 import Atomics
 
 class AtomicLazyReferenceTests: XCTestCase {
+  func test_noncopyable_storeIfNilThenLoad() {
+    XCTAssertEqual(LifetimeTracked.instances, 0)
+    do {
+      let v = AtomicLazyReference<LifetimeTracked>()
+      XCTAssertNil(v.load())
+
+      let ref = LifetimeTracked(42)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref) === ref)
+      XCTAssertTrue(v.load() === ref)
+
+      let ref2 = LifetimeTracked(23)
+      XCTAssertTrue(v.storeIfNilThenLoad(ref2) === ref)
+      XCTAssertTrue(v.load() === ref)
+    }
+    XCTAssertEqual(LifetimeTracked.instances, 0)
+  }
+
   func test_unsafe_create_destroy() {
     XCTAssertEqual(LifetimeTracked.instances, 0)
     let v = UnsafeAtomicLazyReference<LifetimeTracked>.create()
