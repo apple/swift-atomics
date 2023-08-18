@@ -229,6 +229,7 @@ extension Bool.AtomicRepresentation {
   }
 }
 
+#if compiler(>=5.9) && $RawLayout
 extension Atomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
@@ -339,6 +340,7 @@ extension Atomic where Value == Bool {
     return original != operand
   }
 }
+#endif
 extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.

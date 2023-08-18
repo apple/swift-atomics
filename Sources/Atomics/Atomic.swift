@@ -13,8 +13,7 @@
 #if compiler(>=5.9) && $RawLayout
 import Builtin
 
-// FIXME: What we actually want to say is @_rawLayout(like: Value.AtomicRepresentation)
-@_rawLayout(like: DoubleWord.AtomicRepresentation)
+@_rawLayout(like: Value.AtomicRepresentation)
 @frozen
 public struct Atomic<Value: AtomicValue>: ~Copyable
 where Value.AtomicRepresentation.Value == Value

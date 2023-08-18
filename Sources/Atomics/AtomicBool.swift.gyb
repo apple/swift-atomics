@@ -190,6 +190,9 @@ extension Bool.AtomicRepresentation {
 }
 
 % for construct in ["Atomic", "UnsafeAtomic", "ManagedAtomic"]:
+%  if construct == "Atomic":
+#if compiler(>=5.9) && $RawLayout
+%  end
 extension ${construct} where Value == Bool {
 % for (name, iname, op, label, doc) in boolOperations:
   /// Perform an atomic ${doc} operation and return the original value, applying
@@ -234,4 +237,7 @@ extension ${construct} where Value == Bool {
   }
 % end
 }
+%  if construct == "Atomic":
+#endif
+%  end
 % end
