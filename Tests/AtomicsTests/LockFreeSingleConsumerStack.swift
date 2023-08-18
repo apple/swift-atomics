@@ -21,15 +21,13 @@ class LockFreeSingleConsumerStack<Element> {
   }
   typealias NodePtr = UnsafeMutablePointer<Node>
 
-  private var _last = UnsafeAtomic<NodePtr?>.create(nil)
-  private var _consumerCount = UnsafeAtomic<Int>.create(0)
+  private var _last = Atomic<NodePtr?>(nil)
+  private var _consumerCount = Atomic<Int>(0)
   private var foo = 0
 
   deinit {
     // Discard remaining nodes
     while let _ = pop() {}
-    _last.destroy()
-    _consumerCount.destroy()
   }
 
   // Push the given element to the top of the stack.
