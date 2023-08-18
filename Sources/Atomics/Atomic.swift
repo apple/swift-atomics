@@ -23,7 +23,7 @@ where Value.AtomicRepresentation.Value == Value
 
   @_transparent @_alwaysEmitIntoClient
   internal var _ptr: UnsafeMutablePointer<_Storage> {
-    .init(Builtin.addressOfBorrow(self))
+    .init(Builtin.unprotectedAddressOfBorrow(self))
   }
 
   public init(_ initialValue: __owned Value) {
