@@ -31,12 +31,12 @@ private let nodeCount = ManagedAtomic<Int>(0)
 
 private class List<Value: Equatable> {
   final class Node: AtomicReference {
-    private let _next: UnsafeAtomic<Node?>
-    private let _value: UnsafeAtomic<UnsafeMutablePointer<Value>?>
+    private let _next: Atomic<Node?>
+    private let _value: Atomic<UnsafeMutablePointer<Value>?>
 
     init(pointer: UnsafeMutablePointer<Value>?, next: Node? = nil) {
-      self._next = .create(next)
-      self._value = .create(pointer)
+      self._next = .init(next)
+      self._value = .init(pointer)
       nodeCount.wrappingIncrement(ordering: .relaxed)
     }
 
@@ -52,14 +52,14 @@ private class List<Value: Equatable> {
 
     deinit {
       // Prevent stack overflow when deinitializing a long chain
-      var node = self._next.destroy()
+      var node = self.clearNext()
       while node != nil && isKnownUniquelyReferenced(&node) {
-        let next = node!._next.exchange(nil, ordering: .relaxed)
+        let next = node!.clearNext()
         withExtendedLifetime(node) {}
         node = next
       }
 
-      if let p = self._value.destroy() {
+      if let p = self.clearValue() {
         p.deinitialize(count: 1)
         p.deallocate()
       }
