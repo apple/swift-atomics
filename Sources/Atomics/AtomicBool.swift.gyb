@@ -241,3 +241,45 @@ extension ${construct} where Value == Bool {
 #endif
 %  end
 % end
+
+extension ManagedAtomic where Value == Bool {
+% for (name, iname, op, label, doc) in boolOperations:
+  /// Perform an atomic ${doc} operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThen${name}(
+    ${label} operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    _storage.loadThen${name}(
+      ${argLabel(label)}operand,
+      ordering: ordering)
+  }
+% end
+}
+
+extension ManagedAtomic where Value == Bool {
+% for (name, iname, op, label, doc) in boolOperations:
+  /// Perform an atomic ${doc} operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: A boolean value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func ${lowerFirst(name)}ThenLoad(
+    ${label} operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    _storage.${lowerFirst(name)}ThenLoad(
+      ${argLabel(label)}operand,
+      ordering: ordering)
+  }
+% end
+}

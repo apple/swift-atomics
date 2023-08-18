@@ -18,7 +18,17 @@
 // #############################################################################
 
 
-#if !ATOMICS_NATIVE_BUILTINS
+#if ATOMICS_NATIVE_BUILTINS
+import Builtin
+
+extension Bool {
+  @_alwaysEmitIntoClient
+  @inline(__always)
+  internal init(_ builtin: Builtin.Int1) {
+    self = unsafeBitCast(builtin, to: Bool.self)
+  }
+}
+#else
 import _AtomicsShims
 #endif
 
@@ -451,6 +461,7 @@ extension UnsafeAtomic where Value == Bool {
     return original != operand
   }
 }
+
 extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
@@ -464,9 +475,8 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+    _storage.loadThenLogicalAnd(
       with: operand,
-      at: _ptr,
       ordering: ordering)
   }
   /// Perform an atomic logical OR operation and return the original value, applying
@@ -481,9 +491,8 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+    _storage.loadThenLogicalOr(
       with: operand,
-      at: _ptr,
       ordering: ordering)
   }
   /// Perform an atomic logical XOR operation and return the original value, applying
@@ -498,9 +507,8 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+    _storage.loadThenLogicalXor(
       with: operand,
-      at: _ptr,
       ordering: ordering)
   }
 }
@@ -518,11 +526,9 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+    _storage.logicalAndThenLoad(
       with: operand,
-      at: _ptr,
       ordering: ordering)
-    return original && operand
   }
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
@@ -536,11 +542,9 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+    _storage.logicalOrThenLoad(
       with: operand,
-      at: _ptr,
       ordering: ordering)
-    return original || operand
   }
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
@@ -554,10 +558,8 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    let original = Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+    _storage.logicalXorThenLoad(
       with: operand,
-      at: _ptr,
       ordering: ordering)
-    return original != operand
   }
 }
