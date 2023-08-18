@@ -28,7 +28,7 @@ public final class LifetimeTracked {
   }
 
   deinit {
-    assert(serialNumber > 0, "double destruction!")
+    assert(serialNumber > 0, "double destruction")
     LifetimeTracked.instances -= 1
     serialNumber = -serialNumber
   }
@@ -41,13 +41,13 @@ public final class LifetimeTracked {
   public var serialNumber: Int = 0
 }
 
-extension LifetimeTracked : Equatable {
+extension LifetimeTracked: Equatable {
   public static func == (x: LifetimeTracked, y: LifetimeTracked) -> Bool {
     return x.value == y.value
   }
 }
 
-extension LifetimeTracked : Hashable {
+extension LifetimeTracked: Hashable {
   public var hashValue: Int {
     return value
   }
@@ -56,7 +56,7 @@ extension LifetimeTracked : Hashable {
   }
 }
 
-extension LifetimeTracked : Strideable {
+extension LifetimeTracked: Strideable {
   public func distance(to other: LifetimeTracked) -> Int {
     return self.value.distance(to: other.value)
   }
@@ -66,7 +66,7 @@ extension LifetimeTracked : Strideable {
   }
 }
 
-extension LifetimeTracked : CustomStringConvertible {
+extension LifetimeTracked: CustomStringConvertible {
   public var description: String {
     assert(serialNumber > 0, "dead Tracked!")
     return value.description
