@@ -266,9 +266,16 @@ extension ManagedAtomic where Value == Bool {
     ${label} operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThen${name}(
       ${argLabel(label)}operand,
       ordering: ordering)
+#else
+    Value.AtomicRepresentation.atomicLoadThen${name}(
+      ${argLabel(label)}operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 % end
 }
@@ -287,9 +294,17 @@ extension ManagedAtomic where Value == Bool {
     ${label} operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.${lowerFirst(name)}ThenLoad(
       ${argLabel(label)}operand,
       ordering: ordering)
+#else
+    let original = Value.AtomicRepresentation.atomicLoadThen${name}(
+      ${argLabel(label)}operand,
+      at: _ptr,
+      ordering: ordering)
+    return original ${op} operand
+#endif
   }
 % end
 }

@@ -514,9 +514,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenWrappingIncrement(
       by: operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic wrapping subtract operation and return the original value, applying
@@ -534,9 +541,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenWrappingDecrement(
       by: operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic bitwise AND operation and return the original value, applying
@@ -551,9 +565,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenBitwiseAnd(
       with: operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThenBitwiseAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic bitwise OR operation and return the original value, applying
@@ -568,9 +589,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenBitwiseOr(
       with: operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThenBitwiseOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic bitwise XOR operation and return the original value, applying
@@ -585,9 +613,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenBitwiseXor(
       with: operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThenBitwiseXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
 
@@ -606,9 +641,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.wrappingIncrementThenLoad(
       by: operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original &+ operand
+#endif
   }
 
   /// Perform an atomic wrapping subtract operation and return the new value, applying
@@ -626,9 +669,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.wrappingDecrementThenLoad(
       by: operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original &- operand
+#endif
   }
 
   /// Perform an atomic bitwise AND operation and return the new value, applying
@@ -643,9 +694,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.bitwiseAndThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThenBitwiseAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original & operand
+#endif
   }
 
   /// Perform an atomic bitwise OR operation and return the new value, applying
@@ -660,9 +719,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.bitwiseOrThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThenBitwiseOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original | operand
+#endif
   }
 
   /// Perform an atomic bitwise XOR operation and return the new value, applying
@@ -677,9 +744,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.bitwiseXorThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThenBitwiseXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original ^ operand
+#endif
   }
 
 
@@ -697,9 +772,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
     _ = _storage.loadThenWrappingIncrement(
       by: operand,
       ordering: ordering)
+#else
+    _ = _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic wrapping decrement operation applying the
@@ -716,8 +798,15 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
     _ = _storage.loadThenWrappingDecrement(
       by: operand,
       ordering: ordering)
+#else
+    _ = _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 }

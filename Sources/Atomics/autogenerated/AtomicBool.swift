@@ -475,9 +475,16 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenLogicalAnd(
       with: operand,
       ordering: ordering)
+#else
+    Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
@@ -491,9 +498,16 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenLogicalOr(
       with: operand,
       ordering: ordering)
+#else
+    Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
@@ -507,9 +521,16 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThenLogicalXor(
       with: operand,
       ordering: ordering)
+#else
+    Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 }
 
@@ -526,9 +547,17 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.logicalAndThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original && operand
+#endif
   }
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
@@ -542,9 +571,17 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.logicalOrThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original || operand
+#endif
   }
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
@@ -558,8 +595,16 @@ extension ManagedAtomic where Value == Bool {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.logicalXorThenLoad(
       with: operand,
       ordering: ordering)
+#else
+    let original = Value.AtomicRepresentation.atomicLoadThenLogicalXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original != operand
+#endif
   }
 }

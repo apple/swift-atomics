@@ -223,9 +223,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     ${label} operand: Value${" = 1" if "crement" in name else ""},
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.loadThen${name}(
       ${argLabel(label)}operand,
       ordering: ordering)
+#else
+    _Storage.atomicLoadThen${name}(
+      ${argLabel(label)}operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   % end
@@ -248,9 +255,17 @@ extension ManagedAtomic where Value: AtomicInteger {
     ${label} operand: Value${" = 1" if "crement" in name else ""},
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.${lowerFirst(name)}ThenLoad(
       ${argLabel(label)}operand,
       ordering: ordering)
+#else
+    let original = _Storage.atomicLoadThen${name}(
+      ${argLabel(label)}operand,
+      at: _ptr,
+      ordering: ordering)
+    return original ${op} operand
+#endif
   }
 
   % end
@@ -269,9 +284,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
     _ = _storage.loadThenWrappingIncrement(
       by: operand,
       ordering: ordering)
+#else
+    _ = _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic wrapping decrement operation applying the
@@ -288,8 +310,15 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
     _ = _storage.loadThenWrappingDecrement(
       by: operand,
       ordering: ordering)
+#else
+    _ = _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 }

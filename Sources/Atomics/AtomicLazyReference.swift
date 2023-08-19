@@ -10,6 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if compiler(>=5.9) && $RawLayout
 /// A lazily initializable atomic strong reference.
 ///
 /// These values can be set (initialized) exactly once, but read many
@@ -85,6 +86,7 @@ extension AtomicLazyReference {
     return value?.takeUnretainedValue()
   }
 }
+#endif
 
 /// An unsafe reference type holding a lazily initializable atomic
 /// strong reference, requiring manual memory management of the
@@ -255,6 +257,7 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
   /// The value logically stored in an atomic lazy reference value.
   public typealias Value = Instance?
 
+#if compiler(>=5.9) && $RawLayout
   /// The actual lazily initialized reference value.
   @usableFromInline
   internal let _storage: AtomicLazyReference<Instance>
@@ -265,9 +268,37 @@ public class ManagedAtomicLazyReference<Instance: AnyObject> {
     _storage = AtomicLazyReference()
   }
 
-  deinit {
+  deinit {}
+#else
+  @usableFromInline
+  internal typealias _Rep = Optional<Unmanaged<Instance>>.AtomicRepresentation
+
+  /// The atomic representation of the value stored inside.
+  ///
+  /// Warning: This ivar must only ever be accessed via `_ptr` after
+  /// its initialization.
+  @usableFromInline
+  internal let _storage: _Rep
+
+  /// Initializes a new managed atomic lazy reference with a nil value.
+  @inlinable
+  public init() {
+    _storage = _Rep(nil)
   }
+
+  deinit {
+    if let unmanaged = _ptr.pointee.dispose() {
+      unmanaged.release()
+    }
+  }
+
+  @_alwaysEmitIntoClient @inline(__always)
+  internal var _ptr: UnsafeMutablePointer<_Rep> {
+    _getUnsafePointerToStoredProperties(self).assumingMemoryBound(to: _Rep.self)
+  }
+#endif
 }
+
 
 extension ManagedAtomicLazyReference: @unchecked Sendable
 where Instance: Sendable {}
@@ -298,7 +329,23 @@ extension ManagedAtomicLazyReference {
   ///
   /// This operation uses acquiring-and-releasing memory ordering.
   public func storeIfNilThenLoad(_ desired: __owned Instance) -> Instance {
+#if compiler(>=5.9) && $RawLayout
     _storage.storeIfNilThenLoad(desired)
+#else
+    let desiredUnmanaged = Unmanaged.passRetained(desired)
+    let (exchanged, current) = _Rep.atomicCompareExchange(
+      expected: nil,
+      desired: desiredUnmanaged,
+      at: _ptr,
+      ordering: .acquiringAndReleasing)
+    if !exchanged {
+      // The reference has already been initialized. Balance the retain that
+      // we performed on `desired`.
+      desiredUnmanaged.release()
+      return current!.takeUnretainedValue()
+    }
+    return desiredUnmanaged.takeUnretainedValue()
+#endif
   }
 
   /// Atomically loads and returns the current value of this reference.
@@ -306,6 +353,12 @@ extension ManagedAtomicLazyReference {
   /// The load operation is performed with the memory ordering
   /// `AtomicLoadOrdering.acquiring`.
   public func load() -> Instance? {
+#if compiler(>=5.9) && $RawLayout
     _storage.load()
+#else
+    let value = _Rep.atomicLoad(at: _ptr, ordering: .acquiring)
+    return value?.takeUnretainedValue()
+#endif
   }
 }
+

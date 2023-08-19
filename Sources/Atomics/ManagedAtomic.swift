@@ -19,6 +19,7 @@ where Value.AtomicRepresentation.Value == Value {
   // (We'd need one set of implementations for the type equality condition, and
   // another for `Value: AtomicReference`.)
 
+#if compiler(>=5.9) && $RawLayout
   @usableFromInline
   internal let _storage: Atomic<Value>
 
@@ -28,6 +29,34 @@ where Value.AtomicRepresentation.Value == Value {
   public init(_ value: Value) {
     _storage = Atomic(value)
   }
+#else
+  @usableFromInline
+  internal typealias _Storage = Value.AtomicRepresentation
+
+  /// The atomic representation of the value stored inside.
+  ///
+  /// Warning: This ivar must only ever be accessed via `_ptr` after
+  /// its initialization.
+  @usableFromInline
+  internal var _storage: _Storage
+
+  /// Initialize a new managed atomic instance holding the specified initial
+  /// value.
+  @inline(__always) @_alwaysEmitIntoClient
+  public init(_ value: Value) {
+    _storage = _Storage(value)
+  }
+
+  deinit {
+    _ = _ptr.pointee.dispose()
+  }
+
+  @_alwaysEmitIntoClient @inline(__always)
+  internal var _ptr: UnsafeMutablePointer<_Storage> {
+    _getUnsafePointerToStoredProperties(self)
+      .assumingMemoryBound(to: _Storage.self)
+  }
+#endif
 }
 
 extension ManagedAtomic: @unchecked Sendable where Value: Sendable {}
@@ -43,7 +72,11 @@ extension ManagedAtomic {
   public func load(
     ordering: AtomicLoadOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.load(ordering: ordering)
+#else
+    _Storage.atomicLoad(at: _ptr, ordering: ordering)
+#endif
   }
 
   /// Atomically sets the current value to `desired`, applying the specified
@@ -57,7 +90,11 @@ extension ManagedAtomic {
     _ desired: __owned Value,
     ordering: AtomicStoreOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
     _storage.store(desired, ordering: ordering)
+#else
+    _Storage.atomicStore(desired, at: _ptr, ordering: ordering)
+#endif
   }
 
   /// Atomically sets the current value to `desired` and returns the original
@@ -72,7 +109,11 @@ extension ManagedAtomic {
     _ desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
     _storage.exchange(desired, ordering: ordering)
+#else
+    _Storage.atomicExchange(desired, at: _ptr, ordering: ordering)
+#endif
   }
 
   /// Perform an atomic compare and exchange operation on the current value,
@@ -105,8 +146,16 @@ extension ManagedAtomic {
     desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
+#if compiler(>=5.9) && $RawLayout
     _storage.compareExchange(
       expected: expected, desired: desired, ordering: ordering)
+#else
+    _Storage.atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic compare and exchange operation on the current value,
@@ -147,11 +196,20 @@ extension ManagedAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
+#if compiler(>=5.9) && $RawLayout
     _storage.compareExchange(
       expected: expected,
       desired: desired,
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
+#else
+    _Storage.atomicCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: _ptr,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+#endif
   }
 
   /// Perform an atomic weak compare and exchange operation on the current
@@ -187,10 +245,18 @@ extension ManagedAtomic {
     desired: __owned Value,
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
+#if compiler(>=5.9) && $RawLayout
     _storage.weakCompareExchange(
       expected: expected,
       desired: desired,
       ordering: ordering)
+#else
+    _Storage.atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: _ptr,
+      ordering: ordering)
+#endif
   }
 
   /// Perform an atomic weak compare and exchange operation on the current
@@ -234,10 +300,19 @@ extension ManagedAtomic {
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
+#if compiler(>=5.9) && $RawLayout
     _storage.weakCompareExchange(
       expected: expected,
       desired: desired,
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
+#else
+    _Storage.atomicWeakCompareExchange(
+      expected: expected,
+      desired: desired,
+      at: _ptr,
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
+#endif
   }
 }
