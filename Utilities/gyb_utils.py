@@ -129,7 +129,7 @@ def lowerFirst(str):
 def argLabel(label):
   return label + ": " if label != "_" else ""
 
-ptrBitWidth32 = "arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)"
+ptrBitWidth32 = "(compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)))"
 
 def bitwidth_variants(value64, value32):
   if value64 == value32:

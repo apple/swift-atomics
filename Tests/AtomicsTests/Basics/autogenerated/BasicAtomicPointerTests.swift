@@ -47,86 +47,71 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_create_destroy() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
 
   func test_load_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo2)
   }
 
   func test_load_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     XCTAssertEqual(v.load(ordering: .acquiring), _foo1)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     XCTAssertEqual(w.load(ordering: .acquiring), _foo2)
   }
 
   func test_load_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), _foo1)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), _foo2)
   }
 
 
   func test_store_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     v.store(_foo2, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     w.store(_foo1, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
 
   func test_store_releasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     v.store(_foo2, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     w.store(_foo1, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
 
   func test_store_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
     v.store(_foo2, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo2)
 
-    let w: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo2)
-    defer { w.destroy() }
+    let w = Atomic<UnsafePointer<Foo>>(_foo2)
     w.store(_foo1, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), _foo1)
   }
 
 
   func test_exchange_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .relaxed), _foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
@@ -139,8 +124,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_exchange_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .acquiring), _foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
@@ -153,8 +137,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_exchange_releasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .releasing), _foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
@@ -167,8 +150,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_exchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .acquiringAndReleasing), _foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
@@ -181,8 +163,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_exchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     XCTAssertEqual(v.exchange(_foo1, ordering: .sequentiallyConsistent), _foo1)
     XCTAssertEqual(v.load(ordering: .relaxed), _foo1)
@@ -196,8 +177,7 @@ class BasicAtomicPointerTests: XCTestCase {
 
 
   func test_compareExchange_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -233,8 +213,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -270,8 +249,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -307,8 +285,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -344,8 +321,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -381,8 +357,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -418,8 +393,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -455,8 +429,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -492,8 +465,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -529,8 +501,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -567,8 +538,7 @@ class BasicAtomicPointerTests: XCTestCase {
 
 
   func test_compareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -608,8 +578,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -649,8 +618,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -690,8 +658,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -731,8 +698,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -772,8 +738,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -813,8 +778,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -854,8 +818,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -895,8 +858,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -936,8 +898,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -977,8 +938,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -1018,8 +978,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -1059,8 +1018,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -1100,8 +1058,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -1141,8 +1098,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.compareExchange(
       expected: _foo1,
@@ -1182,8 +1138,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1223,8 +1178,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1264,8 +1218,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1305,8 +1258,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1346,8 +1298,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1387,8 +1338,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1428,8 +1378,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1469,8 +1418,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1510,8 +1458,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1551,8 +1498,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1592,8 +1538,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1633,8 +1578,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1674,8 +1618,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1715,8 +1658,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,
@@ -1756,8 +1698,7 @@ class BasicAtomicPointerTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<UnsafePointer<Foo>> = .create(_foo1)
-    defer { v.destroy() }
+    let v = Atomic<UnsafePointer<Foo>>(_foo1)
 
     var (exchanged, original): (Bool, UnsafePointer<Foo>) = v.weakCompareExchange(
       expected: _foo1,

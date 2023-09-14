@@ -26,86 +26,71 @@ import Atomics
 class BasicAtomicRawRepresentableTests: XCTestCase {
 
   func test_create_destroy() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
   }
 
   func test_load_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.two)
   }
 
   func test_load_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     XCTAssertEqual(v.load(ordering: .acquiring), Fred.one)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     XCTAssertEqual(w.load(ordering: .acquiring), Fred.two)
   }
 
   func test_load_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), Fred.one)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), Fred.two)
   }
 
 
   func test_store_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     v.store(Fred.two, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     w.store(Fred.one, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
 
   func test_store_releasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     v.store(Fred.two, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     w.store(Fred.one, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
 
   func test_store_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
     v.store(Fred.two, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    let w: UnsafeAtomic<Fred> = .create(Fred.two)
-    defer { w.destroy() }
+    let w = Atomic<Fred>(Fred.two)
     w.store(Fred.one, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), Fred.one)
   }
 
 
   func test_exchange_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .relaxed), Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
@@ -118,8 +103,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_exchange_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiring), Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
@@ -132,8 +116,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_exchange_releasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .releasing), Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
@@ -146,8 +129,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_exchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .acquiringAndReleasing), Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
@@ -160,8 +142,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_exchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     XCTAssertEqual(v.exchange(Fred.one, ordering: .sequentiallyConsistent), Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
@@ -175,8 +156,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
 
 
   func test_compareExchange_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -212,8 +192,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -249,8 +228,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_releasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -286,8 +264,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -323,8 +300,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -360,8 +336,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -397,8 +372,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -434,8 +408,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -471,8 +444,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -508,8 +480,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -546,8 +517,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
 
 
   func test_compareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -587,8 +557,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -628,8 +597,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -669,8 +637,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -710,8 +677,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -751,8 +717,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -792,8 +757,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -833,8 +797,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -874,8 +837,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -915,8 +877,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -956,8 +917,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -997,8 +957,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -1038,8 +997,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -1079,8 +1037,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -1120,8 +1077,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.compareExchange(
       expected: Fred.one,
@@ -1161,8 +1117,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1202,8 +1157,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1243,8 +1197,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1284,8 +1237,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1325,8 +1277,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1366,8 +1317,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1407,8 +1357,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1448,8 +1397,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1489,8 +1437,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1530,8 +1477,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1571,8 +1517,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1612,8 +1557,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1653,8 +1597,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1694,8 +1637,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,
@@ -1735,8 +1677,7 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Fred> = .create(Fred.one)
-    defer { v.destroy() }
+    let v = Atomic<Fred>(Fred.one)
 
     var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
       expected: Fred.one,

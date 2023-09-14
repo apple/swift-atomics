@@ -17,326 +17,246 @@
 // #############################################################################
 
 
-/// An unsafe reference type holding an atomic value, requiring manual memory
-/// management of the underlying storage representation.
-@frozen
-public struct UnsafeAtomic<Value: AtomicValue>
-where Value.AtomicRepresentation.Value == Value {
-  // Note: the Value.AtomicRepresentation.Value == Value requirement could be relaxed,
-  // at the cost of adding a bunch of potentially ambiguous overloads.
-  // (We'd need one set of implementations for the type equality condition,
-  // and another for `Value: AtomicReference`.)
-
-  public typealias Storage = Value.AtomicRepresentation
-  @usableFromInline
-  internal typealias _Storage = Storage
-
-  @usableFromInline
-  internal let _ptr: UnsafeMutablePointer<Storage>
-
-  /// Initialize an unsafe atomic value that uses the supplied memory location
-  /// for storage. The storage location must already be initialized to
-  /// represent a valid atomic value.
+#if compiler(>=5.9) && $RawLayout
+extension Atomic where Value: AtomicInteger {
+  /// Perform an atomic wrapping add operation and return the original value, applying
+  /// the specified memory ordering.
   ///
-  /// At the end of the lifetime of the atomic value, you must manually ensure
-  /// that the storage location is correctly `dispose()`d, deinitalized and
-  /// deallocated.
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&+` operator does on `Int` values.
   ///
-  /// Note: This is not an atomic operation.
-  @_transparent // Debug performance
-  public init(
-    @_nonEphemeral at pointer: UnsafeMutablePointer<Storage>
-  ) {
-    self._ptr = pointer
-  }
-
-  /// Create a new `UnsafeAtomic` value with the supplied initial value by
-  /// dynamically allocating storage for it.
-  ///
-  /// This call is usually paired with `destroy` to get rid of the allocated
-  /// storage at the end of its lifetime.
-  ///
-  /// Note: This is not an atomic operation.
-  @inlinable
-  public static func create(_ initialValue: __owned Value) -> Self {
-    let ptr = UnsafeMutablePointer<Storage>.allocate(capacity: 1)
-    ptr.initialize(to: Storage(initialValue))
-    return Self(at: ptr)
-  }
-
-  /// Disposes of the current value of the storage location corresponding to
-  /// this unsafe atomic value, then deinitializes and deallocates the storage.
-  ///
-  /// Note: This is not an atomic operation.
-  ///
-  /// - Returns: The last value stored in the storage representation before it
-  ///   was destroyed.
-  @discardableResult
-  @inlinable
-  public func destroy() -> Value {
-    let result = _ptr.pointee.dispose()
-    _ptr.deinitialize(count: 1)
-    _ptr.deallocate()
-    return result
-  }
-}
-
-extension UnsafeAtomic: @unchecked Sendable where Value: Sendable {}
-
-/// A reference type holding an atomic value, with automatic memory management.
-@_fixed_layout
-public class ManagedAtomic<Value: AtomicValue>
-where Value.AtomicRepresentation.Value == Value {
-  // Note: the Value.AtomicRepresentation.Value == Value requirement could be relaxed,
-  // at the cost of adding a bunch of potentially ambiguous overloads.
-  // (We'd need one set of implementations for the type equality condition,
-  // and another for `Value: AtomicReference`.)
-
-  @usableFromInline
-  internal typealias _Storage = Value.AtomicRepresentation
-
-  /// The atomic representation of the value stored inside.
-  ///
-  /// Warning: This ivar must only ever be accessed via `_ptr` after
-  /// its initialization.
-  @usableFromInline
-  internal var _storage: _Storage
-
-  /// Initialize a new managed atomic instance holding the specified initial
-  /// value.
-  @inline(__always) @_alwaysEmitIntoClient
-  public init(_ value: Value) {
-    _storage = _Storage(value)
-  }
-
-  deinit {
-    _ = _ptr.pointee.dispose()
-  }
-
-  @_alwaysEmitIntoClient @inline(__always)
-  internal var _ptr: UnsafeMutablePointer<_Storage> {
-    _getUnsafePointerToStoredProperties(self)
-      .assumingMemoryBound(to: _Storage.self)
-  }
-}
-
-extension ManagedAtomic: @unchecked Sendable where Value: Sendable {}
-
-extension UnsafeAtomic {
-  /// Atomically loads and returns the current value, applying the specified
-  /// memory ordering.
-  ///
+  /// - Parameter operand: An integer value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The current value.
+  /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  public func load(
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    _Storage.atomicLoad(at: _ptr, ordering: ordering)
-  }
-
-  /// Atomically sets the current value to `desired`, applying the specified
-  /// memory ordering.
-  ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func store(
-    _ desired: __owned Value,
-    ordering: AtomicStoreOrdering
-  ) {
-    _Storage.atomicStore(desired, at: _ptr, ordering: ordering)
-  }
-
-  /// Atomically sets the current value to `desired` and returns the original
-  /// value, applying the specified memory ordering.
-  ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func exchange(
-    _ desired: __owned Value,
+  public func loadThenWrappingIncrement(
+    by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
-    _Storage.atomicExchange(desired, at: _ptr, ordering: ordering)
-  }
-
-  /// Perform an atomic compare and exchange operation on the current value,
-  /// applying the specified memory ordering.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// This method implements a "strong" compare and exchange operation
-  /// that does not permit spurious failures.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func compareExchange(
-    expected: Value,
-    desired: __owned Value,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+    _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
       at: _ptr,
       ordering: ordering)
   }
 
-  /// Perform an atomic compare and exchange operation on the current value,
-  /// applying the specified success/failure memory orderings.
+  /// Perform an atomic wrapping subtract operation and return the original value, applying
+  /// the specified memory ordering.
   ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&-` operator does on `Int` values.
   ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// The `successOrdering` argument specifies the memory ordering to use when
-  /// the operation manages to update the current value, while `failureOrdering`
-  /// will be used when the operation leaves the value intact.
-  ///
-  /// This method implements a "strong" compare and exchange operation
-  /// that does not permit spurious failures.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
-  ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
-  ///    operation does not perform the exchange.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func compareExchange(
-    expected: Value,
-    desired: __owned Value,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicCompareExchange(
-      expected: expected,
-      desired: desired,
-      at: _ptr,
-      successOrdering: successOrdering,
-      failureOrdering: failureOrdering)
-  }
-
-  /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the memory ordering. This compare-exchange variant is
-  /// allowed to spuriously fail; it is designed to be called in a loop until
-  /// it indicates a successful exchange has happened.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// (In this weak form, transient conditions may cause the `original ==
-  /// expected` check to sometimes return false when the two values are in fact
-  /// the same.)
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
+  /// - Parameter operand: An integer value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
+  /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  public func weakCompareExchange(
-    expected: Value,
-    desired: __owned Value,
+  public func loadThenWrappingDecrement(
+    by operand: Value = 1,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+  ) -> Value {
+    _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
       at: _ptr,
       ordering: ordering)
   }
 
-  /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the specified success/failure memory orderings. This
-  /// compare-exchange variant is allowed to spuriously fail; it is designed to
-  /// be called in a loop until it indicates a successful exchange has happened.
+  /// Perform an atomic bitwise AND operation and return the original value, applying
+  /// the specified memory ordering.
   ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// (In this weak form, transient conditions may cause the `original ==
-  /// expected` check to sometimes return false when the two values are in fact
-  /// the same.)
-  ///
-  /// The `ordering` argument specifies the memory ordering to use when the
-  /// operation manages to update the current value, while `failureOrdering`
-  /// will be used when the operation leaves the value intact.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
-  ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
-  ///    operation does not perform the exchange.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
-  public func weakCompareExchange(
-    expected: Value,
-    desired: __owned Value,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+  public func loadThenBitwiseAnd(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    _Storage.atomicLoadThenBitwiseAnd(
+      with: operand,
       at: _ptr,
-      successOrdering: successOrdering,
-      failureOrdering: failureOrdering)
+      ordering: ordering)
+  }
+
+  /// Perform an atomic bitwise OR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThenBitwiseOr(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    _Storage.atomicLoadThenBitwiseOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+
+  /// Perform an atomic bitwise XOR operation and return the original value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The original value before the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func loadThenBitwiseXor(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    _Storage.atomicLoadThenBitwiseXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+
+  /// Perform an atomic wrapping add operation and return the new value, applying
+  /// the specified memory ordering.
+  ///
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&+` operator does on `Int` values.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The new value after the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func wrappingIncrementThenLoad(
+    by operand: Value = 1,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original &+ operand
+  }
+
+  /// Perform an atomic wrapping subtract operation and return the new value, applying
+  /// the specified memory ordering.
+  ///
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&-` operator does on `Int` values.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The new value after the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func wrappingDecrementThenLoad(
+    by operand: Value = 1,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original &- operand
+  }
+
+  /// Perform an atomic bitwise AND operation and return the new value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The new value after the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func bitwiseAndThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = _Storage.atomicLoadThenBitwiseAnd(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original & operand
+  }
+
+  /// Perform an atomic bitwise OR operation and return the new value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The new value after the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func bitwiseOrThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = _Storage.atomicLoadThenBitwiseOr(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original | operand
+  }
+
+  /// Perform an atomic bitwise XOR operation and return the new value, applying
+  /// the specified memory ordering.
+  ///
+  /// - Parameter operand: An integer value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Returns: The new value after the operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func bitwiseXorThenLoad(
+    with operand: Value,
+    ordering: AtomicUpdateOrdering
+  ) -> Value {
+    let original = _Storage.atomicLoadThenBitwiseXor(
+      with: operand,
+      at: _ptr,
+      ordering: ordering)
+    return original ^ operand
+  }
+
+  /// Perform an atomic wrapping increment operation applying the
+  /// specified memory ordering.
+  ///
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&+=` operator does on `Int` values.
+  ///
+  /// - Parameter operand: The value to add to the current value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func wrappingIncrement(
+    by operand: Value = 1,
+    ordering: AtomicUpdateOrdering
+  ) {
+    _ = _Storage.atomicLoadThenWrappingIncrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
+  }
+
+  /// Perform an atomic wrapping decrement operation applying the
+  /// specified memory ordering.
+  ///
+  /// Note: This operation silently wraps around on overflow, like the
+  /// `&-=` operator does on `Int` values.
+  ///
+  /// - Parameter operand: The value to subtract from the current value.
+  /// - Parameter ordering: The memory ordering to apply on this operation.
+  @_semantics("atomics.requires_constant_orderings")
+  @_transparent @_alwaysEmitIntoClient
+  public func wrappingDecrement(
+    by operand: Value = 1,
+    ordering: AtomicUpdateOrdering
+  ) {
+    _ = _Storage.atomicLoadThenWrappingDecrement(
+      by: operand,
+      at: _ptr,
+      ordering: ordering)
   }
 }
+#endif
 
 extension UnsafeAtomic where Value: AtomicInteger {
   /// Perform an atomic wrapping add operation and return the original value, applying
@@ -359,6 +279,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       at: _ptr,
       ordering: ordering)
   }
+
   /// Perform an atomic wrapping subtract operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -379,6 +300,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       at: _ptr,
       ordering: ordering)
   }
+
   /// Perform an atomic bitwise AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -396,6 +318,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       at: _ptr,
       ordering: ordering)
   }
+
   /// Perform an atomic bitwise OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -413,6 +336,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       at: _ptr,
       ordering: ordering)
   }
+
   /// Perform an atomic bitwise XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -452,6 +376,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original &+ operand
   }
+
   /// Perform an atomic wrapping subtract operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -473,6 +398,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original &- operand
   }
+
   /// Perform an atomic bitwise AND operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -491,6 +417,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original & operand
   }
+
   /// Perform an atomic bitwise OR operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -509,6 +436,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original | operand
   }
+
   /// Perform an atomic bitwise XOR operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -527,6 +455,7 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original ^ operand
   }
+
 
   /// Perform an atomic wrapping increment operation applying the
   /// specified memory ordering.
@@ -566,221 +495,6 @@ extension UnsafeAtomic where Value: AtomicInteger {
       by: operand,
       at: _ptr,
       ordering: ordering)
-  }
-}
-extension ManagedAtomic {
-  /// Atomically loads and returns the current value, applying the specified
-  /// memory ordering.
-  ///
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The current value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func load(
-    ordering: AtomicLoadOrdering
-  ) -> Value {
-    _Storage.atomicLoad(at: _ptr, ordering: ordering)
-  }
-
-  /// Atomically sets the current value to `desired`, applying the specified
-  /// memory ordering.
-  ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func store(
-    _ desired: __owned Value,
-    ordering: AtomicStoreOrdering
-  ) {
-    _Storage.atomicStore(desired, at: _ptr, ordering: ordering)
-  }
-
-  /// Atomically sets the current value to `desired` and returns the original
-  /// value, applying the specified memory ordering.
-  ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func exchange(
-    _ desired: __owned Value,
-    ordering: AtomicUpdateOrdering
-  ) -> Value {
-    _Storage.atomicExchange(desired, at: _ptr, ordering: ordering)
-  }
-
-  /// Perform an atomic compare and exchange operation on the current value,
-  /// applying the specified memory ordering.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// This method implements a "strong" compare and exchange operation
-  /// that does not permit spurious failures.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func compareExchange(
-    expected: Value,
-    desired: __owned Value,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicCompareExchange(
-      expected: expected,
-      desired: desired,
-      at: _ptr,
-      ordering: ordering)
-  }
-
-  /// Perform an atomic compare and exchange operation on the current value,
-  /// applying the specified success/failure memory orderings.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// The `successOrdering` argument specifies the memory ordering to use when
-  /// the operation manages to update the current value, while `failureOrdering`
-  /// will be used when the operation leaves the value intact.
-  ///
-  /// This method implements a "strong" compare and exchange operation
-  /// that does not permit spurious failures.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
-  ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
-  ///    operation does not perform the exchange.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func compareExchange(
-    expected: Value,
-    desired: __owned Value,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicCompareExchange(
-      expected: expected,
-      desired: desired,
-      at: _ptr,
-      successOrdering: successOrdering,
-      failureOrdering: failureOrdering)
-  }
-
-  /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the memory ordering. This compare-exchange variant is
-  /// allowed to spuriously fail; it is designed to be called in a loop until
-  /// it indicates a successful exchange has happened.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// (In this weak form, transient conditions may cause the `original ==
-  /// expected` check to sometimes return false when the two values are in fact
-  /// the same.)
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func weakCompareExchange(
-    expected: Value,
-    desired: __owned Value,
-    ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
-      at: _ptr,
-      ordering: ordering)
-  }
-
-  /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the specified success/failure memory orderings. This
-  /// compare-exchange variant is allowed to spuriously fail; it is designed to
-  /// be called in a loop until it indicates a successful exchange has happened.
-  ///
-  /// This operation performs the following algorithm as a single atomic
-  /// transaction:
-  ///
-  /// ```
-  /// atomic(self) { currentValue in
-  ///   let original = currentValue
-  ///   guard original == expected else { return (false, original) }
-  ///   currentValue = desired
-  ///   return (true, original)
-  /// }
-  /// ```
-  ///
-  /// (In this weak form, transient conditions may cause the `original ==
-  /// expected` check to sometimes return false when the two values are in fact
-  /// the same.)
-  ///
-  /// The `ordering` argument specifies the memory ordering to use when the
-  /// operation manages to update the current value, while `failureOrdering`
-  /// will be used when the operation leaves the value intact.
-  ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
-  ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
-  ///    operation does not perform the exchange.
-  /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
-  ///   the exchange was successful, and `original` is the original value.
-  @_semantics("atomics.requires_constant_orderings")
-  @_transparent @_alwaysEmitIntoClient
-  public func weakCompareExchange(
-    expected: Value,
-    desired: __owned Value,
-    successOrdering: AtomicUpdateOrdering,
-    failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Value) {
-    _Storage.atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
-      at: _ptr,
-      successOrdering: successOrdering,
-      failureOrdering: failureOrdering)
   }
 }
 
@@ -800,11 +514,18 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.loadThenWrappingIncrement(
+      by: operand,
+      ordering: ordering)
+#else
     _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
+
   /// Perform an atomic wrapping subtract operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -820,11 +541,18 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.loadThenWrappingDecrement(
+      by: operand,
+      ordering: ordering)
+#else
     _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
+
   /// Perform an atomic bitwise AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -837,11 +565,18 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.loadThenBitwiseAnd(
+      with: operand,
+      ordering: ordering)
+#else
     _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
+
   /// Perform an atomic bitwise OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -854,11 +589,18 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.loadThenBitwiseOr(
+      with: operand,
+      ordering: ordering)
+#else
     _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
+
   /// Perform an atomic bitwise XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -871,11 +613,18 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.loadThenBitwiseXor(
+      with: operand,
+      ordering: ordering)
+#else
     _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
+
 
   /// Perform an atomic wrapping add operation and return the new value, applying
   /// the specified memory ordering.
@@ -892,12 +641,19 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.wrappingIncrementThenLoad(
+      by: operand,
+      ordering: ordering)
+#else
     let original = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
     return original &+ operand
+#endif
   }
+
   /// Perform an atomic wrapping subtract operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -913,12 +669,19 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.wrappingDecrementThenLoad(
+      by: operand,
+      ordering: ordering)
+#else
     let original = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
     return original &- operand
+#endif
   }
+
   /// Perform an atomic bitwise AND operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -931,12 +694,19 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.bitwiseAndThenLoad(
+      with: operand,
+      ordering: ordering)
+#else
     let original = _Storage.atomicLoadThenBitwiseAnd(
       with: operand,
       at: _ptr,
       ordering: ordering)
     return original & operand
+#endif
   }
+
   /// Perform an atomic bitwise OR operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -949,12 +719,19 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.bitwiseOrThenLoad(
+      with: operand,
+      ordering: ordering)
+#else
     let original = _Storage.atomicLoadThenBitwiseOr(
       with: operand,
       at: _ptr,
       ordering: ordering)
     return original | operand
+#endif
   }
+
   /// Perform an atomic bitwise XOR operation and return the new value, applying
   /// the specified memory ordering.
   ///
@@ -967,12 +744,19 @@ extension ManagedAtomic where Value: AtomicInteger {
     with operand: Value,
     ordering: AtomicUpdateOrdering
   ) -> Value {
+#if compiler(>=5.9) && $RawLayout
+    _storage.bitwiseXorThenLoad(
+      with: operand,
+      ordering: ordering)
+#else
     let original = _Storage.atomicLoadThenBitwiseXor(
       with: operand,
       at: _ptr,
       ordering: ordering)
     return original ^ operand
+#endif
   }
+
 
   /// Perform an atomic wrapping increment operation applying the
   /// specified memory ordering.
@@ -988,10 +772,16 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
+    _ = _storage.loadThenWrappingIncrement(
+      by: operand,
+      ordering: ordering)
+#else
     _ = _Storage.atomicLoadThenWrappingIncrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
 
   /// Perform an atomic wrapping decrement operation applying the
@@ -1008,9 +798,15 @@ extension ManagedAtomic where Value: AtomicInteger {
     by operand: Value = 1,
     ordering: AtomicUpdateOrdering
   ) {
+#if compiler(>=5.9) && $RawLayout
+    _ = _storage.loadThenWrappingDecrement(
+      by: operand,
+      ordering: ordering)
+#else
     _ = _Storage.atomicLoadThenWrappingDecrement(
       by: operand,
       at: _ptr,
       ordering: ordering)
+#endif
   }
 }

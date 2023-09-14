@@ -2092,7 +2092,7 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
 
 
 
-#if arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)
+#if (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)))
 extension DoubleWord: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -2229,7 +2229,7 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
 
 
 
-#else /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+#else /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
 extension DoubleWord: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
@@ -2363,5 +2363,5 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
   }
 }
 
-#endif /* arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32) */
+#endif /* (compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32))) */
 

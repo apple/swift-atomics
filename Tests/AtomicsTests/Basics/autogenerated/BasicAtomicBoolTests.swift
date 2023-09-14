@@ -26,86 +26,71 @@ import Atomics
 class BasicAtomicBoolTests: XCTestCase {
 
   func test_create_destroy() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     XCTAssertEqual(w.load(ordering: .relaxed), false)
   }
 
   func test_load_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     XCTAssertEqual(w.load(ordering: .relaxed), false)
   }
 
   func test_load_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     XCTAssertEqual(v.load(ordering: .acquiring), true)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     XCTAssertEqual(w.load(ordering: .acquiring), false)
   }
 
   func test_load_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     XCTAssertEqual(v.load(ordering: .sequentiallyConsistent), true)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     XCTAssertEqual(w.load(ordering: .sequentiallyConsistent), false)
   }
 
 
   func test_store_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     v.store(false, ordering: .relaxed)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     w.store(true, ordering: .relaxed)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
 
   func test_store_releasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     v.store(false, ordering: .releasing)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     w.store(true, ordering: .releasing)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
 
   func test_store_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
     v.store(false, ordering: .sequentiallyConsistent)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    let w: UnsafeAtomic<Bool> = .create(false)
-    defer { w.destroy() }
+    let w = Atomic<Bool>(false)
     w.store(true, ordering: .sequentiallyConsistent)
     XCTAssertEqual(w.load(ordering: .relaxed), true)
   }
 
 
   func test_exchange_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     XCTAssertEqual(v.exchange(true, ordering: .relaxed), true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
@@ -118,8 +103,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_exchange_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     XCTAssertEqual(v.exchange(true, ordering: .acquiring), true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
@@ -132,8 +116,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_exchange_releasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     XCTAssertEqual(v.exchange(true, ordering: .releasing), true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
@@ -146,8 +129,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_exchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     XCTAssertEqual(v.exchange(true, ordering: .acquiringAndReleasing), true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
@@ -160,8 +142,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_exchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     XCTAssertEqual(v.exchange(true, ordering: .sequentiallyConsistent), true)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
@@ -175,8 +156,7 @@ class BasicAtomicBoolTests: XCTestCase {
 
 
   func test_compareExchange_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -212,8 +192,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -249,8 +228,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_releasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -286,8 +264,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -323,8 +300,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -360,8 +336,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -397,8 +372,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -434,8 +408,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -471,8 +444,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -508,8 +480,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -546,8 +517,7 @@ class BasicAtomicBoolTests: XCTestCase {
 
 
   func test_compareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -587,8 +557,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -628,8 +597,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -669,8 +637,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -710,8 +677,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -751,8 +717,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -792,8 +757,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -833,8 +797,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -874,8 +837,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -915,8 +877,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -956,8 +917,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -997,8 +957,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -1038,8 +997,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -1079,8 +1037,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -1120,8 +1077,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_compareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.compareExchange(
       expected: true,
@@ -1161,8 +1117,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1202,8 +1157,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1243,8 +1197,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_relaxed_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1284,8 +1237,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1325,8 +1277,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1366,8 +1317,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiring_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1407,8 +1357,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1448,8 +1397,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1489,8 +1437,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_releasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1530,8 +1477,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1571,8 +1517,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1612,8 +1557,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_acquiringAndReleasing_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1653,8 +1597,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_relaxed() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1694,8 +1637,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_acquiring() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1735,8 +1677,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_weakCompareExchange_sequentiallyConsistent_sequentiallyConsistent() {
-    let v: UnsafeAtomic<Bool> = .create(true)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(true)
 
     var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
       expected: true,
@@ -1779,8 +1720,7 @@ class BasicAtomicBoolTests: XCTestCase {
 
   // Bool operations
   func test_loadThenLogicalAnd_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1797,8 +1737,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalAnd_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1815,8 +1754,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalAnd_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1833,8 +1771,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalAnd_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1851,8 +1788,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalAnd_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1869,8 +1805,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalOr_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1887,8 +1822,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalOr_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1905,8 +1839,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalOr_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1923,8 +1856,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalOr_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1941,8 +1873,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalOr_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1959,8 +1890,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalXor_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1977,8 +1907,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalXor_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -1995,8 +1924,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalXor_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2013,8 +1941,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalXor_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2031,8 +1958,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_loadThenLogicalXor_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2050,8 +1976,7 @@ class BasicAtomicBoolTests: XCTestCase {
 
 
   func test_logicalAndThenLoad_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2070,8 +1995,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalAndThenLoad_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2090,8 +2014,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalAndThenLoad_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2110,8 +2033,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalAndThenLoad_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2130,8 +2052,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalAndThenLoad_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2150,8 +2071,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalOrThenLoad_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2170,8 +2090,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalOrThenLoad_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2190,8 +2109,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalOrThenLoad_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2210,8 +2128,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalOrThenLoad_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2230,8 +2147,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalOrThenLoad_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2250,8 +2166,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalXorThenLoad_relaxed() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2270,8 +2185,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalXorThenLoad_acquiring() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2290,8 +2204,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalXorThenLoad_releasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2310,8 +2223,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalXorThenLoad_acquiringAndReleasing() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {
@@ -2330,8 +2242,7 @@ class BasicAtomicBoolTests: XCTestCase {
   }
 
   func test_logicalXorThenLoad_sequentiallyConsistent() {
-    let v = UnsafeAtomic<Bool>.create(false)
-    defer { v.destroy() }
+    let v = Atomic<Bool>(false)
 
     // The truth tables are super tiny, so just check every value
     for a in [false, true] {

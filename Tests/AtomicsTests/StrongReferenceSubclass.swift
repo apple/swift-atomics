@@ -25,6 +25,19 @@ private class Child: Base {}
 private class Grandchild: Child {}
 
 class StrongReferenceSubclass: XCTestCase {
+  func test_base_noncopyable() {
+    let object = Child(42)
+    let v = Atomic<Base>(object)
+
+    XCTAssertTrue(v.load(ordering: .relaxed) === object)
+
+    let object2 = Grandchild(23)
+    let o = v.exchange(object2, ordering: .relaxed)
+    XCTAssertTrue(o === object)
+
+    XCTAssertTrue(v.load(ordering: .relaxed) === object2)
+  }
+
   func test_base_unsafe() {
     let object = Child(42)
     let v = UnsafeAtomic<Base>.create(object)
@@ -52,6 +65,18 @@ class StrongReferenceSubclass: XCTestCase {
     XCTAssertTrue(o === object)
 
     XCTAssertTrue(v.load(ordering: .relaxed) === object2)
+  }
+
+  func test_optional_base() {
+    let v = Atomic<Base?>(nil)
+
+    XCTAssertTrue(v.load(ordering: .relaxed) == nil)
+
+    let object = Grandchild(23)
+    let o = v.exchange(object, ordering: .relaxed)
+    XCTAssertTrue(o == nil)
+
+    XCTAssertTrue(v.load(ordering: .relaxed) === object)
   }
 
   func test_optional_base_unsafe() {

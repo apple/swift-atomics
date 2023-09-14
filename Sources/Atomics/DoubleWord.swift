@@ -10,7 +10,60 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if !ATOMICS_NATIVE_BUILTINS
+#if ATOMICS_NATIVE_BUILTINS
+import Builtin
+
+#if _pointerBitWidth(_32)
+@frozen
+@_alignment(8)
+public struct DoubleWord {
+  @usableFromInline
+  internal typealias _Builtin = Builtin.Int64
+
+  public var first: UInt
+  public var second: UInt
+
+  @inlinable @inline(__always)
+  public init(first: UInt, second: UInt) {
+    self.first = first
+    self.second = second
+  }
+}
+#elseif _pointerBitWidth(_64)
+@frozen
+@_alignment(16)
+public struct DoubleWord {
+  @usableFromInline
+  internal typealias _Builtin = Builtin.Int128
+
+  public var first: UInt
+  public var second: UInt
+
+  @inlinable @inline(__always)
+  public init(first: UInt, second: UInt) {
+    self.first = first
+    self.second = second
+  }
+}
+#else
+#error("Unsupported pointer bit width")
+#endif
+
+extension DoubleWord {
+  @_alwaysEmitIntoClient
+  @inline(__always)
+  internal init(_ builtin: _Builtin) {
+    self = unsafeBitCast(builtin, to: DoubleWord.self)
+  }
+
+  @_alwaysEmitIntoClient
+  @inline(__always)
+  internal var _value: _Builtin {
+    unsafeBitCast(self, to: _Builtin.self)
+  }
+}
+
+#else // !ATOMICS_NATIVE_BUILTINS
 import _AtomicsShims
 public typealias DoubleWord = _AtomicsShims.DoubleWord
 #endif
