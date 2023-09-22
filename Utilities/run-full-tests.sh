@@ -116,7 +116,7 @@ if [ "$(uname)" = "Darwin" ]; then
     try_xcodeproj "xcodeproj.build.macOS" "generic/platform=macOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
     try_xcodeproj "xcodeproj.build.iOS" "generic/platform=iOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
     try_xcodeproj "xcodeproj.build.watchOS" "generic/platform=watchOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
-    try_xcodeproj "xcodeproj.build.watchOS" "generic/platform=tvOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
+    try_xcodeproj "xcodeproj.build.tvOS" "generic/platform=tvOS" -project Xcode/Atomics.xcodeproj -scheme Atomics build
 fi
 
 # Build with custom configurations
