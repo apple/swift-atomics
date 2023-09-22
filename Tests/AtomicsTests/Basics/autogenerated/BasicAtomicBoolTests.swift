@@ -359,15 +359,19 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -379,11 +383,12 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -400,11 +405,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -416,11 +424,12 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -437,11 +446,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -453,11 +465,12 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -474,11 +487,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -490,11 +506,12 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -511,11 +528,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -527,11 +547,12 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1160,16 +1181,19 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), true)
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1182,12 +1206,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1205,12 +1230,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1223,12 +1250,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1246,12 +1274,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1264,12 +1294,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1287,12 +1318,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1305,12 +1338,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1328,12 +1362,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1346,12 +1382,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1369,12 +1406,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1387,12 +1426,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1410,12 +1450,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1428,12 +1470,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1451,12 +1494,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1469,12 +1514,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1492,12 +1538,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1510,12 +1558,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1533,12 +1582,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1551,12 +1602,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1574,12 +1626,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1592,12 +1646,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1615,12 +1670,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1633,12 +1690,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1656,12 +1714,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1674,12 +1734,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1697,12 +1758,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1715,12 +1778,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 
@@ -1738,12 +1802,14 @@ class BasicAtomicBoolTests: XCTestCase {
     let v: UnsafeAtomic<Bool> = .create(true)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Bool) = v.weakCompareExchange(
-      expected: true,
-      desired: false,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Bool)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: true,
+        desired: false,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, true)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
@@ -1756,12 +1822,13 @@ class BasicAtomicBoolTests: XCTestCase {
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), false)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: false,
-      desired: true,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: false,
+        desired: true,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, false)
     XCTAssertEqual(v.load(ordering: .relaxed), true)
 

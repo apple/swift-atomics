@@ -359,15 +359,19 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -379,11 +383,12 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -400,11 +405,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -416,11 +424,12 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -437,11 +446,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -453,11 +465,12 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -474,11 +487,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -490,11 +506,12 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -511,11 +528,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -527,11 +547,12 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1160,16 +1181,19 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1182,12 +1206,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1205,12 +1230,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1223,12 +1250,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1246,12 +1274,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1264,12 +1294,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1287,12 +1318,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1305,12 +1338,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1328,12 +1362,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1346,12 +1382,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1369,12 +1406,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1387,12 +1426,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1410,12 +1450,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1428,12 +1470,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1451,12 +1494,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1469,12 +1514,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1492,12 +1538,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1510,12 +1558,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1533,12 +1582,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1551,12 +1602,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1574,12 +1626,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1592,12 +1646,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1615,12 +1670,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1633,12 +1690,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1656,12 +1714,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1674,12 +1734,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1697,12 +1758,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1715,12 +1778,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 
@@ -1738,12 +1802,14 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Fred> = .create(Fred.one)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Fred) = v.weakCompareExchange(
-      expected: Fred.one,
-      desired: Fred.two,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Fred)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.one,
+        desired: Fred.two,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.one)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
@@ -1756,12 +1822,13 @@ class BasicAtomicRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.two)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: Fred.two,
-      desired: Fred.one,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Fred.two,
+        desired: Fred.one,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Fred.two)
     XCTAssertEqual(v.load(ordering: .relaxed), Fred.one)
 

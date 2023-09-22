@@ -359,15 +359,19 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -379,11 +383,12 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -400,11 +405,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -416,11 +424,12 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -437,11 +446,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -453,11 +465,12 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -474,11 +487,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -490,11 +506,12 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -511,11 +528,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -527,11 +547,12 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1160,16 +1181,19 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1182,12 +1206,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1205,12 +1230,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1223,12 +1250,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1246,12 +1274,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1264,12 +1294,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1287,12 +1318,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1305,12 +1338,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1328,12 +1362,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1346,12 +1382,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1369,12 +1406,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1387,12 +1426,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1410,12 +1450,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1428,12 +1470,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1451,12 +1494,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1469,12 +1514,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1492,12 +1538,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1510,12 +1558,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1533,12 +1582,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1551,12 +1602,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1574,12 +1626,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1592,12 +1646,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1615,12 +1670,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1633,12 +1690,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1656,12 +1714,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1674,12 +1734,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1697,12 +1758,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1715,12 +1778,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 
@@ -1738,12 +1802,14 @@ class BasicAtomicInt32Tests: XCTestCase {
     let v: UnsafeAtomic<Int32> = .create(12)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Int32) = v.weakCompareExchange(
-      expected: 12,
-      desired: 23,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Int32)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 12,
+        desired: 23,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 12)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
@@ -1756,12 +1822,13 @@ class BasicAtomicInt32Tests: XCTestCase {
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 23)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: 23,
-      desired: 12,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: 23,
+        desired: 12,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, 23)
     XCTAssertEqual(v.load(ordering: .relaxed), 12)
 

@@ -366,15 +366,19 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -386,11 +390,12 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -407,11 +412,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -423,11 +431,12 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -444,11 +453,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -460,11 +472,12 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -481,11 +494,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -497,11 +513,12 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -518,11 +535,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -534,11 +554,12 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1167,16 +1188,19 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1189,12 +1213,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1212,12 +1237,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1230,12 +1257,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1253,12 +1281,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1271,12 +1301,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1294,12 +1325,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1312,12 +1345,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1335,12 +1369,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1353,12 +1389,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1376,12 +1413,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1394,12 +1433,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1417,12 +1457,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1435,12 +1477,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1458,12 +1501,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1476,12 +1521,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1499,12 +1545,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1517,12 +1565,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1540,12 +1589,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1558,12 +1609,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1581,12 +1633,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1599,12 +1653,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1622,12 +1677,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1640,12 +1697,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1663,12 +1721,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1681,12 +1741,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1704,12 +1765,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1722,12 +1785,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
@@ -1745,12 +1809,14 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     let v: UnsafeAtomic<Unmanaged<Bar>> = .create(_bar1)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Unmanaged<Bar>) = v.weakCompareExchange(
-      expected: _bar1,
-      desired: _bar2,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Unmanaged<Bar>)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar1,
+        desired: _bar2,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar1)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
@@ -1763,12 +1829,13 @@ class BasicAtomicUnmanagedTests: XCTestCase {
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar2)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: _bar2,
-      desired: _bar1,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: _bar2,
+        desired: _bar1,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, _bar2)
     XCTAssertEqual(v.load(ordering: .relaxed), _bar1)
 
