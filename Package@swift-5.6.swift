@@ -80,7 +80,8 @@ let package = Package(
         "Basics/BasicAtomicUInt8Tests.swift.gyb",
         "Basics/BasicAtomicUIntTests.swift.gyb",
         "Basics/BasicAtomicUnmanagedTests.swift.gyb",
-      ]
+      ],
+      swiftSettings: _swiftSettings
     ),
   ]
 )
