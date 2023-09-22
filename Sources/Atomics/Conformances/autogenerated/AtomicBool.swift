@@ -302,6 +302,7 @@ extension UnsafeAtomic where Value == Bool {
       ordering: ordering)
     return original && operand
   }
+
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -320,6 +321,7 @@ extension UnsafeAtomic where Value == Bool {
       ordering: ordering)
     return original || operand
   }
+
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -338,6 +340,7 @@ extension UnsafeAtomic where Value == Bool {
       ordering: ordering)
     return original != operand
   }
+
 }
 extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
@@ -412,6 +415,7 @@ extension ManagedAtomic where Value == Bool {
       ordering: ordering)
     return original && operand
   }
+
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -430,6 +434,7 @@ extension ManagedAtomic where Value == Bool {
       ordering: ordering)
     return original || operand
   }
+
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
@@ -448,4 +453,5 @@ extension ManagedAtomic where Value == Bool {
       ordering: ordering)
     return original != operand
   }
+
 }

@@ -232,6 +232,7 @@ extension ${construct} where Value == Bool {
       ordering: ordering)
     return original ${op} operand
   }
+
 % end
 }
 % end

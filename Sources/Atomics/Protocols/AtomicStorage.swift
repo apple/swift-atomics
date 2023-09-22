@@ -10,14 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-/// A type that supports atomic operations through a separate atomic storage
-/// representation.
-public protocol AtomicValue {
-  /// The atomic storage representation for this value.
-  associatedtype AtomicRepresentation: AtomicStorage
-  /* where Self is a subtype of AtomicRepresentation.Value */
-}
-
 /// The storage representation for an atomic value, providing pointer-based
 /// atomic operations. This is a low-level implementation detail of atomic
 /// types; instead of directly handling conforming types, it is usually better

@@ -8,22 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7D489E4829CE969D00499B21 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D489E3F29CE969D00499B21 /* Atomics.framework */; };
-		7D489EDB29CE96DA00499B21 /* AtomicStrongReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */; };
-		7D489EDC29CE96DA00499B21 /* AtomicInteger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5B29CE96D900499B21 /* AtomicInteger.swift */; };
-		7D489EDF29CE96DA00499B21 /* AtomicOptionalRawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */; };
-		7D489EE029CE96DA00499B21 /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E5F29CE96D900499B21 /* AtomicValue.swift */; };
-		7D489EE329CE96DA00499B21 /* AtomicRawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */; };
-		7D489EE429CE96DA00499B21 /* DoubleWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6329CE96D900499B21 /* DoubleWord.swift */; };
 		7D489EE629CE96DA00499B21 /* Unmanaged extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */; };
-		7D489EE829CE96DA00499B21 /* AtomicOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6729CE96D900499B21 /* AtomicOptional.swift */; };
-		7D489EEA29CE96DA00499B21 /* AtomicMemoryOrderings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */; };
-		7D489EED29CE96DA00499B21 /* AtomicLazyReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */; };
-		7D489EEE29CE96DA00499B21 /* IntegerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6E29CE96D900499B21 /* IntegerConformances.swift */; };
-		7D489EEF29CE96DA00499B21 /* PointerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E6F29CE96D900499B21 /* PointerConformances.swift */; };
-		7D489EF029CE96DA00499B21 /* Primitives.native.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7029CE96D900499B21 /* Primitives.native.swift */; };
-		7D489EF129CE96DA00499B21 /* Primitives.shims.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7129CE96D900499B21 /* Primitives.shims.swift */; };
-		7D489EF229CE96DA00499B21 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7229CE96D900499B21 /* AtomicBool.swift */; };
-		7D489EF329CE96DA00499B21 /* HighLevelTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7329CE96D900499B21 /* HighLevelTypes.swift */; };
 		7D489EF529CE96DA00499B21 /* _AtomicsShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D489E7729CE96D900499B21 /* _AtomicsShims.h */; };
 		7D489EF629CE96DA00499B21 /* _AtomicsShims.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D489E7A29CE96D900499B21 /* _AtomicsShims.c */; };
 		7D489F4A29CE976800499B21 /* StrongReferenceShuffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EBC29CE96DA00499B21 /* StrongReferenceShuffle.swift */; };
@@ -62,6 +47,25 @@
 		7D489F6B29CE978100499B21 /* BasicAtomicOptionalReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA629CE96DA00499B21 /* BasicAtomicOptionalReferenceTests.swift */; };
 		7D489F6C29CE978100499B21 /* BasicAtomicUnmanagedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA129CE96DA00499B21 /* BasicAtomicUnmanagedTests.swift */; };
 		7D489F6D29CE978100499B21 /* BasicAtomicRawRepresentableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D489EA429CE96DA00499B21 /* BasicAtomicRawRepresentableTests.swift */; };
+		7DA9B4702ABBD93D00F14CE3 /* UnsafeAtomicLazyReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4512ABBD93D00F14CE3 /* UnsafeAtomicLazyReference.swift */; };
+		7DA9B4722ABBD93D00F14CE3 /* DoubleWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4532ABBD93D00F14CE3 /* DoubleWord.swift */; };
+		7DA9B4732ABBD93D00F14CE3 /* ManagedAtomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4542ABBD93D00F14CE3 /* ManagedAtomic.swift */; };
+		7DA9B4742ABBD93D00F14CE3 /* ManagedAtomicLazyReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4552ABBD93D00F14CE3 /* ManagedAtomicLazyReference.swift */; };
+		7DA9B4752ABBD93D00F14CE3 /* AtomicMemoryOrderings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4562ABBD93D00F14CE3 /* AtomicMemoryOrderings.swift */; };
+		7DA9B4762ABBD93D00F14CE3 /* UnsafeAtomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4572ABBD93D00F14CE3 /* UnsafeAtomic.swift */; };
+		7DA9B4772ABBD93D00F14CE3 /* IntegerOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4592ABBD93D00F14CE3 /* IntegerOperations.swift */; };
+		7DA9B47A2ABBD93D00F14CE3 /* Primitives.native.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B45E2ABBD93D00F14CE3 /* Primitives.native.swift */; };
+		7DA9B47B2ABBD93D00F14CE3 /* Primitives.shims.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B45F2ABBD93D00F14CE3 /* Primitives.shims.swift */; };
+		7DA9B47C2ABBD93D00F14CE3 /* AtomicInteger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4612ABBD93D00F14CE3 /* AtomicInteger.swift */; };
+		7DA9B47D2ABBD93D00F14CE3 /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4622ABBD93D00F14CE3 /* AtomicValue.swift */; };
+		7DA9B47E2ABBD93D00F14CE3 /* AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4632ABBD93D00F14CE3 /* AtomicReference.swift */; };
+		7DA9B47F2ABBD93D00F14CE3 /* AtomicOptionalWrappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4642ABBD93D00F14CE3 /* AtomicOptionalWrappable.swift */; };
+		7DA9B4802ABBD93D00F14CE3 /* AtomicStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4652ABBD93D00F14CE3 /* AtomicStorage.swift */; };
+		7DA9B4812ABBD93D00F14CE3 /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B4672ABBD93D00F14CE3 /* RawRepresentable.swift */; };
+		7DA9B4842ABBD93D00F14CE3 /* OptionalRawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B46A2ABBD93D00F14CE3 /* OptionalRawRepresentable.swift */; };
+		7DA9B4862ABBD93D00F14CE3 /* IntegerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B46D2ABBD93D00F14CE3 /* IntegerConformances.swift */; };
+		7DA9B4872ABBD93D00F14CE3 /* PointerConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B46E2ABBD93D00F14CE3 /* PointerConformances.swift */; };
+		7DA9B4882ABBD93D00F14CE3 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9B46F2ABBD93D00F14CE3 /* AtomicBool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,31 +82,9 @@
 		7D489E3F29CE969D00499B21 /* Atomics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D489E4729CE969D00499B21 /* AtomicsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AtomicsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D489E5829CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicStrongReference.swift; sourceTree = "<group>"; };
-		7D489E5B29CE96D900499B21 /* AtomicInteger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicInteger.swift; sourceTree = "<group>"; };
 		7D489E5C29CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		7D489E5D29CE96D900499B21 /* AtomicLazyReference.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicLazyReference.swift.gyb; sourceTree = "<group>"; };
-		7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicOptionalRawRepresentable.swift; sourceTree = "<group>"; };
-		7D489E5F29CE96D900499B21 /* AtomicValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicValue.swift; sourceTree = "<group>"; };
-		7D489E6029CE96D900499B21 /* Primitives.shims.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.shims.swift.gyb; sourceTree = "<group>"; };
-		7D489E6129CE96D900499B21 /* AtomicBool.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicBool.swift.gyb; sourceTree = "<group>"; };
-		7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicRawRepresentable.swift; sourceTree = "<group>"; };
-		7D489E6329CE96D900499B21 /* DoubleWord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleWord.swift; sourceTree = "<group>"; };
-		7D489E6429CE96D900499B21 /* HighLevelTypes.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighLevelTypes.swift.gyb; sourceTree = "<group>"; };
 		7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Unmanaged extensions.swift"; sourceTree = "<group>"; };
-		7D489E6629CE96D900499B21 /* PointerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PointerConformances.swift.gyb; sourceTree = "<group>"; };
-		7D489E6729CE96D900499B21 /* AtomicOptional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicOptional.swift; sourceTree = "<group>"; };
-		7D489E6829CE96D900499B21 /* Primitives.native.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.native.swift.gyb; sourceTree = "<group>"; };
-		7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicMemoryOrderings.swift; sourceTree = "<group>"; };
 		7D489E6A29CE96D900499B21 /* Atomics.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Atomics.docc; sourceTree = "<group>"; };
-		7D489E6B29CE96D900499B21 /* IntegerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IntegerConformances.swift.gyb; sourceTree = "<group>"; };
-		7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicLazyReference.swift; sourceTree = "<group>"; };
-		7D489E6E29CE96D900499B21 /* IntegerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerConformances.swift; sourceTree = "<group>"; };
-		7D489E6F29CE96D900499B21 /* PointerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerConformances.swift; sourceTree = "<group>"; };
-		7D489E7029CE96D900499B21 /* Primitives.native.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.native.swift; sourceTree = "<group>"; };
-		7D489E7129CE96D900499B21 /* Primitives.shims.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.shims.swift; sourceTree = "<group>"; };
-		7D489E7229CE96D900499B21 /* AtomicBool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
-		7D489E7329CE96D900499B21 /* HighLevelTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighLevelTypes.swift; sourceTree = "<group>"; };
 		7D489E7529CE96D900499B21 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		7D489E7729CE96D900499B21 /* _AtomicsShims.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _AtomicsShims.h; sourceTree = "<group>"; };
 		7D489E7829CE96D900499B21 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
@@ -190,6 +172,31 @@
 		7D489F6F29CE986A00499B21 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		7D489F7029CE986A00499B21 /* Atomics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Atomics.xcconfig; sourceTree = "<group>"; };
 		7D489F7129CE986A00499B21 /* AtomicsTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AtomicsTests.xcconfig; sourceTree = "<group>"; };
+		7DA9B4512ABBD93D00F14CE3 /* UnsafeAtomicLazyReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafeAtomicLazyReference.swift; sourceTree = "<group>"; };
+		7DA9B4522ABBD93D00F14CE3 /* IntegerOperations.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IntegerOperations.swift.gyb; sourceTree = "<group>"; };
+		7DA9B4532ABBD93D00F14CE3 /* DoubleWord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleWord.swift; sourceTree = "<group>"; };
+		7DA9B4542ABBD93D00F14CE3 /* ManagedAtomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedAtomic.swift; sourceTree = "<group>"; };
+		7DA9B4552ABBD93D00F14CE3 /* ManagedAtomicLazyReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedAtomicLazyReference.swift; sourceTree = "<group>"; };
+		7DA9B4562ABBD93D00F14CE3 /* AtomicMemoryOrderings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicMemoryOrderings.swift; sourceTree = "<group>"; };
+		7DA9B4572ABBD93D00F14CE3 /* UnsafeAtomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafeAtomic.swift; sourceTree = "<group>"; };
+		7DA9B4592ABBD93D00F14CE3 /* IntegerOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerOperations.swift; sourceTree = "<group>"; };
+		7DA9B45B2ABBD93D00F14CE3 /* Primitives.shims.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.shims.swift.gyb; sourceTree = "<group>"; };
+		7DA9B45C2ABBD93D00F14CE3 /* Primitives.native.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Primitives.native.swift.gyb; sourceTree = "<group>"; };
+		7DA9B45E2ABBD93D00F14CE3 /* Primitives.native.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.native.swift; sourceTree = "<group>"; };
+		7DA9B45F2ABBD93D00F14CE3 /* Primitives.shims.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Primitives.shims.swift; sourceTree = "<group>"; };
+		7DA9B4612ABBD93D00F14CE3 /* AtomicInteger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicInteger.swift; sourceTree = "<group>"; };
+		7DA9B4622ABBD93D00F14CE3 /* AtomicValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicValue.swift; sourceTree = "<group>"; };
+		7DA9B4632ABBD93D00F14CE3 /* AtomicReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicReference.swift; sourceTree = "<group>"; };
+		7DA9B4642ABBD93D00F14CE3 /* AtomicOptionalWrappable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicOptionalWrappable.swift; sourceTree = "<group>"; };
+		7DA9B4652ABBD93D00F14CE3 /* AtomicStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicStorage.swift; sourceTree = "<group>"; };
+		7DA9B4672ABBD93D00F14CE3 /* RawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawRepresentable.swift; sourceTree = "<group>"; };
+		7DA9B4682ABBD93D00F14CE3 /* AtomicBool.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AtomicBool.swift.gyb; sourceTree = "<group>"; };
+		7DA9B4692ABBD93D00F14CE3 /* PointerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PointerConformances.swift.gyb; sourceTree = "<group>"; };
+		7DA9B46A2ABBD93D00F14CE3 /* OptionalRawRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalRawRepresentable.swift; sourceTree = "<group>"; };
+		7DA9B46B2ABBD93D00F14CE3 /* IntegerConformances.swift.gyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IntegerConformances.swift.gyb; sourceTree = "<group>"; };
+		7DA9B46D2ABBD93D00F14CE3 /* IntegerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerConformances.swift; sourceTree = "<group>"; };
+		7DA9B46E2ABBD93D00F14CE3 /* PointerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerConformances.swift; sourceTree = "<group>"; };
+		7DA9B46F2ABBD93D00F14CE3 /* AtomicBool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
 		BB63DC6A29D782010054E9C2 /* Atomics.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Atomics.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -252,41 +259,15 @@
 		7D489E5929CE96D900499B21 /* Atomics */ = {
 			isa = PBXGroup;
 			children = (
-				7D489E6C29CE96D900499B21 /* autogenerated */,
-				7D489E6129CE96D900499B21 /* AtomicBool.swift.gyb */,
-				7D489E5B29CE96D900499B21 /* AtomicInteger.swift */,
-				7D489E5D29CE96D900499B21 /* AtomicLazyReference.swift.gyb */,
-				7D489E6929CE96D900499B21 /* AtomicMemoryOrderings.swift */,
-				7D489E6729CE96D900499B21 /* AtomicOptional.swift */,
-				7D489E5E29CE96D900499B21 /* AtomicOptionalRawRepresentable.swift */,
-				7D489E6229CE96D900499B21 /* AtomicRawRepresentable.swift */,
+				7DA9B4662ABBD93D00F14CE3 /* Conformances */,
+				7DA9B45A2ABBD93D00F14CE3 /* Primitives */,
+				7DA9B4602ABBD93D00F14CE3 /* Protocols */,
+				7DA9B4502ABBD93D00F14CE3 /* Types */,
 				7D489E6A29CE96D900499B21 /* Atomics.docc */,
-				7D489E5A29CE96D900499B21 /* AtomicStrongReference.swift */,
-				7D489E5F29CE96D900499B21 /* AtomicValue.swift */,
 				7D489E5C29CE96D900499B21 /* CMakeLists.txt */,
-				7D489E6329CE96D900499B21 /* DoubleWord.swift */,
-				7D489E6429CE96D900499B21 /* HighLevelTypes.swift.gyb */,
-				7D489E6B29CE96D900499B21 /* IntegerConformances.swift.gyb */,
-				7D489E6629CE96D900499B21 /* PointerConformances.swift.gyb */,
-				7D489E6829CE96D900499B21 /* Primitives.native.swift.gyb */,
-				7D489E6029CE96D900499B21 /* Primitives.shims.swift.gyb */,
 				7D489E6529CE96D900499B21 /* Unmanaged extensions.swift */,
 			);
 			path = Atomics;
-			sourceTree = "<group>";
-		};
-		7D489E6C29CE96D900499B21 /* autogenerated */ = {
-			isa = PBXGroup;
-			children = (
-				7D489E7229CE96D900499B21 /* AtomicBool.swift */,
-				7D489E6D29CE96D900499B21 /* AtomicLazyReference.swift */,
-				7D489E7329CE96D900499B21 /* HighLevelTypes.swift */,
-				7D489E6E29CE96D900499B21 /* IntegerConformances.swift */,
-				7D489E6F29CE96D900499B21 /* PointerConformances.swift */,
-				7D489E7029CE96D900499B21 /* Primitives.native.swift */,
-				7D489E7129CE96D900499B21 /* Primitives.shims.swift */,
-			);
-			path = autogenerated;
 			sourceTree = "<group>";
 		};
 		7D489E7429CE96D900499B21 /* _AtomicsShims */ = {
@@ -457,6 +438,83 @@
 			name = Xcode;
 			sourceTree = "<group>";
 		};
+		7DA9B4502ABBD93D00F14CE3 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B4512ABBD93D00F14CE3 /* UnsafeAtomicLazyReference.swift */,
+				7DA9B4522ABBD93D00F14CE3 /* IntegerOperations.swift.gyb */,
+				7DA9B4532ABBD93D00F14CE3 /* DoubleWord.swift */,
+				7DA9B4542ABBD93D00F14CE3 /* ManagedAtomic.swift */,
+				7DA9B4552ABBD93D00F14CE3 /* ManagedAtomicLazyReference.swift */,
+				7DA9B4562ABBD93D00F14CE3 /* AtomicMemoryOrderings.swift */,
+				7DA9B4572ABBD93D00F14CE3 /* UnsafeAtomic.swift */,
+				7DA9B4582ABBD93D00F14CE3 /* autogenerated */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		7DA9B4582ABBD93D00F14CE3 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B4592ABBD93D00F14CE3 /* IntegerOperations.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
+		7DA9B45A2ABBD93D00F14CE3 /* Primitives */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B45B2ABBD93D00F14CE3 /* Primitives.shims.swift.gyb */,
+				7DA9B45C2ABBD93D00F14CE3 /* Primitives.native.swift.gyb */,
+				7DA9B45D2ABBD93D00F14CE3 /* autogenerated */,
+			);
+			path = Primitives;
+			sourceTree = "<group>";
+		};
+		7DA9B45D2ABBD93D00F14CE3 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B45E2ABBD93D00F14CE3 /* Primitives.native.swift */,
+				7DA9B45F2ABBD93D00F14CE3 /* Primitives.shims.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
+		7DA9B4602ABBD93D00F14CE3 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B4612ABBD93D00F14CE3 /* AtomicInteger.swift */,
+				7DA9B4622ABBD93D00F14CE3 /* AtomicValue.swift */,
+				7DA9B4632ABBD93D00F14CE3 /* AtomicReference.swift */,
+				7DA9B4642ABBD93D00F14CE3 /* AtomicOptionalWrappable.swift */,
+				7DA9B4652ABBD93D00F14CE3 /* AtomicStorage.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		7DA9B4662ABBD93D00F14CE3 /* Conformances */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B4672ABBD93D00F14CE3 /* RawRepresentable.swift */,
+				7DA9B4682ABBD93D00F14CE3 /* AtomicBool.swift.gyb */,
+				7DA9B4692ABBD93D00F14CE3 /* PointerConformances.swift.gyb */,
+				7DA9B46A2ABBD93D00F14CE3 /* OptionalRawRepresentable.swift */,
+				7DA9B46B2ABBD93D00F14CE3 /* IntegerConformances.swift.gyb */,
+				7DA9B46C2ABBD93D00F14CE3 /* autogenerated */,
+			);
+			path = Conformances;
+			sourceTree = "<group>";
+		};
+		7DA9B46C2ABBD93D00F14CE3 /* autogenerated */ = {
+			isa = PBXGroup;
+			children = (
+				7DA9B46D2ABBD93D00F14CE3 /* IntegerConformances.swift */,
+				7DA9B46E2ABBD93D00F14CE3 /* PointerConformances.swift */,
+				7DA9B46F2ABBD93D00F14CE3 /* AtomicBool.swift */,
+			);
+			path = autogenerated;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -515,7 +573,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					7D489E3E29CE969D00499B21 = {
 						CreatedOnToolsVersion = 14.2;
@@ -567,23 +625,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D489EEE29CE96DA00499B21 /* IntegerConformances.swift in Sources */,
+				7DA9B4802ABBD93D00F14CE3 /* AtomicStorage.swift in Sources */,
+				7DA9B4752ABBD93D00F14CE3 /* AtomicMemoryOrderings.swift in Sources */,
+				7DA9B47C2ABBD93D00F14CE3 /* AtomicInteger.swift in Sources */,
+				7DA9B4882ABBD93D00F14CE3 /* AtomicBool.swift in Sources */,
+				7DA9B47B2ABBD93D00F14CE3 /* Primitives.shims.swift in Sources */,
+				7DA9B4862ABBD93D00F14CE3 /* IntegerConformances.swift in Sources */,
+				7DA9B4742ABBD93D00F14CE3 /* ManagedAtomicLazyReference.swift in Sources */,
+				7DA9B4812ABBD93D00F14CE3 /* RawRepresentable.swift in Sources */,
+				7DA9B4872ABBD93D00F14CE3 /* PointerConformances.swift in Sources */,
 				7D489EF629CE96DA00499B21 /* _AtomicsShims.c in Sources */,
-				7D489EDF29CE96DA00499B21 /* AtomicOptionalRawRepresentable.swift in Sources */,
-				7D489EDB29CE96DA00499B21 /* AtomicStrongReference.swift in Sources */,
-				7D489EE829CE96DA00499B21 /* AtomicOptional.swift in Sources */,
-				7D489EF229CE96DA00499B21 /* AtomicBool.swift in Sources */,
-				7D489EEF29CE96DA00499B21 /* PointerConformances.swift in Sources */,
-				7D489EE029CE96DA00499B21 /* AtomicValue.swift in Sources */,
-				7D489EDC29CE96DA00499B21 /* AtomicInteger.swift in Sources */,
-				7D489EED29CE96DA00499B21 /* AtomicLazyReference.swift in Sources */,
-				7D489EF329CE96DA00499B21 /* HighLevelTypes.swift in Sources */,
+				7DA9B4732ABBD93D00F14CE3 /* ManagedAtomic.swift in Sources */,
+				7DA9B47E2ABBD93D00F14CE3 /* AtomicReference.swift in Sources */,
+				7DA9B47F2ABBD93D00F14CE3 /* AtomicOptionalWrappable.swift in Sources */,
+				7DA9B47D2ABBD93D00F14CE3 /* AtomicValue.swift in Sources */,
+				7DA9B4762ABBD93D00F14CE3 /* UnsafeAtomic.swift in Sources */,
 				7D489EE629CE96DA00499B21 /* Unmanaged extensions.swift in Sources */,
-				7D489EE429CE96DA00499B21 /* DoubleWord.swift in Sources */,
-				7D489EEA29CE96DA00499B21 /* AtomicMemoryOrderings.swift in Sources */,
-				7D489EE329CE96DA00499B21 /* AtomicRawRepresentable.swift in Sources */,
-				7D489EF029CE96DA00499B21 /* Primitives.native.swift in Sources */,
-				7D489EF129CE96DA00499B21 /* Primitives.shims.swift in Sources */,
+				7DA9B4722ABBD93D00F14CE3 /* DoubleWord.swift in Sources */,
+				7DA9B4772ABBD93D00F14CE3 /* IntegerOperations.swift in Sources */,
+				7DA9B4842ABBD93D00F14CE3 /* OptionalRawRepresentable.swift in Sources */,
+				7DA9B4702ABBD93D00F14CE3 /* UnsafeAtomicLazyReference.swift in Sources */,
+				7DA9B47A2ABBD93D00F14CE3 /* Primitives.native.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
