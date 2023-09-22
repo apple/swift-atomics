@@ -22,51 +22,56 @@ import _AtomicsShims
 #endif
 
 
-
 extension Int8: AtomicValue {
   @frozen
   public struct AtomicRepresentation {
     public typealias Value = Int8
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int8
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt8Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_Int8(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_Int8(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == Int8.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `Int8.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int8.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_Int8(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int8(value)
+#endif
   }
 }
 
@@ -78,7 +83,7 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -89,7 +94,7 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -101,9 +106,9 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -115,10 +120,10 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Int8) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -131,11 +136,11 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int8) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -148,11 +153,11 @@ extension Int8.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int8) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -168,8 +173,8 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -181,8 +186,8 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -194,8 +199,8 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -207,8 +212,8 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -220,13 +225,11 @@ extension Int8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int8 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -235,45 +238,51 @@ extension Int16: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = Int16
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int16
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt16Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_Int16(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_Int16(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == Int16.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `Int16.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int16.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_Int16(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int16(value)
+#endif
   }
 }
 
@@ -285,7 +294,7 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -296,7 +305,7 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -308,9 +317,9 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -322,10 +331,10 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Int16) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -338,11 +347,11 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int16) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -355,11 +364,11 @@ extension Int16.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int16) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -375,8 +384,8 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -388,8 +397,8 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -401,8 +410,8 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -414,8 +423,8 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -427,13 +436,11 @@ extension Int16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int16 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -442,45 +449,51 @@ extension Int32: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = Int32
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int32
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt32Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_Int32(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_Int32(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == Int32.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `Int32.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int32.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_Int32(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int32(value)
+#endif
   }
 }
 
@@ -492,7 +505,7 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -503,7 +516,7 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -515,9 +528,9 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -529,10 +542,10 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Int32) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -545,11 +558,11 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int32) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -562,11 +575,11 @@ extension Int32.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int32) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -582,8 +595,8 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -595,8 +608,8 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -608,8 +621,8 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -621,8 +634,8 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -634,13 +647,11 @@ extension Int32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int32 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -649,45 +660,51 @@ extension Int64: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = Int64
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int64
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt64Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_Int64(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_Int64(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == Int64.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `Int64.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int64.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_Int64(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int64(value)
+#endif
   }
 }
 
@@ -699,7 +716,7 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -710,7 +727,7 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -722,9 +739,9 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -736,10 +753,10 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Int64) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -752,11 +769,11 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int64) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -769,11 +786,11 @@ extension Int64.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int64) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -789,8 +806,8 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -802,8 +819,8 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -815,8 +832,8 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -828,8 +845,8 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -841,13 +858,11 @@ extension Int64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int64 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -856,45 +871,51 @@ extension UInt8: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = UInt8
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int8
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt8Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = Int8(bitPattern: value)
-#else
-      _storage = _sa_prepare_Int8(Int8(bitPattern: value))
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return UInt8(bitPattern: _storage)
-#else
-      let v = _sa_dispose_Int8(_storage)
-      return UInt8(bitPattern: v)
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == UInt8.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `UInt8.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt8.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return Value(_sa_dispose_Int8(storage)._value)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int8(Int8(value._value))
+#endif
   }
 }
 
@@ -906,7 +927,7 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return UInt8(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -917,7 +938,7 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      Int8(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -929,9 +950,9 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicExchange(
-      Int8(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
-    return UInt8(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -943,10 +964,10 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: UInt8) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int8(bitPattern: expected),
-      desired: Int8(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, UInt8(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -959,11 +980,11 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt8) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int8(bitPattern: expected),
-      desired: Int8(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt8(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -976,11 +997,11 @@ extension UInt8.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt8) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: Int8(bitPattern: expected),
-      desired: Int8(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt8(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -996,8 +1017,8 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: Int8(bitPattern: operand), ordering: ordering)
-    return UInt8(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1009,8 +1030,8 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: Int8(bitPattern: operand), ordering: ordering)
-    return UInt8(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1022,8 +1043,8 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: Int8(bitPattern: operand), ordering: ordering)
-    return UInt8(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1035,8 +1056,8 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: Int8(bitPattern: operand), ordering: ordering)
-    return UInt8(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1048,13 +1069,11 @@ extension UInt8.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt8 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: Int8(bitPattern: operand), ordering: ordering)
-    return UInt8(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -1063,45 +1082,51 @@ extension UInt16: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = UInt16
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int16
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt16Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = Int16(bitPattern: value)
-#else
-      _storage = _sa_prepare_Int16(Int16(bitPattern: value))
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return UInt16(bitPattern: _storage)
-#else
-      let v = _sa_dispose_Int16(_storage)
-      return UInt16(bitPattern: v)
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == UInt16.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `UInt16.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt16.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return Value(_sa_dispose_Int16(storage)._value)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int16(Int16(value._value))
+#endif
   }
 }
 
@@ -1113,7 +1138,7 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return UInt16(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1124,7 +1149,7 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      Int16(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -1136,9 +1161,9 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicExchange(
-      Int16(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
-    return UInt16(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1150,10 +1175,10 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: UInt16) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int16(bitPattern: expected),
-      desired: Int16(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, UInt16(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1166,11 +1191,11 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt16) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int16(bitPattern: expected),
-      desired: Int16(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt16(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1183,11 +1208,11 @@ extension UInt16.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt16) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: Int16(bitPattern: expected),
-      desired: Int16(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt16(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -1203,8 +1228,8 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: Int16(bitPattern: operand), ordering: ordering)
-    return UInt16(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1216,8 +1241,8 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: Int16(bitPattern: operand), ordering: ordering)
-    return UInt16(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1229,8 +1254,8 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: Int16(bitPattern: operand), ordering: ordering)
-    return UInt16(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1242,8 +1267,8 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: Int16(bitPattern: operand), ordering: ordering)
-    return UInt16(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1255,13 +1280,11 @@ extension UInt16.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt16 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: Int16(bitPattern: operand), ordering: ordering)
-    return UInt16(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -1270,45 +1293,51 @@ extension UInt32: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = UInt32
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int32
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt32Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = Int32(bitPattern: value)
-#else
-      _storage = _sa_prepare_Int32(Int32(bitPattern: value))
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return UInt32(bitPattern: _storage)
-#else
-      let v = _sa_dispose_Int32(_storage)
-      return UInt32(bitPattern: v)
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == UInt32.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `UInt32.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt32.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return Value(_sa_dispose_Int32(storage)._value)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int32(Int32(value._value))
+#endif
   }
 }
 
@@ -1320,7 +1349,7 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return UInt32(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1331,7 +1360,7 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      Int32(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -1343,9 +1372,9 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicExchange(
-      Int32(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
-    return UInt32(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1357,10 +1386,10 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: UInt32) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int32(bitPattern: expected),
-      desired: Int32(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, UInt32(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1373,11 +1402,11 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt32) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int32(bitPattern: expected),
-      desired: Int32(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt32(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1390,11 +1419,11 @@ extension UInt32.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt32) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: Int32(bitPattern: expected),
-      desired: Int32(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt32(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -1410,8 +1439,8 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: Int32(bitPattern: operand), ordering: ordering)
-    return UInt32(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1423,8 +1452,8 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: Int32(bitPattern: operand), ordering: ordering)
-    return UInt32(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1436,8 +1465,8 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: Int32(bitPattern: operand), ordering: ordering)
-    return UInt32(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1449,8 +1478,8 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: Int32(bitPattern: operand), ordering: ordering)
-    return UInt32(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1462,13 +1491,11 @@ extension UInt32.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt32 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: Int32(bitPattern: operand), ordering: ordering)
-    return UInt32(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -1477,45 +1504,51 @@ extension UInt64: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = UInt64
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int64
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt64Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = Int64(bitPattern: value)
-#else
-      _storage = _sa_prepare_Int64(Int64(bitPattern: value))
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return UInt64(bitPattern: _storage)
-#else
-      let v = _sa_dispose_Int64(_storage)
-      return UInt64(bitPattern: v)
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == UInt64.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `UInt64.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt64.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return Value(_sa_dispose_Int64(storage)._value)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int64(Int64(value._value))
+#endif
   }
 }
 
@@ -1527,7 +1560,7 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return UInt64(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1538,7 +1571,7 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      Int64(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -1550,9 +1583,9 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicExchange(
-      Int64(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
-    return UInt64(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1564,10 +1597,10 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: UInt64) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int64(bitPattern: expected),
-      desired: Int64(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, UInt64(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1580,11 +1613,11 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt64) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int64(bitPattern: expected),
-      desired: Int64(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt64(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1597,11 +1630,11 @@ extension UInt64.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt64) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: Int64(bitPattern: expected),
-      desired: Int64(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt64(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -1617,8 +1650,8 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: Int64(bitPattern: operand), ordering: ordering)
-    return UInt64(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1630,8 +1663,8 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: Int64(bitPattern: operand), ordering: ordering)
-    return UInt64(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1643,8 +1676,8 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: Int64(bitPattern: operand), ordering: ordering)
-    return UInt64(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1656,8 +1689,8 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: Int64(bitPattern: operand), ordering: ordering)
-    return UInt64(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1669,13 +1702,11 @@ extension UInt64.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt64 {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: Int64(bitPattern: operand), ordering: ordering)
-    return UInt64(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -1684,45 +1715,51 @@ extension Int: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = Int
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicIntStorage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_Int(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_Int(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == Int.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `Int.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension Int.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_Int(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int(value)
+#endif
   }
 }
 
@@ -1734,7 +1771,7 @@ extension Int.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1745,7 +1782,7 @@ extension Int.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -1757,9 +1794,9 @@ extension Int.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1771,10 +1808,10 @@ extension Int.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Int) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1787,11 +1824,11 @@ extension Int.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1804,11 +1841,11 @@ extension Int.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Int) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -1824,8 +1861,8 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1837,8 +1874,8 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: operand, ordering: ordering)
-    return r
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1850,8 +1887,8 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1863,8 +1900,8 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1876,13 +1913,11 @@ extension Int.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> Int {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand, ordering: ordering)
-    return r
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -1891,45 +1926,51 @@ extension UInt: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = UInt
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicIntStorage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = Int(bitPattern: value)
-#else
-      _storage = _sa_prepare_Int(Int(bitPattern: value))
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return UInt(bitPattern: _storage)
-#else
-      let v = _sa_dispose_Int(_storage)
-      return UInt(bitPattern: v)
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == UInt.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `UInt.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension UInt.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return Value(_sa_dispose_Int(storage)._value)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_Int(Int(value._value))
+#endif
   }
 }
 
@@ -1941,7 +1982,7 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return UInt(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1952,7 +1993,7 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      Int(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -1964,9 +2005,9 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicExchange(
-      Int(bitPattern: desired),
+      Self._encode(desired),
       ordering: ordering)
-    return UInt(bitPattern: r)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1978,10 +2019,10 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: UInt) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int(bitPattern: expected),
-      desired: Int(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, UInt(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -1994,11 +2035,11 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: Int(bitPattern: expected),
-      desired: Int(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2011,11 +2052,11 @@ extension UInt.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: UInt) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: Int(bitPattern: expected),
-      desired: Int(bitPattern: desired),
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, UInt(bitPattern: r.original))
+    return (r.exchanged, Self._decode(r.original))
   }
 }
 
@@ -2031,8 +2072,8 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoadThenWrappingIncrement(
-      by: Int(bitPattern: operand), ordering: ordering)
-    return UInt(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2044,8 +2085,8 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoadThenWrappingDecrement(
-      by: Int(bitPattern: operand), ordering: ordering)
-    return UInt(bitPattern: r)
+      by: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2057,8 +2098,8 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoadThenBitwiseAnd(
-      with: Int(bitPattern: operand), ordering: ordering)
-    return UInt(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2070,8 +2111,8 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoadThenBitwiseOr(
-      with: Int(bitPattern: operand), ordering: ordering)
-    return UInt(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2083,13 +2124,11 @@ extension UInt.AtomicRepresentation: AtomicIntegerStorage {
     ordering: AtomicUpdateOrdering
   ) -> UInt {
     let r = pointer._extract._atomicLoadThenBitwiseXor(
-      with: Int(bitPattern: operand), ordering: ordering)
-    return UInt(bitPattern: r)
+      with: Self._encode(operand), ordering: ordering)
+    return Self._decode(r)
   }
 
 }
-
-
 
 
 
@@ -2098,45 +2137,51 @@ extension DoubleWord: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = DoubleWord
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = DoubleWord
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicDoubleWordStorage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value
-#else
-      _storage = _sa_prepare_DoubleWord(value)
-#endif
+      _storage = Self._encode(value)
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage
-#else
-      let v = _sa_dispose_DoubleWord(_storage)
-      return v
-#endif
+      Self._decode(_storage)
     }
   }
 }
 
 extension UnsafeMutablePointer
 where Pointee == DoubleWord.AtomicRepresentation {
-  @inlinable @inline(__always)
+  @_transparent @_alwaysEmitIntoClient
   internal var _extract: UnsafeMutablePointer<Pointee._Storage> {
     // `DoubleWord.AtomicRepresentation` is layout-compatible with
     // its only stored property.
     UnsafeMutableRawPointer(self).assumingMemoryBound(to: Pointee._Storage.self)
+  }
+}
+
+extension DoubleWord.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ storage: _Storage) -> Value {
+#if ATOMICS_NATIVE_BUILTINS
+    return Value(storage._value)
+#else
+    return _sa_dispose_DoubleWord(storage)
+#endif
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> _Storage {
+#if ATOMICS_NATIVE_BUILTINS
+    return _Storage(value._value)
+#else
+    return _sa_prepare_DoubleWord(value)
+#endif
   }
 }
 
@@ -2148,7 +2193,7 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     ordering: AtomicLoadOrdering
   ) -> DoubleWord {
     let r = pointer._extract._atomicLoad(ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2159,7 +2204,7 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     ordering: AtomicStoreOrdering
   ) {
     pointer._extract._atomicStore(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
   }
 
@@ -2171,9 +2216,9 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> DoubleWord {
     let r = pointer._extract._atomicExchange(
-      desired,
+      Self._encode(desired),
       ordering: ordering)
-    return r
+    return Self._decode(r)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2185,10 +2230,10 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: DoubleWord) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       ordering: ordering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2201,11 +2246,11 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: DoubleWord) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -2218,13 +2263,12 @@ extension DoubleWord.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: DoubleWord) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected,
-      desired: desired,
+      expected: Self._encode(expected),
+      desired: Self._encode(desired),
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original)
+    return (r.exchanged, Self._decode(r.original))
   }
 }
-
 
 

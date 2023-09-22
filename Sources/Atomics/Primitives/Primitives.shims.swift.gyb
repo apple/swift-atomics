@@ -37,19 +37,19 @@ internal func _atomicMemoryFence(
   }
 }
 
-% for (swiftType, builtin64, builtin32, shimType) in atomicTypes:
-extension UnsafeMutablePointer where Pointee == ${shimType} {
+% for (storageType, valueType) in cPrimitives:
+extension UnsafeMutablePointer where Pointee == ${storageType} {
   /// Atomically loads a word starting at this address with the specified
   /// memory ordering.
   @_semantics("atomics.requires_constant_orderings")
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> ${swiftType} {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> ${storageType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder) in loadOrderings:
     case .${enumOrder}:
-      return _sa_load_${shim_name(llvmOrder)}_${swiftType}(self)
+      return _sa_load_${shim_name(llvmOrder)}_${valueType}(self)
 % end
     default:
       fatalError("Unsupported ordering")
@@ -63,13 +63,13 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: ${swiftType},
+    _ desired: ${storageType},
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder) in storeOrderings:
     case .${enumOrder}:
-      _sa_store_${shim_name(llvmOrder)}_${swiftType}(self, desired)
+      _sa_store_${shim_name(llvmOrder)}_${valueType}(self, desired)
 % end
     default:
       fatalError("Unsupported ordering")
@@ -82,13 +82,13 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: ${swiftType},
+    _ desired: ${storageType},
     ordering: AtomicUpdateOrdering
-  ) -> ${swiftType} {
+  ) -> ${storageType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder, failOrder) in updateOrderings:
     case .${enumOrder}:
-      return _sa_exchange_${shim_name(llvmOrder)}_${swiftType}(self, desired)
+      return _sa_exchange_${shim_name(llvmOrder)}_${valueType}(self, desired)
 % end
     default:
       fatalError("Unsupported ordering")
@@ -112,16 +112,16 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: ${swiftType},
-    desired: ${swiftType},
+    expected: ${storageType},
+    desired: ${storageType},
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: ${swiftType}) {
+  ) -> (exchanged: Bool, original: ${storageType}) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder, failOrder) in updateOrderings:
     case .${enumOrder}:
-      exchanged = _sa_cmpxchg_strong_${shim_name(llvmOrder)}_${shim_name(failOrder)}_${swiftType}(
+      exchanged = _sa_cmpxchg_strong_${shim_name(llvmOrder)}_${shim_name(failOrder)}_${valueType}(
         self, &expected, desired)
 % end
     default:
@@ -151,11 +151,11 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: ${swiftType},
-    desired: ${swiftType},
+    expected: ${storageType},
+    desired: ${storageType},
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: ${swiftType}) {
+  ) -> (exchanged: Bool, original: ${storageType}) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -165,7 +165,7 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
 % for (swiftSuccess, apiSuccess, _, llvmOrder, _) in updateOrderings:
 %   for (swiftFailure, apiFailure, _, llvmFailure) in loadOrderings:
     case (.${swiftSuccess}, .${swiftFailure}):
-      exchanged = _sa_cmpxchg_strong_${actualShimOrders(llvmOrder, llvmFailure)}_${swiftType}(
+      exchanged = _sa_cmpxchg_strong_${actualShimOrders(llvmOrder, llvmFailure)}_${valueType}(
         self, &expected, desired)
 %   end
 % end
@@ -196,11 +196,11 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: ${swiftType},
-    desired: ${swiftType},
+    expected: ${storageType},
+    desired: ${storageType},
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: ${swiftType}) {
+  ) -> (exchanged: Bool, original: ${storageType}) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -210,7 +210,7 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
 % for (swiftSuccess, apiSuccess, _, llvmOrder, _) in updateOrderings:
 %   for (swiftFailure, apiFailure, _, llvmFailure) in loadOrderings:
     case (.${swiftSuccess}, .${swiftFailure}):
-      exchanged = _sa_cmpxchg_weak_${actualShimOrders(llvmOrder, llvmFailure)}_${swiftType}(
+      exchanged = _sa_cmpxchg_weak_${actualShimOrders(llvmOrder, llvmFailure)}_${valueType}(
         self, &expected, desired)
 %   end
 % end
@@ -220,7 +220,7 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
     return (exchanged, expected)
   }
 
-% if swiftType != "DoubleWord":
+% if valueType != "DoubleWord":
 %   for (swiftName, builtinName, operator, label, doc) in integerOperations:
   /// Perform an atomic ${doc} operation and return the new value,
   /// with the specified memory ordering.
@@ -237,13 +237,13 @@ extension UnsafeMutablePointer where Pointee == ${shimType} {
   @usableFromInline
   internal
   func _atomicLoadThen${swiftName}(
-    ${label} operand: ${swiftType},
+    ${label} operand: ${storageType},
     ordering: AtomicUpdateOrdering
-  ) -> ${swiftType} {
+  ) -> ${storageType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder, failOrder) in updateOrderings:
     case .${enumOrder}:
-      return _sa_fetch_${builtinName}_${shim_name(llvmOrder)}_${swiftType}(
+      return _sa_fetch_${builtinName}_${shim_name(llvmOrder)}_${valueType}(
         self, operand)
 % end
     default:

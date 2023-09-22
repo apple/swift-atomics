@@ -18,7 +18,17 @@
 // #############################################################################
 
 
-#if !ATOMICS_NATIVE_BUILTINS
+#if ATOMICS_NATIVE_BUILTINS
+import Builtin
+
+extension Bool {
+  @_alwaysEmitIntoClient
+  @_transparent
+  internal init(_ builtin: Builtin.Int1) {
+    self = unsafeBitCast(builtin, to: Bool.self)
+  }
+}
+#else
 import _AtomicsShims
 #endif
 
@@ -27,46 +37,42 @@ extension Bool: AtomicValue {
   public struct AtomicRepresentation {
     public typealias Value = Bool
 
-#if ATOMICS_NATIVE_BUILTINS
-    @usableFromInline
-    internal typealias _Storage = Int8
-#else
     @usableFromInline
     internal typealias _Storage = _AtomicInt8Storage
-#endif
 
     @usableFromInline
     internal var _storage: _Storage
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public init(_ value: Bool) {
-#if ATOMICS_NATIVE_BUILTINS
-      _storage = value._atomicValue
-#else
-      _storage = _sa_prepare_Int8(value._atomicValue)
-#endif
+      _storage = value._atomicRepresentation
     }
 
-    @inline(__always) @_alwaysEmitIntoClient
+    @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
-      return _storage._atomicBoolValue
-#else
-      return _sa_dispose_Int8(_storage)._atomicBoolValue
-#endif
+      return _storage._decodeBool
     }
   }
 
-  @_alwaysEmitIntoClient @inline(__always)
-  internal var _atomicValue: Int8 {
-    self ? 1 : 0
+  @_transparent @_alwaysEmitIntoClient
+  internal var _atomicRepresentation: _AtomicInt8Storage {
+    let v: Int8 = (self ? 1 : 0)
+#if ATOMICS_NATIVE_BUILTINS
+    return .init(v._value)
+#else
+    return _sa_prepare_Int8(v)
+#endif
   }
 }
 
-extension Int8 {
-  @_alwaysEmitIntoClient @inline(__always)
-  internal var _atomicBoolValue: Bool {
-    (self & 1) != 0
+extension _AtomicInt8Storage {
+  @_transparent @_alwaysEmitIntoClient
+  internal var _decodeBool: Bool {
+#if ATOMICS_NATIVE_BUILTINS
+    return (Int8(self._value) & 1) != 0
+#else
+    return (_sa_dispose_Int8(self) & 1) != 0
+#endif
   }
 }
 
@@ -88,7 +94,7 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicLoadOrdering
   ) -> Bool {
-    pointer._extract._atomicLoad(ordering: ordering)._atomicBoolValue
+    pointer._extract._atomicLoad(ordering: ordering)._decodeBool
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -98,7 +104,8 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     at pointer: UnsafeMutablePointer<Bool.AtomicRepresentation>,
     ordering: AtomicStoreOrdering
   ) {
-    pointer._extract._atomicStore(desired._atomicValue, ordering: ordering)
+    pointer._extract._atomicStore(
+      desired._atomicRepresentation, ordering: ordering)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -109,8 +116,8 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> Bool {
     pointer._extract._atomicExchange(
-      desired._atomicValue, ordering: ordering
-    )._atomicBoolValue
+      desired._atomicRepresentation, ordering: ordering
+    )._decodeBool
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -122,10 +129,10 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Bool) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected._atomicValue,
-      desired: desired._atomicValue,
+      expected: expected._atomicRepresentation,
+      desired: desired._atomicRepresentation,
       ordering: ordering)
-    return (r.exchanged, r.original._atomicBoolValue)
+    return (r.exchanged, r.original._decodeBool)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -138,11 +145,11 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Bool) {
     let r = pointer._extract._atomicCompareExchange(
-      expected: expected._atomicValue,
-      desired: desired._atomicValue,
+      expected: expected._atomicRepresentation,
+      desired: desired._atomicRepresentation,
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original._atomicBoolValue)
+    return (r.exchanged, r.original._decodeBool)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -155,11 +162,11 @@ extension Bool.AtomicRepresentation: AtomicStorage {
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Bool) {
     let r = pointer._extract._atomicWeakCompareExchange(
-      expected: expected._atomicValue,
-      desired: desired._atomicValue,
+      expected: expected._atomicRepresentation,
+      desired: desired._atomicRepresentation,
       successOrdering: successOrdering,
       failureOrdering: failureOrdering)
-    return (r.exchanged, r.original._atomicBoolValue)
+    return (r.exchanged, r.original._decodeBool)
   }
 }
 
@@ -184,8 +191,8 @@ extension Bool.AtomicRepresentation {
     ordering: AtomicUpdateOrdering
   ) -> Value {
     pointer._extract._atomicLoadThenBitwiseAnd(
-      with: operand._atomicValue, ordering: ordering
-    )._atomicBoolValue
+      with: operand._atomicRepresentation, ordering: ordering
+    )._decodeBool
   }
   /// Perform an atomic logical OR operation on the value referenced by
   /// `pointer` and return the original value, applying the specified memory
@@ -204,8 +211,8 @@ extension Bool.AtomicRepresentation {
     ordering: AtomicUpdateOrdering
   ) -> Value {
     pointer._extract._atomicLoadThenBitwiseOr(
-      with: operand._atomicValue, ordering: ordering
-    )._atomicBoolValue
+      with: operand._atomicRepresentation, ordering: ordering
+    )._decodeBool
   }
   /// Perform an atomic logical XOR operation on the value referenced by
   /// `pointer` and return the original value, applying the specified memory
@@ -224,8 +231,8 @@ extension Bool.AtomicRepresentation {
     ordering: AtomicUpdateOrdering
   ) -> Value {
     pointer._extract._atomicLoadThenBitwiseXor(
-      with: operand._atomicValue, ordering: ordering
-    )._atomicBoolValue
+      with: operand._atomicRepresentation, ordering: ordering
+    )._decodeBool
   }
 }
 
