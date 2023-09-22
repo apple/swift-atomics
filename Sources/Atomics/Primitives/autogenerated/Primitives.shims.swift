@@ -49,7 +49,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> Int8 {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_Int8(self)
@@ -69,7 +69,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: Int8,
+    _ desired: _AtomicInt8Storage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -90,9 +90,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: Int8,
+    _ desired: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_Int8(self, desired)
@@ -126,10 +126,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int8,
-    desired: Int8,
+    expected: _AtomicInt8Storage,
+    desired: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Int8) {
+  ) -> (exchanged: Bool, original: _AtomicInt8Storage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -175,11 +175,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int8,
-    desired: Int8,
+    expected: _AtomicInt8Storage,
+    desired: _AtomicInt8Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int8) {
+  ) -> (exchanged: Bool, original: _AtomicInt8Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -258,11 +258,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: Int8,
-    desired: Int8,
+    expected: _AtomicInt8Storage,
+    desired: _AtomicInt8Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int8) {
+  ) -> (exchanged: Bool, original: _AtomicInt8Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -333,9 +333,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingIncrement(
-    by operand: Int8,
+    by operand: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_add_relaxed_Int8(
@@ -369,9 +369,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingDecrement(
-    by operand: Int8,
+    by operand: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_sub_relaxed_Int8(
@@ -402,9 +402,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseAnd(
-    with operand: Int8,
+    with operand: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_and_relaxed_Int8(
@@ -435,9 +435,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseOr(
-    with operand: Int8,
+    with operand: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_or_relaxed_Int8(
@@ -468,9 +468,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt8Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseXor(
-    with operand: Int8,
+    with operand: _AtomicInt8Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int8 {
+  ) -> _AtomicInt8Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_xor_relaxed_Int8(
@@ -499,7 +499,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> Int16 {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_Int16(self)
@@ -519,7 +519,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: Int16,
+    _ desired: _AtomicInt16Storage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -540,9 +540,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: Int16,
+    _ desired: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_Int16(self, desired)
@@ -576,10 +576,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int16,
-    desired: Int16,
+    expected: _AtomicInt16Storage,
+    desired: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Int16) {
+  ) -> (exchanged: Bool, original: _AtomicInt16Storage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -625,11 +625,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int16,
-    desired: Int16,
+    expected: _AtomicInt16Storage,
+    desired: _AtomicInt16Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int16) {
+  ) -> (exchanged: Bool, original: _AtomicInt16Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -708,11 +708,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: Int16,
-    desired: Int16,
+    expected: _AtomicInt16Storage,
+    desired: _AtomicInt16Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int16) {
+  ) -> (exchanged: Bool, original: _AtomicInt16Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -783,9 +783,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingIncrement(
-    by operand: Int16,
+    by operand: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_add_relaxed_Int16(
@@ -819,9 +819,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingDecrement(
-    by operand: Int16,
+    by operand: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_sub_relaxed_Int16(
@@ -852,9 +852,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseAnd(
-    with operand: Int16,
+    with operand: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_and_relaxed_Int16(
@@ -885,9 +885,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseOr(
-    with operand: Int16,
+    with operand: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_or_relaxed_Int16(
@@ -918,9 +918,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt16Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseXor(
-    with operand: Int16,
+    with operand: _AtomicInt16Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int16 {
+  ) -> _AtomicInt16Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_xor_relaxed_Int16(
@@ -949,7 +949,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> Int32 {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_Int32(self)
@@ -969,7 +969,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: Int32,
+    _ desired: _AtomicInt32Storage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -990,9 +990,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: Int32,
+    _ desired: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_Int32(self, desired)
@@ -1026,10 +1026,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int32,
-    desired: Int32,
+    expected: _AtomicInt32Storage,
+    desired: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Int32) {
+  ) -> (exchanged: Bool, original: _AtomicInt32Storage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -1075,11 +1075,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int32,
-    desired: Int32,
+    expected: _AtomicInt32Storage,
+    desired: _AtomicInt32Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int32) {
+  ) -> (exchanged: Bool, original: _AtomicInt32Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -1158,11 +1158,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: Int32,
-    desired: Int32,
+    expected: _AtomicInt32Storage,
+    desired: _AtomicInt32Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int32) {
+  ) -> (exchanged: Bool, original: _AtomicInt32Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -1233,9 +1233,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingIncrement(
-    by operand: Int32,
+    by operand: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_add_relaxed_Int32(
@@ -1269,9 +1269,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingDecrement(
-    by operand: Int32,
+    by operand: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_sub_relaxed_Int32(
@@ -1302,9 +1302,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseAnd(
-    with operand: Int32,
+    with operand: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_and_relaxed_Int32(
@@ -1335,9 +1335,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseOr(
-    with operand: Int32,
+    with operand: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_or_relaxed_Int32(
@@ -1368,9 +1368,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt32Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseXor(
-    with operand: Int32,
+    with operand: _AtomicInt32Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int32 {
+  ) -> _AtomicInt32Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_xor_relaxed_Int32(
@@ -1399,7 +1399,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> Int64 {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_Int64(self)
@@ -1419,7 +1419,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: Int64,
+    _ desired: _AtomicInt64Storage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -1440,9 +1440,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: Int64,
+    _ desired: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_Int64(self, desired)
@@ -1476,10 +1476,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int64,
-    desired: Int64,
+    expected: _AtomicInt64Storage,
+    desired: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Int64) {
+  ) -> (exchanged: Bool, original: _AtomicInt64Storage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -1525,11 +1525,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int64,
-    desired: Int64,
+    expected: _AtomicInt64Storage,
+    desired: _AtomicInt64Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int64) {
+  ) -> (exchanged: Bool, original: _AtomicInt64Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -1608,11 +1608,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: Int64,
-    desired: Int64,
+    expected: _AtomicInt64Storage,
+    desired: _AtomicInt64Storage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int64) {
+  ) -> (exchanged: Bool, original: _AtomicInt64Storage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -1683,9 +1683,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingIncrement(
-    by operand: Int64,
+    by operand: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_add_relaxed_Int64(
@@ -1719,9 +1719,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingDecrement(
-    by operand: Int64,
+    by operand: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_sub_relaxed_Int64(
@@ -1752,9 +1752,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseAnd(
-    with operand: Int64,
+    with operand: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_and_relaxed_Int64(
@@ -1785,9 +1785,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseOr(
-    with operand: Int64,
+    with operand: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_or_relaxed_Int64(
@@ -1818,9 +1818,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseXor(
-    with operand: Int64,
+    with operand: _AtomicInt64Storage,
     ordering: AtomicUpdateOrdering
-  ) -> Int64 {
+  ) -> _AtomicInt64Storage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_xor_relaxed_Int64(
@@ -1849,7 +1849,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> Int {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_Int(self)
@@ -1869,7 +1869,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: Int,
+    _ desired: _AtomicIntStorage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -1890,9 +1890,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: Int,
+    _ desired: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_Int(self, desired)
@@ -1926,10 +1926,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int,
-    desired: Int,
+    expected: _AtomicIntStorage,
+    desired: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Int) {
+  ) -> (exchanged: Bool, original: _AtomicIntStorage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -1975,11 +1975,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: Int,
-    desired: Int,
+    expected: _AtomicIntStorage,
+    desired: _AtomicIntStorage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int) {
+  ) -> (exchanged: Bool, original: _AtomicIntStorage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -2058,11 +2058,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: Int,
-    desired: Int,
+    expected: _AtomicIntStorage,
+    desired: _AtomicIntStorage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Int) {
+  ) -> (exchanged: Bool, original: _AtomicIntStorage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -2133,9 +2133,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingIncrement(
-    by operand: Int,
+    by operand: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_add_relaxed_Int(
@@ -2169,9 +2169,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @usableFromInline
   internal
   func _atomicLoadThenWrappingDecrement(
-    by operand: Int,
+    by operand: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_sub_relaxed_Int(
@@ -2202,9 +2202,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseAnd(
-    with operand: Int,
+    with operand: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_and_relaxed_Int(
@@ -2235,9 +2235,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseOr(
-    with operand: Int,
+    with operand: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_or_relaxed_Int(
@@ -2268,9 +2268,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicIntStorage {
   @usableFromInline
   internal
   func _atomicLoadThenBitwiseXor(
-    with operand: Int,
+    with operand: _AtomicIntStorage,
     ordering: AtomicUpdateOrdering
-  ) -> Int {
+  ) -> _AtomicIntStorage {
     switch ordering {
     case .relaxed:
       return _sa_fetch_xor_relaxed_Int(
@@ -2299,7 +2299,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> DoubleWord {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> _AtomicDoubleWordStorage {
     switch ordering {
     case .relaxed:
       return _sa_load_relaxed_DoubleWord(self)
@@ -2319,7 +2319,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: DoubleWord,
+    _ desired: _AtomicDoubleWordStorage,
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -2340,9 +2340,9 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: DoubleWord,
+    _ desired: _AtomicDoubleWordStorage,
     ordering: AtomicUpdateOrdering
-  ) -> DoubleWord {
+  ) -> _AtomicDoubleWordStorage {
     switch ordering {
     case .relaxed:
       return _sa_exchange_relaxed_DoubleWord(self, desired)
@@ -2376,10 +2376,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: DoubleWord,
-    desired: DoubleWord,
+    expected: _AtomicDoubleWordStorage,
+    desired: _AtomicDoubleWordStorage,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: DoubleWord) {
+  ) -> (exchanged: Bool, original: _AtomicDoubleWordStorage) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -2425,11 +2425,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: DoubleWord,
-    desired: DoubleWord,
+    expected: _AtomicDoubleWordStorage,
+    desired: _AtomicDoubleWordStorage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: DoubleWord) {
+  ) -> (exchanged: Bool, original: _AtomicDoubleWordStorage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -2508,11 +2508,11 @@ extension UnsafeMutablePointer where Pointee == _AtomicDoubleWordStorage {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: DoubleWord,
-    desired: DoubleWord,
+    expected: _AtomicDoubleWordStorage,
+    desired: _AtomicDoubleWordStorage,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: DoubleWord) {
+  ) -> (exchanged: Bool, original: _AtomicDoubleWordStorage) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.

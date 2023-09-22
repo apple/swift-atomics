@@ -38,13 +38,12 @@ let package = Package(
       dependencies: ["_AtomicsShims"],
       exclude: [
         "CMakeLists.txt",
-        "AtomicBool.swift.gyb",
-        "AtomicLazyReference.swift.gyb",
-        "HighLevelTypes.swift.gyb",
-        "IntegerConformances.swift.gyb",
-        "PointerConformances.swift.gyb",
-        "Primitives.native.swift.gyb",
-        "Primitives.shims.swift.gyb",
+        "Conformances/AtomicBool.swift.gyb",
+        "Conformances/IntegerConformances.swift.gyb",
+        "Conformances/PointerConformances.swift.gyb",
+        "Primitives/Primitives.native.swift.gyb",
+        "Primitives/Primitives.shims.swift.gyb",
+        "Types/IntegerOperations.swift.gyb",
       ],
       cSettings: _cSettings,
       swiftSettings: _swiftSettings
@@ -81,7 +80,8 @@ let package = Package(
         "Basics/BasicAtomicUInt8Tests.swift.gyb",
         "Basics/BasicAtomicUIntTests.swift.gyb",
         "Basics/BasicAtomicUnmanagedTests.swift.gyb",
-      ]
+      ],
+      swiftSettings: _swiftSettings
     ),
   ]
 )
