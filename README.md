@@ -47,7 +47,7 @@ The primary focus is to provide systems programmers access to atomic operations 
 
 - Each atomic operation is invoked in client code using a clear, unabbreviated name that directly specifies what that operation does. Atomic operations are never implicit -- they are always clearly spelled out.
 
-- There is no default memory ordering, to avoid accidental (and costly) use of sequential consistency. (This is surprisingly common issue in C/C++.)
+- There is no default memory ordering, to avoid accidental (and costly) use of sequential consistency. (This is a surprisingly common issue in C/C++.)
 
 - Operations such as compare/exchange prefer to keep input values cleanly separated from results. There are no `inout` parameters.
 
@@ -56,7 +56,7 @@ The primary focus is to provide systems programmers access to atomic operations 
 To use `Atomics` in your own project, you need to set it up as a package dependency:
 
 ```swift
-// swift-tools-version:5.6
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -64,7 +64,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-atomics.git", 
-      .upToNextMajor(from: "1.1.0") // or `.upToNextMinor
+      .upToNextMajor(from: "1.2.0") // or `.upToNextMinor
     )
   ],
   targets: [
@@ -78,20 +78,76 @@ let package = Package(
 )
 ```
 
+## Compatibility
+
+### Swift Releases
+
+The atomics implementation is inherently far more tightly coupled to the compiler than usual, so tagged versions of this package typically only support a narrow range of Swift releases:
+
+swift-atomics       | Supported Swift Versions
+--------------------|-------------------------
+`1.0.x`             | 5.3, 5.4, 5.5
+`1.1.x`             | 5.6, 5.7, 5.8
+`1.2.x`             | 5.7, 5.8, 5.9
+`main`              | 5.8, 5.9, unreleased snapshots of 5.10 and trunk
+
+Note that the `main` branch is not a tagged release, so its contents are inherently unstable. Because of this, we do not recommended using it in production. (For example, its set of supported Swift releases is subject to change without notice.)
+
+### Source Stability
+
+The Swift Atomics package is source stable. The version numbers follow [Semantic Versioning][semver] -- source breaking changes to public API can only land in a new major version.
+
+[semver]: https://semver.org
+
+The public API of current versions of the `swift-atomics` package consists of non-underscored declarations that are marked `public` in the `Atomics` module.
+
+By "underscored declarations" we mean declarations that have a leading underscore anywhere in their fully qualified name. For instance, here are some names that wouldn't be considered part of the public API, even if they were technically marked public:
+
+- `FooModule.Bar._someMember(value:)` (underscored member)
+- `FooModule._Bar.someMember` (underscored type)
+- `_FooModule.Bar` (underscored module)
+- `FooModule.Bar.init(_value:)` (underscored initializer)
+
+Interfaces that aren't part of the public API may continue to change in any release, including patch releases. 
+
+Note that contents of the `_AtomicsShims` module explicitly aren't public API. (As implied by its underscored module name.) The definitions therein may therefore change at whim, and the entire module may be removed in any new release -- do not import this module directly. We also don't make any source compatibility promises about the contents of the `Utilities`, `Tests`, `Xcode` and `cmake` subdirectories.
+
+If you have a use case that requires using underscored APIs, please [submit a Feature Request][enhancement] describing it! We'd like the public interface to be as useful as possible -- although preferably without compromising safety or limiting future evolution.
+
+Future minor versions of the package may introduce changes to these rules as needed.
+
+We'd like this package to quickly embrace Swift language and toolchain improvements that are relevant to its mandate. Accordingly, from time to time, new versions of this package will require clients to upgrade to a more recent Swift toolchain release. (This allows the package to make use of new language/stdlib features, build on compiler bug fixes, and adopt new package manager functionality as soon as they are available.)
+
+Requiring a new Swift release will only require a minor version bump.
+
+
 ## Features
 
-The package implements atomic operations for the following Swift constructs, all of which conform to the public `AtomicValue` protocol:
+For a detailed overview of the interfaces offered by this package, please see [our API documentation][APIDocs].
+
+[APIDocs]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics
+[AtomicValue]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicvalue
+[DoubleWord]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/doubleword
+[AtomicReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicreference
+[UnsafeAtomic]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/unsafeatomic
+[ManagedAtomic]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/managedatomic
+[ManagedAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/managedatomiclazyreference
+[UnsafeAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/unsafeatomiclazyreference
+[AtomicStorage]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicstorage
+[AtomicInteger]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicinteger
+
+The package implements atomic operations for the following Swift constructs, all of which conform to the public [`AtomicValue` protocol][AtomicValue]:
 
 - Standard signed integer types (`Int`, `Int64`, `Int32`, `Int16`, `Int8`)
 - Standard unsigned integer types (`UInt`, `UInt64`, `UInt32`, `UInt16`, `UInt8`)
 - Booleans (`Bool`)
 - Standard pointer types (`UnsafeRawPointer`, `UnsafeMutableRawPointer`, `UnsafePointer<T>`, `UnsafeMutablePointer<T>`), along with their optional-wrapped forms (such as `Optional<UnsafePointer<T>>`)
 - Unmanaged references (`Unmanaged<T>`, `Optional<Unmanaged<T>>`)
-- A special `DoubleWord` type that consists of two `UInt` values, `first` and `second`, providing double-wide atomic primitives
+- A special [`DoubleWord` type][DoubleWord] that consists of two `UInt` values, `first` and `second`, providing double-wide atomic primitives
 - Any `RawRepresentable` type whose `RawValue` is in turn an atomic type (such as simple custom enum types)
-- Strong references to class instances that opted into atomic use (by conforming to the `AtomicReference` protocol)
+- Strong references to class instances that opted into atomic use (by conforming to the [`AtomicReference` protocol][AtomicReference])
 
-Of particular note is full support for atomic strong references. This provides a convenient memory reclamation solution for concurrent data structures that fits perfectly with Swift's reference counting memory management model. (Atomic strong references are implemented in terms of `DoubleWord` operations.) However, accessing an atomic strong reference is (relatively) expensive, so we also provide a separate set of efficient constructs (`ManagedAtomicLazyReference` and `UnsafeAtomicLazyReference`) for the common case of a lazily initialized (but otherwise constant) atomic strong reference.
+Of particular note is full support for atomic strong references. This provides a convenient memory reclamation solution for concurrent data structures that fits perfectly with Swift's reference counting memory management model. (Atomic strong references are implemented in terms of `DoubleWord` operations.) However, accessing an atomic strong reference is (relatively) expensive, so we also provide a separate set of efficient constructs ([`ManagedAtomicLazyReference`][ManagedAtomicLazyReference] and [`UnsafeAtomicLazyReference`][UnsafeAtomicLazyReference]) for the common case of a lazily initialized (but otherwise constant) atomic strong reference.
 
 ### Lock-Free vs Wait-Free Operations
 
@@ -107,12 +163,12 @@ Atomic access is implemented in terms of dedicated atomic storage representation
 
 [SE-0282]: https://github.com/apple/swift-evolution/blob/master/proposals/0282-atomics.md
 
-While the underlying pointer-based atomic operations are exposed as static methods on the corresponding `AtomicStorage` types, we strongly recommend the use of higher-level atomic wrappers to manage the details of preparing/disposing atomic storage. This version of the library provides two wrapper types:
+While the underlying pointer-based atomic operations are exposed as static methods on the corresponding [`AtomicStorage`][AtomicStorage] types, we strongly recommend the use of higher-level atomic wrappers to manage the details of preparing/disposing atomic storage. This version of the library provides two wrapper types:
 
-- an easy to use, memory-safe `ManagedAtomic<T>` generic class and
-- a less convenient, but more flexible `UnsafeAtomic<T>` generic struct.
+- an easy to use, memory-safe [`ManagedAtomic<T>`][ManagedAtomic] generic class and
+- a less convenient, but more flexible [`UnsafeAtomic<T>`][UnsafeAtomic] generic struct.
 
-Both constructs provide the following operations on all `AtomicValue` types:
+Both constructs provide the following operations on all [`AtomicValue`][AtomicValue] types:
 
 ```swift
 func load(ordering: AtomicLoadOrdering) -> Value
@@ -146,7 +202,7 @@ func weakCompareExchange(
 ) -> (exchanged: Bool, original: Value)
 ```
 
-Integer types come with additional atomic operations for incrementing or decrementing values and bitwise logical operations. 
+[Integer types][AtomicInteger] come with additional atomic operations for incrementing or decrementing values and bitwise logical operations. 
 
 ```swift
 func loadThenWrappingIncrement(
@@ -247,34 +303,7 @@ func logicalXorThenLoad(
 
 For an introduction to the APIs provided by this package, for now please see the [first version of SE-0282][SE-0282r0]. 
 
-The current version of the `Atomics` module does not implement APIs for tagged atomics (see [issue #1](https://github.com/apple/swift-atomics/issues/1)), although it does expose a `DoubleWord` type that can be used to implement them. (Atomic strong references are already implemented in terms of `DoubleWord`, although in their current form they do not expose any user-customizable bits.)
-
-## Source Stability
-
-The Swift Atomics package is source stable. The version numbers follow [Semantic Versioning][semver] -- source breaking changes to public API can only land in a new major version.
-
-[semver]: https://semver.org
-
-The public API of version 1.1 of the `swift-atomics` package consists of non-underscored declarations that are marked `public` in the `Atomics` module.
-
-By "underscored declarations" we mean declarations that have a leading underscore anywhere in their fully qualified name. For instance, here are some names that wouldn't be considered part of the public API, even if they were technically marked public:
-
-- `FooModule.Bar._someMember(value:)` (underscored member)
-- `FooModule._Bar.someMember` (underscored type)
-- `_FooModule.Bar` (underscored module)
-- `FooModule.Bar.init(_value:)` (underscored initializer)
-
-Interfaces that aren't part of the public API may continue to change in any release, including patch releases. 
-
-Note that contents of the `_AtomicsShims` module explicitly aren't public API. (As implied by its underscored module name.) The definitions therein may therefore change at whim, and the entire module may be removed in any new release -- do not import this module directly. We also don't make any source compatibility promises about the contents of the `Utilities`, `Tests`, `Xcode` and `cmake` subdirectories.
-
-If you have a use case that requires using underscored APIs, please [submit a Feature Request][enhancement] describing it! We'd like the public interface to be as useful as possible -- although preferably without compromising safety or limiting future evolution.
-
-Future minor versions of the package may introduce changes to these rules as needed.
-
-We'd like this package to quickly embrace Swift language and toolchain improvements that are relevant to its mandate. Accordingly, from time to time, new versions of this package will require clients to upgrade to a more recent Swift toolchain release. (This allows the package to make use of new language/stdlib features, build on compiler bug fixes, and adopt new package manager functionality as soon as they are available.)
-
-Requiring a new Swift release will only require a minor version bump.
+The current version of the `Atomics` module does not implement APIs for tagged atomics (see [issue #1](https://github.com/apple/swift-atomics/issues/1)), although it does expose a [`DoubleWord`][DoubleWord] type that can be used to implement them. (Atomic strong references are already implemented in terms of [`DoubleWord`][DoubleWord], although in their current form they do not expose any user-customizable bits.)
 
 ## Contributing to Swift Atomics
 
