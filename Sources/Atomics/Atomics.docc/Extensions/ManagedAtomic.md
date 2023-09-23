@@ -13,6 +13,7 @@
 - ``exchange(_:ordering:)``
 - ``compareExchange(expected:desired:ordering:)``
 - ``compareExchange(expected:desired:successOrdering:failureOrdering:)``
+- ``weakCompareExchange(expected:desired:ordering:)``
 - ``weakCompareExchange(expected:desired:successOrdering:failureOrdering:)``
 
 ### Atomic Integer Operations

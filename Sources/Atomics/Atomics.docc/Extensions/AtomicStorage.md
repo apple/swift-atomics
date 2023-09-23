@@ -17,5 +17,6 @@
 - ``atomicStore(_:at:ordering:)``
 - ``atomicExchange(_:at:ordering:)``
 - ``atomicCompareExchange(expected:desired:at:ordering:)``
-- ``atomicCompareExchange(expected:desired:at:successOrdering:failureOrdering:)``
+- ``atomicCompareExchange(expected:desired:at:successOrdering:failureOrdering:)-9t4wj``
+- ``atomicWeakCompareExchange(expected:desired:at:ordering:)-55229``
 - ``atomicWeakCompareExchange(expected:desired:at:successOrdering:failureOrdering:)``
