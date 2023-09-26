@@ -13,7 +13,7 @@
 #if ATOMICS_NATIVE_BUILTINS
 import Builtin
 
-#if _pointerBitWidth(_32)
+#if compiler(>=5.9) && _pointerBitWidth(_32)
 @frozen
 @_alignment(8)
 public struct DoubleWord {
@@ -29,7 +29,7 @@ public struct DoubleWord {
     self.second = second
   }
 }
-#elseif _pointerBitWidth(_64)
+#elseif compiler(>=5.9) && _pointerBitWidth(_64)
 @frozen
 @_alignment(16)
 public struct DoubleWord {

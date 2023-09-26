@@ -2110,7 +2110,7 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt64Storage {
   }
 }
 
-#if _pointerBitWidth(_64)
+#if compiler(>=5.9) && _pointerBitWidth(_64)
 @usableFromInline
 @frozen
 @_alignment(16)
@@ -2438,10 +2438,10 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt128Storage {
 }
 #endif
 
-#if _pointerBitWidth(_64)
+#if compiler(>=5.9) && _pointerBitWidth(_64)
 @usableFromInline internal typealias _AtomicIntStorage = _AtomicInt64Storage
 @usableFromInline internal typealias _AtomicDoubleWordStorage = _AtomicInt128Storage
-#elseif _pointerBitWidth(_32)
+#elseif compiler(>=5.9) && _pointerBitWidth(_32)
 @usableFromInline internal typealias _AtomicIntStorage = _AtomicInt32Storage
 @usableFromInline internal typealias _AtomicDoubleWordStorage = _AtomicInt64Storage
 #else
