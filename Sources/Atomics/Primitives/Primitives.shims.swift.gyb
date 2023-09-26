@@ -45,7 +45,7 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   @usableFromInline
-  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> ${storageType} {
+  internal func _atomicLoad(ordering: AtomicLoadOrdering) -> ${valueType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder) in loadOrderings:
     case .${enumOrder}:
@@ -63,7 +63,7 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_transparent // Debug performance
   @usableFromInline
   internal func _atomicStore(
-    _ desired: ${storageType},
+    _ desired: ${valueType},
     ordering: AtomicStoreOrdering
   ) {
     switch ordering {
@@ -82,9 +82,9 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicExchange(
-    _ desired: ${storageType},
+    _ desired: ${valueType},
     ordering: AtomicUpdateOrdering
-  ) -> ${storageType} {
+  ) -> ${valueType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder, failOrder) in updateOrderings:
     case .${enumOrder}:
@@ -112,10 +112,10 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: ${storageType},
-    desired: ${storageType},
+    expected: ${valueType},
+    desired: ${valueType},
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: ${storageType}) {
+  ) -> (exchanged: Bool, original: ${valueType}) {
     var expected = expected
     let exchanged: Bool
     switch ordering {
@@ -151,11 +151,11 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicCompareExchange(
-    expected: ${storageType},
-    desired: ${storageType},
+    expected: ${valueType},
+    desired: ${valueType},
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: ${storageType}) {
+  ) -> (exchanged: Bool, original: ${valueType}) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -196,11 +196,11 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @_alwaysEmitIntoClient
   @_transparent // Debug performance
   public func _atomicWeakCompareExchange(
-    expected: ${storageType},
-    desired: ${storageType},
+    expected: ${valueType},
+    desired: ${valueType},
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: ${storageType}) {
+  ) -> (exchanged: Bool, original: ${valueType}) {
     // FIXME: LLVM doesn't support arbitrary ordering combinations
     // yet, so upgrade the success ordering when necessary so that it
     // is at least as "strong" as the failure case.
@@ -237,9 +237,9 @@ extension UnsafeMutablePointer where Pointee == ${storageType} {
   @usableFromInline
   internal
   func _atomicLoadThen${swiftName}(
-    ${label} operand: ${storageType},
+    ${label} operand: ${valueType},
     ordering: AtomicUpdateOrdering
-  ) -> ${storageType} {
+  ) -> ${valueType} {
     switch ordering {
 % for (enumOrder, apiOrder, docOrder, llvmOrder, failOrder) in updateOrderings:
     case .${enumOrder}:

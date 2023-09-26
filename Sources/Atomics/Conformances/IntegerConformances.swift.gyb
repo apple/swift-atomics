@@ -48,12 +48,20 @@ extension ${swiftType}: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_${shimType}(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_${shimType}(_storage))
+#endif
     }
   }
 }
@@ -68,33 +76,39 @@ where Pointee == ${swiftType}.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension ${swiftType}.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-% if swiftType == shimType:
-    return _sa_dispose_${shimType}(storage)
-% else:
-    return Value(_sa_dispose_${shimType}(storage)._value)
-% end
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-% if swiftType == shimType:
-    return _sa_prepare_${shimType}(value)
-% else:
-    return _sa_prepare_${shimType}(${shimType}(value._value))
-% end
-#endif
   }
 }
+#else
+extension ${swiftType}.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: ${shimType}) -> Value {
+% if swiftType == shimType:
+    return v
+% else:
+    return Value(v._value)
+% end
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> ${shimType} {
+% if swiftType == shimType:
+    return value
+% else:
+    return ${shimType}(value._value)
+% end
+  }
+}
+#endif
 
 extension ${swiftType}.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")

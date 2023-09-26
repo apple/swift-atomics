@@ -35,12 +35,20 @@ extension Int8: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int8(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int8(_storage))
+#endif
     }
   }
 }
@@ -55,25 +63,31 @@ where Pointee == Int8.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension Int8.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_Int8(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int8(value)
-#endif
   }
 }
+#else
+extension Int8.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int8) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int8 {
+    return value
+  }
+}
+#endif
 
 extension Int8.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -246,12 +260,20 @@ extension Int16: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int16(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int16(_storage))
+#endif
     }
   }
 }
@@ -266,25 +288,31 @@ where Pointee == Int16.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension Int16.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_Int16(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int16(value)
-#endif
   }
 }
+#else
+extension Int16.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int16) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int16 {
+    return value
+  }
+}
+#endif
 
 extension Int16.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -457,12 +485,20 @@ extension Int32: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int32(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int32(_storage))
+#endif
     }
   }
 }
@@ -477,25 +513,31 @@ where Pointee == Int32.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension Int32.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_Int32(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int32(value)
-#endif
   }
 }
+#else
+extension Int32.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int32) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int32 {
+    return value
+  }
+}
+#endif
 
 extension Int32.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -668,12 +710,20 @@ extension Int64: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int64(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int64(_storage))
+#endif
     }
   }
 }
@@ -688,25 +738,31 @@ where Pointee == Int64.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension Int64.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_Int64(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int64(value)
-#endif
   }
 }
+#else
+extension Int64.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int64) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int64 {
+    return value
+  }
+}
+#endif
 
 extension Int64.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -879,12 +935,20 @@ extension UInt8: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int8(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int8(_storage))
+#endif
     }
   }
 }
@@ -899,25 +963,31 @@ where Pointee == UInt8.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension UInt8.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return Value(_sa_dispose_Int8(storage)._value)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int8(Int8(value._value))
-#endif
   }
 }
+#else
+extension UInt8.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int8) -> Value {
+    return Value(v._value)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int8 {
+    return Int8(value._value)
+  }
+}
+#endif
 
 extension UInt8.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1090,12 +1160,20 @@ extension UInt16: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int16(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int16(_storage))
+#endif
     }
   }
 }
@@ -1110,25 +1188,31 @@ where Pointee == UInt16.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension UInt16.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return Value(_sa_dispose_Int16(storage)._value)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int16(Int16(value._value))
-#endif
   }
 }
+#else
+extension UInt16.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int16) -> Value {
+    return Value(v._value)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int16 {
+    return Int16(value._value)
+  }
+}
+#endif
 
 extension UInt16.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1301,12 +1385,20 @@ extension UInt32: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int32(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int32(_storage))
+#endif
     }
   }
 }
@@ -1321,25 +1413,31 @@ where Pointee == UInt32.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension UInt32.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return Value(_sa_dispose_Int32(storage)._value)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int32(Int32(value._value))
-#endif
   }
 }
+#else
+extension UInt32.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int32) -> Value {
+    return Value(v._value)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int32 {
+    return Int32(value._value)
+  }
+}
+#endif
 
 extension UInt32.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1512,12 +1610,20 @@ extension UInt64: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int64(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int64(_storage))
+#endif
     }
   }
 }
@@ -1532,25 +1638,31 @@ where Pointee == UInt64.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension UInt64.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return Value(_sa_dispose_Int64(storage)._value)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int64(Int64(value._value))
-#endif
   }
 }
+#else
+extension UInt64.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int64) -> Value {
+    return Value(v._value)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int64 {
+    return Int64(value._value)
+  }
+}
+#endif
 
 extension UInt64.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1723,12 +1835,20 @@ extension Int: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -1743,25 +1863,31 @@ where Pointee == Int.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension Int.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_Int(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int(value)
-#endif
   }
 }
+#else
+extension Int.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int {
+    return value
+  }
+}
+#endif
 
 extension Int.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1934,12 +2060,20 @@ extension UInt: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -1954,25 +2088,31 @@ where Pointee == UInt.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension UInt.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return Value(_sa_dispose_Int(storage)._value)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_Int(Int(value._value))
-#endif
   }
 }
+#else
+extension UInt.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: Int) -> Value {
+    return Value(v._value)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> Int {
+    return Int(value._value)
+  }
+}
+#endif
 
 extension UInt.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -2145,12 +2285,20 @@ extension DoubleWord: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_DoubleWord(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_DoubleWord(_storage))
+#endif
     }
   }
 }
@@ -2165,25 +2313,31 @@ where Pointee == DoubleWord.AtomicRepresentation {
   }
 }
 
+#if ATOMICS_NATIVE_BUILTINS
 extension DoubleWord.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     return Value(storage._value)
-#else
-    return _sa_dispose_DoubleWord(storage)
-#endif
   }
 
   @_transparent @_alwaysEmitIntoClient
   static func _encode(_ value: Value) -> _Storage {
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(value._value)
-#else
-    return _sa_prepare_DoubleWord(value)
-#endif
   }
 }
+#else
+extension DoubleWord.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  static func _decode(_ v: DoubleWord) -> Value {
+    return v
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  static func _encode(_ value: Value) -> DoubleWord {
+    return value
+  }
+}
+#endif
 
 extension DoubleWord.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
