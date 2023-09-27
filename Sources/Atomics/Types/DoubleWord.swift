@@ -10,10 +10,17 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if ATOMICS_NATIVE_BUILTINS
+// FIXME: The conditionals below have been carefully constructed to
+// avoid confusing Swift 5.7; they can be sanitized once we drop support
+// for that version.
+#if compiler(>=5.9)
+#if !ATOMICS_NATIVE_BUILTINS
+#error("swift-atomics requires native builtins on Swift 5.9")
+#endif
+
 import Builtin
 
-#if compiler(>=5.9) && _pointerBitWidth(_32)
+#if _pointerBitWidth(_32)
 @frozen
 @_alignment(8)
 public struct DoubleWord {
@@ -29,7 +36,7 @@ public struct DoubleWord {
     self.second = second
   }
 }
-#elseif compiler(>=5.9) && _pointerBitWidth(_64)
+#elseif _pointerBitWidth(_64)
 @frozen
 @_alignment(16)
 public struct DoubleWord {
@@ -63,10 +70,14 @@ extension DoubleWord {
   }
 }
 
-#else // !ATOMICS_NATIVE_BUILTINS
+#else // compiler(>=5.9)
+
+#if ATOMICS_NATIVE_BUILTINS
+#error("swift-atomics requires C shims on Swift versions below 5.9")
+#endif
 import _AtomicsShims
 public typealias DoubleWord = _AtomicsShims.DoubleWord
-#endif
+#endif // compiler(>=5.9)
 
 extension DoubleWord {
   /// Initialize a new `DoubleWord` value given its high- and
