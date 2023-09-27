@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -198,7 +198,6 @@
 		7DA9B46E2ABBD93D00F14CE3 /* PointerConformances.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerConformances.swift; sourceTree = "<group>"; };
 		7DA9B46F2ABBD93D00F14CE3 /* AtomicBool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
 		7DF2275B2ABCBF4B00EC2AFE /* Package@swift-5.7.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Package@swift-5.7.swift"; path = "../Package@swift-5.7.swift"; sourceTree = "<group>"; };
-		7DF2275C2ABCBF4B00EC2AFE /* Package@swift-5.6.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Package@swift-5.6.swift"; path = "../Package@swift-5.6.swift"; sourceTree = "<group>"; };
 		7DF2275D2ABCBF4B00EC2AFE /* Package@swift-5.8.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Package@swift-5.8.swift"; path = "../Package@swift-5.8.swift"; sourceTree = "<group>"; };
 		BB63DC6A29D782010054E9C2 /* Atomics.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Atomics.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -226,7 +225,6 @@
 			isa = PBXGroup;
 			children = (
 				7D489EC529CE96DA00499B21 /* Package.swift */,
-				7DF2275C2ABCBF4B00EC2AFE /* Package@swift-5.6.swift */,
 				7DF2275B2ABCBF4B00EC2AFE /* Package@swift-5.7.swift */,
 				7DF2275D2ABCBF4B00EC2AFE /* Package@swift-5.8.swift */,
 				7D489EC629CE96DA00499B21 /* CMakeLists.txt */,
@@ -241,6 +239,7 @@
 				7D489E4029CE969D00499B21 /* Products */,
 			);
 			sourceTree = "<group>";
+			tabWidth = 8;
 		};
 		7D489E4029CE969D00499B21 /* Products */ = {
 			isa = PBXGroup;
@@ -591,7 +590,7 @@
 				};
 			};
 			buildConfigurationList = 7D489E3929CE969D00499B21 /* Build configuration list for PBXProject "Atomics" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
