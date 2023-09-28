@@ -11,6 +11,12 @@
 
 SDKROOT = macosx
 
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = -
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = "iOS Developer"
+CODE_SIGN_IDENTITY[sdk=watchos*] = "iOS Developer"
+CODE_SIGN_IDENTITY[sdk=appletvos*] = "iOS Developer"
+
 SWIFT_VERSION = 5.5
 ONLY_ACTIVE_ARCH[config=Debug] = YES
 

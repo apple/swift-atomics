@@ -359,15 +359,19 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -379,11 +383,12 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -400,11 +405,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -416,11 +424,12 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -437,11 +446,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -453,11 +465,12 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -474,11 +487,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -490,11 +506,12 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -511,11 +528,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -527,11 +547,12 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1160,16 +1181,19 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1182,12 +1206,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1205,12 +1230,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1223,12 +1250,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1246,12 +1274,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1264,12 +1294,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1287,12 +1318,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1305,12 +1338,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1328,12 +1362,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1346,12 +1382,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1369,12 +1406,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1387,12 +1426,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1410,12 +1450,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1428,12 +1470,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1451,12 +1494,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1469,12 +1514,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1492,12 +1538,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1510,12 +1558,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1533,12 +1582,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1551,12 +1602,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1574,12 +1626,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1592,12 +1646,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1615,12 +1670,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1633,12 +1690,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1656,12 +1714,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1674,12 +1734,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1697,12 +1758,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1715,12 +1778,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 
@@ -1738,12 +1802,14 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     let v: UnsafeAtomic<Hyacinth?> = .create(Hyacinth.bucket)
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, Hyacinth?) = v.weakCompareExchange(
-      expected: Hyacinth.bucket,
-      desired: nil,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, Hyacinth?)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: Hyacinth.bucket,
+        desired: nil,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, Hyacinth.bucket)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
@@ -1756,12 +1822,13 @@ class BasicAtomicOptionalRawRepresentableTests: XCTestCase {
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), nil)
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: nil,
-      desired: Hyacinth.bucket,
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: nil,
+        desired: Hyacinth.bucket,
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, nil)
     XCTAssertEqual(v.load(ordering: .relaxed), Hyacinth.bucket)
 

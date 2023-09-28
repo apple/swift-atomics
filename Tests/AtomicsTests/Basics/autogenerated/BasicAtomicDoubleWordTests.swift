@@ -359,15 +359,19 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
   }
 
+
   func test_weakCompareExchange_relaxed() {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -379,11 +383,12 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      ordering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        ordering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -400,11 +405,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -416,11 +424,12 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      ordering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        ordering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -437,11 +446,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -453,11 +465,12 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      ordering: .releasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        ordering: .releasing)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -474,11 +487,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -490,11 +506,12 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      ordering: .acquiringAndReleasing)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        ordering: .acquiringAndReleasing)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -511,11 +528,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -527,11 +547,12 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      ordering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        ordering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1160,16 +1181,19 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
   }
 
+
   func test_weakCompareExchange_relaxed_relaxed() {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1182,12 +1206,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .relaxed,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1205,12 +1230,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1223,12 +1250,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .relaxed,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1246,12 +1274,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1264,12 +1294,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .relaxed,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .relaxed,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1287,12 +1318,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1305,12 +1338,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiring,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1328,12 +1362,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1346,12 +1382,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiring,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1369,12 +1406,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1387,12 +1426,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiring,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiring,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1410,12 +1450,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1428,12 +1470,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .releasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .releasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1451,12 +1494,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1469,12 +1514,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .releasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .releasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1492,12 +1538,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1510,12 +1558,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .releasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .releasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1533,12 +1582,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1551,12 +1602,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1574,12 +1626,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1592,12 +1646,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1615,12 +1670,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1633,12 +1690,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .acquiringAndReleasing,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .acquiringAndReleasing,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1656,12 +1714,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1674,12 +1734,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .relaxed)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .relaxed)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1697,12 +1758,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1715,12 +1778,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .acquiring)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .acquiring)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 
@@ -1738,12 +1802,14 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     let v: UnsafeAtomic<DoubleWord> = .create(DoubleWord(first: 100, second: 64))
     defer { v.destroy() }
 
-    var (exchanged, original): (Bool, DoubleWord) = v.weakCompareExchange(
-      expected: DoubleWord(first: 100, second: 64),
-      desired: DoubleWord(first: 50, second: 32),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    var (exchanged, original): (Bool, DoubleWord)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 100, second: 64),
+        desired: DoubleWord(first: 50, second: 32),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 100, second: 64))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
@@ -1756,12 +1822,13 @@ class BasicAtomicDoubleWordTests: XCTestCase {
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 50, second: 32))
 
-    (exchanged, original) = v.weakCompareExchange(
-      expected: DoubleWord(first: 50, second: 32),
-      desired: DoubleWord(first: 100, second: 64),
-      successOrdering: .sequentiallyConsistent,
-      failureOrdering: .sequentiallyConsistent)
-    XCTAssertTrue(exchanged)
+    repeat {
+      (exchanged, original) = v.weakCompareExchange(
+        expected: DoubleWord(first: 50, second: 32),
+        desired: DoubleWord(first: 100, second: 64),
+        successOrdering: .sequentiallyConsistent,
+        failureOrdering: .sequentiallyConsistent)
+    } while !exchanged
     XCTAssertEqual(original, DoubleWord(first: 50, second: 32))
     XCTAssertEqual(v.load(ordering: .relaxed), DoubleWord(first: 100, second: 64))
 

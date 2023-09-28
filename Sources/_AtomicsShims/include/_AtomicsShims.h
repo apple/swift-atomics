@@ -98,11 +98,10 @@ SWIFTATOMIC_THREAD_FENCE_FN(seq_cst)
 // Atomic load
 #define SWIFTATOMIC_LOAD_FN(swiftType, cType, order)                    \
   SWIFTATOMIC_INLINE                                                    \
-  _sa_##swiftType _sa_load_##order##_##swiftType(_sa_##swiftType *ptr)  \
+  cType _sa_load_##order##_##swiftType(_sa_##swiftType *ptr)            \
   {                                                                     \
-    cType value = atomic_load_explicit(                                 \
+    return atomic_load_explicit(                                        \
       &ptr->value, memory_order_##order);                               \
-    return (_sa_##swiftType) { .value = value };                        \
   }
 
 // Atomic store
@@ -110,22 +109,21 @@ SWIFTATOMIC_THREAD_FENCE_FN(seq_cst)
   SWIFTATOMIC_INLINE                                                    \
   void _sa_store_##order##_##swiftType(                                 \
     _sa_##swiftType *ptr,                                               \
-    _sa_##swiftType desired)                                            \
+    cType desired)                                                      \
   {                                                                     \
     atomic_store_explicit(                                              \
-      &ptr->value, desired.value, memory_order_##order);                \
+      &ptr->value, desired, memory_order_##order);                      \
   }
 
 // Atomic exchange
 #define SWIFTATOMIC_EXCHANGE_FN(swiftType, cType, order)                \
   SWIFTATOMIC_INLINE                                                    \
-  _sa_##swiftType _sa_exchange_##order##_##swiftType(                   \
+  cType _sa_exchange_##order##_##swiftType(                             \
     _sa_##swiftType *ptr,                                               \
-    _sa_##swiftType desired)                                            \
+    cType desired)                                                      \
   {                                                                     \
-    cType value = atomic_exchange_explicit(                             \
-      &ptr->value, desired.value, memory_order_##order);                \
-    return (_sa_##swiftType) { .value = value };                        \
+    return atomic_exchange_explicit(                                    \
+      &ptr->value, desired, memory_order_##order);                      \
   }
 
 // Atomic compare/exchange
@@ -134,13 +132,13 @@ SWIFTATOMIC_THREAD_FENCE_FN(seq_cst)
   bool                                                                  \
   _sa_cmpxchg_##_kind##_##succ##_##fail##_##swiftType(                  \
     _sa_##swiftType *ptr,                                               \
-    _sa_##swiftType *expected,                                          \
-    _sa_##swiftType desired)                                            \
+    cType *expected,                                                    \
+    cType desired)                                                      \
   {                                                                     \
     return atomic_compare_exchange_##_kind##_explicit(                  \
       &ptr->value,                                                      \
-      &expected->value,                                                 \
-      desired.value,                                                    \
+      expected,                                                         \
+      desired,                                                          \
       memory_order_##succ,                                              \
       memory_order_##fail);                                             \
   }
@@ -148,13 +146,12 @@ SWIFTATOMIC_THREAD_FENCE_FN(seq_cst)
 // Atomic integer operations
 #define SWIFTATOMIC_INTEGER_FN(op, swiftType, cType, order)             \
   SWIFTATOMIC_INLINE                                                    \
-  _sa_##swiftType _sa_fetch_##op##_##order##_##swiftType(               \
+  cType _sa_fetch_##op##_##order##_##swiftType(                         \
     _sa_##swiftType *ptr,                                               \
-    _sa_##swiftType operand)                                            \
+    cType operand)                                                      \
   {                                                                     \
-    cType value = atomic_fetch_##op##_explicit(                         \
-      &ptr->value, operand.value, memory_order_##order);                \
-    return (_sa_##swiftType) { .value = value };                        \
+    return atomic_fetch_##op##_explicit(                                \
+      &ptr->value, operand, memory_order_##order);                      \
   }
 
 // Functions for each supported operation + memory ordering combination

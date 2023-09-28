@@ -35,12 +35,20 @@ extension UnsafeRawPointer: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -55,27 +63,35 @@ extension UnsafeRawPointer.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeRawPointer.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeRawPointer(bitPattern: bits)!
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = Int(bitPattern: value)
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeRawPointer.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeRawPointer(bitPattern: bits)!
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return Int(bitPattern: value)
+  }
+}
+#endif
 
 extension UnsafeRawPointer.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -171,12 +187,20 @@ extension UnsafeMutableRawPointer: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -191,27 +215,35 @@ extension UnsafeMutableRawPointer.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeMutableRawPointer.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeMutableRawPointer(bitPattern: bits)!
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = Int(bitPattern: value)
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeMutableRawPointer.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeMutableRawPointer(bitPattern: bits)!
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return Int(bitPattern: value)
+  }
+}
+#endif
 
 extension UnsafeMutableRawPointer.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -307,12 +339,20 @@ extension UnsafePointer: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -327,27 +367,35 @@ extension UnsafePointer.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafePointer.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafePointer(bitPattern: bits)!
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = Int(bitPattern: value)
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafePointer.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafePointer(bitPattern: bits)!
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return Int(bitPattern: value)
+  }
+}
+#endif
 
 extension UnsafePointer.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -443,12 +491,20 @@ extension UnsafeMutablePointer: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -463,27 +519,35 @@ extension UnsafeMutablePointer.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeMutablePointer.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeMutablePointer(bitPattern: bits)!
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = Int(bitPattern: value)
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeMutablePointer.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeMutablePointer(bitPattern: bits)!
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return Int(bitPattern: value)
+  }
+}
+#endif
 
 extension UnsafeMutablePointer.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -579,12 +643,20 @@ extension Unmanaged: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -599,27 +671,35 @@ extension Unmanaged.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension Unmanaged.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return Unmanaged.fromOpaque(UnsafeRawPointer(bitPattern: bits)!)
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = Int(bitPattern: value.toOpaque())
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension Unmanaged.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return Unmanaged.fromOpaque(UnsafeRawPointer(bitPattern: bits)!)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return Int(bitPattern: value.toOpaque())
+  }
+}
+#endif
 
 extension Unmanaged.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -717,12 +797,20 @@ extension UnsafeRawPointer: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -737,27 +825,35 @@ extension UnsafeRawPointer.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeRawPointer.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeRawPointer(bitPattern: bits)
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = value.map { Int(bitPattern: $0) } ?? 0
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeRawPointer.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeRawPointer(bitPattern: bits)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return value.map { Int(bitPattern: $0) } ?? 0
+  }
+}
+#endif
 
 extension UnsafeRawPointer.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -851,12 +947,20 @@ extension UnsafeMutableRawPointer: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -871,27 +975,35 @@ extension UnsafeMutableRawPointer.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeMutableRawPointer.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeMutableRawPointer(bitPattern: bits)
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = value.map { Int(bitPattern: $0) } ?? 0
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeMutableRawPointer.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeMutableRawPointer(bitPattern: bits)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return value.map { Int(bitPattern: $0) } ?? 0
+  }
+}
+#endif
 
 extension UnsafeMutableRawPointer.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -985,12 +1097,20 @@ extension UnsafePointer: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -1005,27 +1125,35 @@ extension UnsafePointer.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafePointer.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafePointer(bitPattern: bits)
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = value.map { Int(bitPattern: $0) } ?? 0
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafePointer.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafePointer(bitPattern: bits)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return value.map { Int(bitPattern: $0) } ?? 0
+  }
+}
+#endif
 
 extension UnsafePointer.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1119,12 +1247,20 @@ extension UnsafeMutablePointer: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -1139,27 +1275,35 @@ extension UnsafeMutablePointer.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension UnsafeMutablePointer.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     return UnsafeMutablePointer(bitPattern: bits)
   }
 
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = value.map { Int(bitPattern: $0) } ?? 0
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension UnsafeMutablePointer.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    return UnsafeMutablePointer(bitPattern: bits)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return value.map { Int(bitPattern: $0) } ?? 0
+  }
+}
+#endif
 
 extension UnsafeMutablePointer.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -1253,12 +1397,20 @@ extension Unmanaged: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -1273,14 +1425,13 @@ extension Unmanaged.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension Unmanaged.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     guard let opaque = UnsafeRawPointer(bitPattern: bits) else {
       return nil
     }
@@ -1290,13 +1441,25 @@ extension Unmanaged.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _encode(_ value: Value) -> _Storage {
     let bits = value.map { Int(bitPattern: $0.toOpaque())} ?? 0
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension Unmanaged.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    guard let opaque = UnsafeRawPointer(bitPattern: bits) else {
+      return nil
+    }
+    return Unmanaged.fromOpaque(opaque)
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    return value.map { Int(bitPattern: $0.toOpaque())} ?? 0
+  }
+}
+#endif
 
 extension Unmanaged.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")

@@ -41,12 +41,20 @@ extension ${swiftType}: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-      Self._decode(_storage)
+#if ATOMICS_NATIVE_BUILTINS
+      return Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -61,14 +69,13 @@ extension ${swiftType}.AtomicRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension ${swiftType}.AtomicRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     % if swiftType == "Unmanaged":
     return Unmanaged.fromOpaque(UnsafeRawPointer(bitPattern: bits)!)
     % else:
@@ -83,13 +90,30 @@ extension ${swiftType}.AtomicRepresentation {
     % else:
     let bits = Int(bitPattern: value)
     % end
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension ${swiftType}.AtomicRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    % if swiftType == "Unmanaged":
+    return Unmanaged.fromOpaque(UnsafeRawPointer(bitPattern: bits)!)
+    % else:
+    return ${swiftType}(bitPattern: bits)!
+    % end
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    % if swiftType == "Unmanaged":
+    return Int(bitPattern: value.toOpaque())
+    % else:
+    return Int(bitPattern: value)
+    % end
+  }
+}
+#endif
 
 extension ${swiftType}.AtomicRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
@@ -189,12 +213,20 @@ extension ${swiftType}: AtomicOptionalWrappable {
 
     @inline(__always) @_alwaysEmitIntoClient
     public init(_ value: Value) {
+#if ATOMICS_NATIVE_BUILTINS
       _storage = Self._encode(value)
+#else
+      _storage = _sa_prepare_Int(Self._encode(value))
+#endif
     }
 
     @inline(__always) @_alwaysEmitIntoClient
     public func dispose() -> Value {
+#if ATOMICS_NATIVE_BUILTINS
       Self._decode(_storage)
+#else
+      return Self._decode(_sa_dispose_Int(_storage))
+#endif
     }
   }
 }
@@ -209,14 +241,13 @@ extension ${swiftType}.AtomicOptionalRepresentation {
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _Storage.self)
   }
+}
 
+#if ATOMICS_NATIVE_BUILTINS
+extension ${swiftType}.AtomicOptionalRepresentation {
   @_transparent @_alwaysEmitIntoClient
   internal static func _decode(_ storage: _Storage) -> Value {
-#if ATOMICS_NATIVE_BUILTINS
     let bits = Int(storage._value)
-#else
-    let bits = _sa_dispose_Int(storage)
-#endif
     % if swiftType == "Unmanaged":
     guard let opaque = UnsafeRawPointer(bitPattern: bits) else {
       return nil
@@ -234,13 +265,33 @@ extension ${swiftType}.AtomicOptionalRepresentation {
     % else:
     let bits = value.map { Int(bitPattern: $0) } ?? 0
     % end
-#if ATOMICS_NATIVE_BUILTINS
     return _Storage(bits._value)
-#else
-    return _sa_prepare_Int(bits)
-#endif
   }
 }
+#else
+extension ${swiftType}.AtomicOptionalRepresentation {
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _decode(_ bits: Int) -> Value {
+    % if swiftType == "Unmanaged":
+    guard let opaque = UnsafeRawPointer(bitPattern: bits) else {
+      return nil
+    }
+    return Unmanaged.fromOpaque(opaque)
+    % else:
+    return ${swiftType}(bitPattern: bits)
+    % end
+  }
+
+  @_transparent @_alwaysEmitIntoClient
+  internal static func _encode(_ value: Value) -> Int {
+    % if swiftType == "Unmanaged":
+    return value.map { Int(bitPattern: $0.toOpaque())} ?? 0
+    % else:
+    return value.map { Int(bitPattern: $0) } ?? 0
+    % end
+  }
+}
+#endif
 
 extension ${swiftType}.AtomicOptionalRepresentation: AtomicStorage {
   @_semantics("atomics.requires_constant_orderings")
