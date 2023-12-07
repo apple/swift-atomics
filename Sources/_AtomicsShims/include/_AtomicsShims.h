@@ -235,7 +235,16 @@ SWIFTATOMIC_DEFINE_TYPE(DoubleWord, _sa_dword)
 
 #endif //!defined(ATOMICS_NATIVE_BUILTINS) && defined(__swift__) && !defined(__cplusplus)
 
+#if SWIFTATOMIC_SINGLE_MODULE
+// In the single-module configuration, declare _sa_retain_n/_sa_release_n with
+// the Swift calling convention, so that they can be easily picked up with
+// @_silgen_name'd declarations.
+// FIXME: Use @_cdecl("name") once we can switch to a compiler that has it.
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
 SWIFTATOMIC_SWIFTCC SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
+#else
+SWIFTATOMIC_SHIMS_EXPORT void _sa_retain_n(void *object, uint32_t n);
+SWIFTATOMIC_SHIMS_EXPORT void _sa_release_n(void *object, uint32_t n);
+#endif
 
 #endif //SWIFTATOMIC_HEADER_INCLUDED
