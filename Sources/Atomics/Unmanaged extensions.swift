@@ -21,7 +21,7 @@ internal func _sa_release_n(_ object: UnsafeMutableRawPointer, _ delta: UInt32)
 // import of the shims module, and we only need it to get the declarations for
 // _sa_retain_n/_sa_release_n. The import is unfortunately still problematic;
 // these functions need to be moved into the stdlib or (preferably) we need
-// a compiler-level fix for https://bugs.swift.org/browse/SR-13708 to get rid
+// a compiler-level fix for https://github.com/apple/swift/issues/56105 to get rid
 // of it.
 //
 // Hiding the import using @_implementationOnly is not possible unless
