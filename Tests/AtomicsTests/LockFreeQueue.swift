@@ -24,9 +24,9 @@
 // to implement a free list to resolve the original algorithm's use-after-free
 // problem.
 
-import XCTest
-import Dispatch
 import Atomics
+import Dispatch
+import XCTest
 
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
@@ -106,7 +106,8 @@ class LockFreeQueue<Element> {
         ordering: .acquiringAndReleasing
       )
       if exchanged {
-        _ = self.tail.compareExchange(expected: tail, desired: new, ordering: .releasing)
+        _ = self.tail.compareExchange(
+          expected: tail, desired: new, ordering: .releasing)
         return
       }
       tail = current!
@@ -123,9 +124,12 @@ class LockFreeQueue<Element> {
       if head === tail {
         // Nudge `tail` forward a step to make sure it doesn't fall off the
         // list when we unlink this node.
-        _ = self.tail.compareExchange(expected: tail, desired: n, ordering: .acquiringAndReleasing)
+        _ = self.tail.compareExchange(
+          expected: tail, desired: n, ordering: .acquiringAndReleasing)
       }
-      if self.head.compareExchange(expected: head, desired: n, ordering: .releasing).exchanged {
+      if self.head.compareExchange(
+        expected: head, desired: n, ordering: .releasing
+      ).exchanged {
         let result = n.value!
         n.value = nil
         // To prevent threads that are suspended in `enqueue`/`dequeue` from
@@ -150,17 +154,18 @@ class QueueTests: XCTestCase {
     DispatchQueue.concurrentPerform(iterations: writers + readers) { id in
       if id < writers {
         // Writer
-        for i in 0 ..< count {
+        for i in 0..<count {
           queue.enqueue((id, i))
         }
       } else {
         // Reader
-        var values = (0 ..< writers).map { _ in -1 }
+        var values = (0..<writers).map { _ in -1 }
         while num.load(ordering: .relaxed) < writers * count {
           // Spin until we get a value
           guard let (writer, value) = queue.dequeue() else { continue }
           precondition(writer >= 0 && writer < writers)
-          precondition(readers == 1 ? value == values[writer] + 1 : value > values[writer])
+          precondition(
+            readers == 1 ? value == values[writer] + 1 : value > values[writer])
           values[writer] = value
           num.wrappingIncrement(ordering: .relaxed)
         }
@@ -184,12 +189,12 @@ class QueueTests: XCTestCase {
     check(readers: 16, writers: 16, count: iterations)
   }
 
-#if MANUAL_TEST_DISCOVERY
+  #if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test01_10", test01_10),
     ("test02_10", test02_10),
     ("test04_10", test04_10),
     ("test16_16", test16_16),
   ]
-#endif
+  #endif
 }

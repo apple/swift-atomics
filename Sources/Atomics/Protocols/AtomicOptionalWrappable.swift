@@ -11,9 +11,10 @@
 //===----------------------------------------------------------------------===//
 
 /// An atomic value that also supports atomic operations when wrapped
-/// in an `Optional`. Atomic optional wrappable types come with a
-/// standalone atomic representation for their optional-wrapped
-/// variants.
+/// in an `Optional`.
+///
+/// Atomic optional wrappable types come with a standalone atomic
+/// representation for their optional-wrapped variants.
 public protocol AtomicOptionalWrappable: AtomicValue {
   /// The atomic storage representation for `Optional<Self>`.
   associatedtype AtomicOptionalRepresentation: AtomicStorage

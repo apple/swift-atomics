@@ -53,9 +53,11 @@ where Instance: Sendable {}
 
 extension ManagedAtomicLazyReference {
   /// Atomically initializes this reference if its current value is nil, then
-  /// returns the initialized value. If this reference is already initialized,
-  /// then `storeIfNilThenLoad(_:)` discards its supplied argument and returns
-  /// the current value without updating it.
+  /// returns the initialized value.
+  ///
+  /// If this reference is already initialized, then `storeIfNilThenLoad(_:)`
+  /// discards its supplied argument and returns the current value without
+  /// updating it.
   ///
   /// The following example demonstrates how this can be used to implement a
   /// thread-safe lazily initialized reference:

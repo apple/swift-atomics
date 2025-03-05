@@ -12,8 +12,8 @@
 
 import Atomics
 
-extension Unmanaged: Equatable { // FIXME: This is terrible
-  public static func ==(left: Self, right: Self) -> Bool {
+extension Unmanaged: Equatable {  // FIXME: This is terrible
+  public static func == (left: Self, right: Self) -> Bool {
     left.toOpaque() == right.toOpaque()
   }
 }
@@ -28,7 +28,7 @@ class Bar: Equatable, CustomStringConvertible {
   var value: Int
   init(_ value: Int) { self.value = value }
   var description: String { "Bar(\(value))" }
-  static func ==(left: Bar, right: Bar) -> Bool {
+  static func == (left: Bar, right: Bar) -> Bool {
     left === right
   }
 }
@@ -37,7 +37,7 @@ final class Baz: Equatable, CustomStringConvertible, AtomicReference {
   var value: Int
   init(_ value: Int) { self.value = value }
   var description: String { "Bar(\(value))" }
-  static func ==(left: Baz, right: Baz) -> Bool {
+  static func == (left: Baz, right: Baz) -> Bool {
     left === right
   }
 }

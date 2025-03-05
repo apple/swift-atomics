@@ -30,7 +30,7 @@ where
   Wrapped.RawValue.AtomicOptionalRepresentation.Value == Wrapped.RawValue?
 {
 
-  public typealias Value = Optional<Wrapped>
+  public typealias Value = Wrapped?
 
   @usableFromInline
   internal typealias _Storage = Wrapped.RawValue.AtomicOptionalRepresentation
@@ -39,12 +39,12 @@ where
   internal var _storage: _Storage
 
   @_transparent @_alwaysEmitIntoClient
-  public init(_ value: __owned Optional<Wrapped>) {
+  public init(_ value: __owned Wrapped?) {
     self._storage = _Storage(value?.rawValue)
   }
 
   @_transparent @_alwaysEmitIntoClient
-  __consuming public func dispose() -> Optional<Wrapped> {
+  __consuming public func dispose() -> Wrapped? {
     _storage.dispose().flatMap(Wrapped.init(rawValue:))
   }
 
@@ -54,7 +54,7 @@ where
     _ ptr: UnsafeMutablePointer<Self>
   ) -> UnsafeMutablePointer<_Storage> {
     // `Self` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: _Storage.self)
+    UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: _Storage.self)
   }
 
   @_semantics("atomics.requires_constant_orderings")
@@ -62,7 +62,7 @@ where
   public static func atomicLoad(
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicLoadOrdering
-  ) -> Optional<Wrapped> {
+  ) -> Wrapped? {
     let ro = _Storage.atomicLoad(
       at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
@@ -71,7 +71,7 @@ where
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicStore(
-    _ desired: __owned Optional<Wrapped>,
+    _ desired: __owned Wrapped?,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicStoreOrdering
   ) {
@@ -82,10 +82,10 @@ where
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicExchange(
-    _ desired: __owned Optional<Wrapped>,
+    _ desired: __owned Wrapped?,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> Optional<Wrapped> {
+  ) -> Wrapped? {
     let ro = _Storage.atomicExchange(
       desired?.rawValue, at: _extract(pointer), ordering: ordering)
     return ro.flatMap(Wrapped.init(rawValue:))
@@ -94,11 +94,11 @@ where
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Optional<Wrapped>,
-    desired: __owned Optional<Wrapped>,
+    expected: Wrapped?,
+    desired: __owned Wrapped?,
     at pointer: UnsafeMutablePointer<Self>,
     ordering: AtomicUpdateOrdering
-  ) -> (exchanged: Bool, original: Optional<Wrapped>) {
+  ) -> (exchanged: Bool, original: Wrapped?) {
     let ro = _Storage.atomicCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,
@@ -110,12 +110,12 @@ where
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicCompareExchange(
-    expected: Optional<Wrapped>,
-    desired: __owned Optional<Wrapped>,
+    expected: Wrapped?,
+    desired: __owned Wrapped?,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Optional<Wrapped>) {
+  ) -> (exchanged: Bool, original: Wrapped?) {
     let ro = _Storage.atomicCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,
@@ -128,12 +128,12 @@ where
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public static func atomicWeakCompareExchange(
-    expected: Optional<Wrapped>,
-    desired: __owned Optional<Wrapped>,
+    expected: Wrapped?,
+    desired: __owned Wrapped?,
     at pointer: UnsafeMutablePointer<Self>,
     successOrdering: AtomicUpdateOrdering,
     failureOrdering: AtomicLoadOrdering
-  ) -> (exchanged: Bool, original: Optional<Wrapped>) {
+  ) -> (exchanged: Bool, original: Wrapped?) {
     let ro = _Storage.atomicWeakCompareExchange(
       expected: expected?.rawValue,
       desired: desired?.rawValue,

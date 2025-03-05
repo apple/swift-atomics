@@ -176,9 +176,11 @@ extension ManagedAtomic {
   }
 
   /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the memory ordering. This compare-exchange variant is
-  /// allowed to spuriously fail; it is designed to be called in a loop until
-  /// it indicates a successful exchange has happened.
+  /// value, applying the memory ordering.
+  ///
+  /// This compare-exchange variant is allowed to spuriously fail; it is
+  /// designed to be called in a loop until it indicates a successful exchange
+  /// has happened.
   ///
   /// This operation performs the following algorithm as a single atomic
   /// transaction:
@@ -216,9 +218,11 @@ extension ManagedAtomic {
   }
 
   /// Perform an atomic weak compare and exchange operation on the current
-  /// value, applying the specified success/failure memory orderings. This
-  /// compare-exchange variant is allowed to spuriously fail; it is designed to
-  /// be called in a loop until it indicates a successful exchange has happened.
+  /// value, applying the specified success/failure memory orderings.
+  ///
+  /// This compare-exchange variant is allowed to spuriously fail; it is
+  /// designed to be called in a loop until it indicates a successful exchange
+  /// has happened.
   ///
   /// This operation performs the following algorithm as a single atomic
   /// transaction:

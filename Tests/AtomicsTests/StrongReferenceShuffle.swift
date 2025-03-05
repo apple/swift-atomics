@@ -15,9 +15,9 @@
 // each thread unlinks its corresponding value then reinserts it at
 // the end of the list.
 
-import XCTest
 import Atomics
 import Dispatch
+import XCTest
 
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
@@ -66,7 +66,9 @@ private class List<Value: Equatable> {
       nodeCount.wrappingDecrement(ordering: .relaxed)
     }
 
-    var value: Value? { _value.load(ordering: .sequentiallyConsistent)?.pointee }
+    var value: Value? {
+      _value.load(ordering: .sequentiallyConsistent)?.pointee
+    }
 
     func clearValue() -> UnsafeMutablePointer<Value>? {
       withExtendedLifetime(self) {
@@ -82,9 +84,13 @@ private class List<Value: Equatable> {
       }
     }
 
-    func compareExchangeNext(expected: Node?, desired: Node?) -> (exchanged: Bool, original: Node?) {
+    func compareExchangeNext(expected: Node?, desired: Node?) -> (
+      exchanged: Bool, original: Node?
+    ) {
       withExtendedLifetime(self) {
-        _next.compareExchange(expected: expected, desired: desired, ordering: .sequentiallyConsistent)
+        _next.compareExchange(
+          expected: expected, desired: desired,
+          ordering: .sequentiallyConsistent)
       }
     }
   }
@@ -111,9 +117,10 @@ private class List<Value: Equatable> {
 }
 
 extension List {
-  /// Move the given value to the end of this list. It is safe to call
-  /// this concurrently on multiple threads as long as all invocations
-  /// are using distinct values.
+  /// Move the given value to the end of this list.
+  ///
+  /// It is safe to call this concurrently on multiple threads as long as all
+  /// invocations are using distinct values.
   func sink(_ value: Value) {
     var current = self.head
     var next = self.head.next
@@ -129,7 +136,9 @@ extension List {
           // Mark this node as deleted.
           found = true
           new = Node(pointer: n.clearValue(), next: nil)
-          precondition(new?.value == value, "Concurrent sink invocations with the same value")
+          precondition(
+            new?.value == value,
+            "Concurrent sink invocations with the same value")
           v = nil
         }
         current = n
@@ -145,7 +154,8 @@ extension List {
       } else {
         // `next` is nil. Append `new` to the end of the list.
         precondition(found, "Lost value \(value) in \(read())")
-        let (exchanged, original) = current.compareExchangeNext(expected: nil, desired: new)
+        let (exchanged, original) = current.compareExchangeNext(
+          expected: nil, desired: new)
         if exchanged {
           if current !== anchor {
             // Opportunistically unlink the chain of deleted nodes between `anchor` and `new`.
@@ -158,8 +168,9 @@ extension List {
     }
   }
 
-  /// Read out and return the contents of this list in an array. Note
-  /// that this may return duplicate or missing elements if it is
+  /// Read out and return the contents of this list in an array.
+  ///
+  /// Note that this may return duplicate or missing elements if it is
   /// called concurrently with `sink`. (This is still safe -- the
   /// results may be useless, but the returned values are still
   /// valid.)
@@ -193,7 +204,6 @@ extension List where Value: Hashable {
   }
 }
 
-
 class StrongReferenceShuffleTests: XCTestCase {
   override func tearDown() {
     XCTAssertEqual(nodeCount.load(ordering: .relaxed), 0)
@@ -206,19 +216,20 @@ class StrongReferenceShuffleTests: XCTestCase {
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    let list = List<Int>(from: 0 ..< writers)
+    let list = List<Int>(from: 0..<writers)
 
-    XCTAssertEqual(list.read(), Array(0 ..< writers),
+    XCTAssertEqual(
+      list.read(), Array(0..<writers),
       "Unexpected list contents at start",
       file: file, line: line)
 
     DispatchQueue.concurrentPerform(iterations: readers + writers) { id in
       if id < writers {
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           list.sink(id)
         }
       } else {
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           let elements = list.readUnique(expectedCount: writers)
           precondition(elements.count <= writers)
         }
@@ -234,37 +245,78 @@ class StrongReferenceShuffleTests: XCTestCase {
         }
         .joined(separator: ", "))
     let values = Set(contents.compactMap { $0 })
-    XCTAssertEqual(values, Set(0 ..< writers),
+    XCTAssertEqual(
+      values, Set(0..<writers),
       "Unexpected list contents at end",
       file: file, line: line)
   }
 
-  func test_sink_01_00() { checkSink(writers: 1, readers: 0, iterations: iterations) }
-  func test_sink_02_00() { checkSink(writers: 2, readers: 0, iterations: iterations) }
-  func test_sink_04_00() { checkSink(writers: 4, readers: 0, iterations: iterations) }
-  func test_sink_08_00() { checkSink(writers: 8, readers: 0, iterations: iterations) }
+  func test_sink_01_00() {
+    checkSink(writers: 1, readers: 0, iterations: iterations)
+  }
+  func test_sink_02_00() {
+    checkSink(writers: 2, readers: 0, iterations: iterations)
+  }
+  func test_sink_04_00() {
+    checkSink(writers: 4, readers: 0, iterations: iterations)
+  }
+  func test_sink_08_00() {
+    checkSink(writers: 8, readers: 0, iterations: iterations)
+  }
 
-  func test_sink_01_01() { checkSink(writers: 1, readers: 1, iterations: iterations) }
-  func test_sink_02_01() { checkSink(writers: 2, readers: 1, iterations: iterations) }
-  func test_sink_04_01() { checkSink(writers: 4, readers: 1, iterations: iterations) }
-  func test_sink_08_01() { checkSink(writers: 8, readers: 1, iterations: iterations) }
+  func test_sink_01_01() {
+    checkSink(writers: 1, readers: 1, iterations: iterations)
+  }
+  func test_sink_02_01() {
+    checkSink(writers: 2, readers: 1, iterations: iterations)
+  }
+  func test_sink_04_01() {
+    checkSink(writers: 4, readers: 1, iterations: iterations)
+  }
+  func test_sink_08_01() {
+    checkSink(writers: 8, readers: 1, iterations: iterations)
+  }
 
-  func test_sink_01_02() { checkSink(writers: 1, readers: 2, iterations: iterations) }
-  func test_sink_02_02() { checkSink(writers: 2, readers: 2, iterations: iterations) }
-  func test_sink_04_02() { checkSink(writers: 4, readers: 2, iterations: iterations) }
-  func test_sink_08_02() { checkSink(writers: 8, readers: 2, iterations: iterations) }
+  func test_sink_01_02() {
+    checkSink(writers: 1, readers: 2, iterations: iterations)
+  }
+  func test_sink_02_02() {
+    checkSink(writers: 2, readers: 2, iterations: iterations)
+  }
+  func test_sink_04_02() {
+    checkSink(writers: 4, readers: 2, iterations: iterations)
+  }
+  func test_sink_08_02() {
+    checkSink(writers: 8, readers: 2, iterations: iterations)
+  }
 
-  func test_sink_01_04() { checkSink(writers: 1, readers: 4, iterations: iterations) }
-  func test_sink_02_04() { checkSink(writers: 2, readers: 4, iterations: iterations) }
-  func test_sink_04_04() { checkSink(writers: 4, readers: 4, iterations: iterations) }
-  func test_sink_08_04() { checkSink(writers: 8, readers: 4, iterations: iterations) }
+  func test_sink_01_04() {
+    checkSink(writers: 1, readers: 4, iterations: iterations)
+  }
+  func test_sink_02_04() {
+    checkSink(writers: 2, readers: 4, iterations: iterations)
+  }
+  func test_sink_04_04() {
+    checkSink(writers: 4, readers: 4, iterations: iterations)
+  }
+  func test_sink_08_04() {
+    checkSink(writers: 8, readers: 4, iterations: iterations)
+  }
 
-  func test_sink_01_08() { checkSink(writers: 1, readers: 8, iterations: iterations) }
-  func test_sink_02_08() { checkSink(writers: 2, readers: 8, iterations: iterations) }
-  func test_sink_04_08() { checkSink(writers: 4, readers: 8, iterations: iterations) }
-  func test_sink_08_08() { checkSink(writers: 8, readers: 8, iterations: iterations) }
+  func test_sink_01_08() {
+    checkSink(writers: 1, readers: 8, iterations: iterations)
+  }
+  func test_sink_02_08() {
+    checkSink(writers: 2, readers: 8, iterations: iterations)
+  }
+  func test_sink_04_08() {
+    checkSink(writers: 4, readers: 8, iterations: iterations)
+  }
+  func test_sink_08_08() {
+    checkSink(writers: 8, readers: 8, iterations: iterations)
+  }
 
-#if MANUAL_TEST_DISCOVERY
+  #if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test_sink_01_00", test_sink_01_00),
     ("test_sink_02_00", test_sink_02_00),
@@ -287,5 +339,5 @@ class StrongReferenceShuffleTests: XCTestCase {
     ("test_sink_04_08", test_sink_04_08),
     ("test_sink_08_08", test_sink_08_08),
   ]
-#endif
+  #endif
 }

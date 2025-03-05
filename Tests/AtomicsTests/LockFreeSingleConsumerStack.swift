@@ -10,9 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
 import Atomics
 import Dispatch
+import XCTest
 
 class LockFreeSingleConsumerStack<Element> {
   struct Node {
@@ -27,7 +27,7 @@ class LockFreeSingleConsumerStack<Element> {
 
   deinit {
     // Discard remaining nodes
-    while let _ = pop() {}
+    while pop() != nil {}
     _last.destroy()
     _consumerCount.destroy()
   }
@@ -97,7 +97,7 @@ class LockFreeSingleConsumerStackTests: XCTestCase {
     let numThreads = 100
     let numValues = 10_000
     DispatchQueue.concurrentPerform(iterations: numThreads) { thread in
-      for value in 1 ... numValues {
+      for value in 1...numValues {
         stack.push((thread: thread, value: value))
       }
     }
@@ -132,22 +132,24 @@ class LockFreeSingleConsumerStackTests: XCTestCase {
     DispatchQueue.concurrentPerform(iterations: numThreads + 1) { thread in
       if thread < numThreads {
         // Producers
-        for value in 0 ..< numValues {
+        for value in 0..<numValues {
           stack.push((thread: thread, value: value))
         }
       }
     }
 
     consumerQueue.sync {
-      XCTAssertEqual(Array(repeating: numValues * (numValues - 1) / 2, count: numThreads), perThreadSums)
+      XCTAssertEqual(
+        Array(repeating: numValues * (numValues - 1) / 2, count: numThreads),
+        perThreadSums)
     }
   }
 
-#if MANUAL_TEST_DISCOVERY
+  #if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("test_Basics", test_Basics),
     ("test_ConcurrentPushes", test_ConcurrentPushes),
     ("test_ConcurrentPushesAndPops", test_ConcurrentPushesAndPops),
   ]
-#endif
+  #endif
 }

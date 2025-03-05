@@ -94,10 +94,10 @@ where
     ordering: AtomicUpdateOrdering
   ) -> (exchanged: Bool, original: Value) {
     let raw = _Storage.atomicCompareExchange(
-            expected: expected.rawValue,
-            desired: desired.rawValue,
-            at: _extract(pointer),
-            ordering: ordering)
+      expected: expected.rawValue,
+      desired: desired.rawValue,
+      at: _extract(pointer),
+      ordering: ordering)
     return (raw.exchanged, Value(rawValue: raw.original)!)
   }
 
@@ -111,11 +111,11 @@ where
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
     let raw = _Storage.atomicCompareExchange(
-            expected: expected.rawValue,
-            desired: desired.rawValue,
-            at: _extract(pointer),
-            successOrdering: successOrdering,
-            failureOrdering: failureOrdering)
+      expected: expected.rawValue,
+      desired: desired.rawValue,
+      at: _extract(pointer),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
     return (raw.exchanged, Value(rawValue: raw.original)!)
   }
 
@@ -129,11 +129,11 @@ where
     failureOrdering: AtomicLoadOrdering
   ) -> (exchanged: Bool, original: Value) {
     let raw = _Storage.atomicWeakCompareExchange(
-            expected: expected.rawValue,
-            desired: desired.rawValue,
-            at: _extract(pointer),
-            successOrdering: successOrdering,
-            failureOrdering: failureOrdering)
+      expected: expected.rawValue,
+      desired: desired.rawValue,
+      at: _extract(pointer),
+      successOrdering: successOrdering,
+      failureOrdering: failureOrdering)
     return (raw.exchanged, Value(rawValue: raw.original)!)
   }
 }

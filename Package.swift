@@ -18,11 +18,11 @@ var _swiftSettings: [SwiftSetting] = []
 
 // Enable the use of native Swift compiler builtins instead of C atomics.
 _cSettings += [
-  .define("ATOMICS_NATIVE_BUILTINS"),
+  .define("ATOMICS_NATIVE_BUILTINS")
 ]
 _swiftSettings += [
   .define("ATOMICS_NATIVE_BUILTINS"),
-  .enableExperimentalFeature("BuiltinModule")
+  .enableExperimentalFeature("BuiltinModule"),
 ]
 
 let package = Package(
@@ -30,7 +30,7 @@ let package = Package(
   products: [
     .library(
       name: "Atomics",
-      targets: ["Atomics"]),
+      targets: ["Atomics"])
   ],
   targets: [
     .target(

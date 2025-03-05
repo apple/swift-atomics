@@ -11,11 +11,13 @@
 //===----------------------------------------------------------------------===//
 
 /// The storage representation for an atomic value, providing pointer-based
-/// atomic operations. This is a low-level implementation detail of atomic
-/// types; instead of directly handling conforming types, it is usually better
-/// to use the `UnsafeAtomic` or `ManagedAtomic` generics -- these provide more
-/// convenient and safer interfaces while also ensuring that the storage is
-/// correctly constructed and destroyed.
+/// atomic operations.
+///
+/// This is a low-level implementation detail of atomic types; instead of
+/// directly handling conforming types, it is usually better to use the
+/// `UnsafeAtomic` or `ManagedAtomic` generics -- these provide more convenient
+/// and safer interfaces while also ensuring that the storage is correctly
+/// constructed and destroyed.
 ///
 /// Logically, atomic storage representations are neither value- nor reference
 /// types: they should be treated as non-copiable values with a custom
@@ -36,9 +38,10 @@ public protocol AtomicStorage {
   init(_ value: __owned Value)
 
   /// Prepare this atomic storage value for deinitialization, extracting the
-  /// logical value it represents. This invalidates this atomic storage; you
-  /// must not perform any operations on it after this call (except for
-  /// deinitialization).
+  /// logical value it represents.
+  ///
+  /// This invalidates this atomic storage; you must not perform any operations
+  /// on it after this call (except for deinitialization).
   ///
   /// This call prevents resource leaks when destroying the storage
   /// representation of certain `AtomicValue` types. (In particular, ones that

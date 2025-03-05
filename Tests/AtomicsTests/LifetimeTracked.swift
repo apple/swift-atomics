@@ -41,32 +41,32 @@ public final class LifetimeTracked {
   public var serialNumber: Int = 0
 }
 
-extension LifetimeTracked : Equatable {
+extension LifetimeTracked: Equatable {
   public static func == (x: LifetimeTracked, y: LifetimeTracked) -> Bool {
-    return x.value == y.value
+    x.value == y.value
   }
 }
 
-extension LifetimeTracked : Hashable {
+extension LifetimeTracked: Hashable {
   public var hashValue: Int {
-    return value
+    value
   }
   public func hash(into hasher: inout Hasher) {
     hasher.combine(value)
   }
 }
 
-extension LifetimeTracked : Strideable {
+extension LifetimeTracked: Strideable {
   public func distance(to other: LifetimeTracked) -> Int {
-    return self.value.distance(to: other.value)
+    self.value.distance(to: other.value)
   }
 
   public func advanced(by n: Int) -> LifetimeTracked {
-    return LifetimeTracked(self.value.advanced(by: n))
+    LifetimeTracked(self.value.advanced(by: n))
   }
 }
 
-extension LifetimeTracked : CustomStringConvertible {
+extension LifetimeTracked: CustomStringConvertible {
   public var description: String {
     assert(serialNumber > 0, "dead Tracked!")
     return value.description
@@ -74,5 +74,5 @@ extension LifetimeTracked : CustomStringConvertible {
 }
 
 public func < (x: LifetimeTracked, y: LifetimeTracked) -> Bool {
-  return x.value < y.value
+  x.value < y.value
 }

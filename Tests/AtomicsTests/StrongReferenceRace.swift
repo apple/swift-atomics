@@ -10,9 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
 import Atomics
 import Dispatch
+import XCTest
 
 private var iterations: Int {
   #if SWIFT_ATOMICS_LONG_TESTS
@@ -59,12 +59,14 @@ class StrongReferenceRace: XCTestCase {
       "Leak - \(leftover) leftover instances remaining")
   }
 
-  func checkLoad(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkLoad(
+    count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line
+  ) {
     let ref = UnsafeAtomic<Node>.create(Node())
     defer { ref.destroy() }
 
     DispatchQueue.concurrentPerform(iterations: count) { id in
-      for _ in 0 ..< iterations {
+      for _ in 0..<iterations {
         blackHole(ref.load(ordering: .relaxed))
       }
     }
@@ -75,7 +77,9 @@ class StrongReferenceRace: XCTestCase {
   func testLoad8() { checkLoad(count: 8, iterations: iterations) }
   func testLoad16() { checkLoad(count: 16, iterations: iterations) }
 
-  func checkCompareExchange(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkCompareExchange(
+    count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line
+  ) {
     let a = Node()
     let b = Node()
     let ref = UnsafeAtomic<Node>.create(a)
@@ -83,7 +87,7 @@ class StrongReferenceRace: XCTestCase {
 
     DispatchQueue.concurrentPerform(iterations: count) { id in
       var expected = a
-      for _ in 0 ..< iterations {
+      for _ in 0..<iterations {
         var done = false
         repeat {
           (done, expected) = ref.compareExchange(
@@ -94,13 +98,25 @@ class StrongReferenceRace: XCTestCase {
       }
     }
   }
-  func testCompareExchange1() { checkCompareExchange(count: 1, iterations: iterations) }
-  func testCompareExchange2() { checkCompareExchange(count: 2, iterations: iterations) }
-  func testCompareExchange4() { checkCompareExchange(count: 4, iterations: iterations) }
-  func testCompareExchange8() { checkCompareExchange(count: 8, iterations: iterations) }
-  func testCompareExchange16() { checkCompareExchange(count: 16, iterations: iterations) }
+  func testCompareExchange1() {
+    checkCompareExchange(count: 1, iterations: iterations)
+  }
+  func testCompareExchange2() {
+    checkCompareExchange(count: 2, iterations: iterations)
+  }
+  func testCompareExchange4() {
+    checkCompareExchange(count: 4, iterations: iterations)
+  }
+  func testCompareExchange8() {
+    checkCompareExchange(count: 8, iterations: iterations)
+  }
+  func testCompareExchange16() {
+    checkCompareExchange(count: 16, iterations: iterations)
+  }
 
-  func checkCompareExchangeNil(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkCompareExchangeNil(
+    count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line
+  ) {
     let a = Node()
     let b = Node()
     let ref = UnsafeAtomic<Node?>.create(nil)
@@ -108,7 +124,7 @@ class StrongReferenceRace: XCTestCase {
 
     DispatchQueue.concurrentPerform(iterations: count) { id in
       var expected: Node? = nil
-      for _ in 0 ..< iterations {
+      for _ in 0..<iterations {
         var done = false
         repeat {
           (done, expected) = ref.compareExchange(
@@ -119,13 +135,26 @@ class StrongReferenceRace: XCTestCase {
       }
     }
   }
-  func testCompareExchangeNil_01() { checkCompareExchangeNil(count: 1, iterations: iterations) }
-  func testCompareExchangeNil_02() { checkCompareExchangeNil(count: 2, iterations: iterations) }
-  func testCompareExchangeNil_04() { checkCompareExchangeNil(count: 4, iterations: iterations) }
-  func testCompareExchangeNil_08() { checkCompareExchangeNil(count: 8, iterations: iterations) }
-  func testCompareExchangeNil_16() { checkCompareExchangeNil(count: 16, iterations: iterations) }
+  func testCompareExchangeNil_01() {
+    checkCompareExchangeNil(count: 1, iterations: iterations)
+  }
+  func testCompareExchangeNil_02() {
+    checkCompareExchangeNil(count: 2, iterations: iterations)
+  }
+  func testCompareExchangeNil_04() {
+    checkCompareExchangeNil(count: 4, iterations: iterations)
+  }
+  func testCompareExchangeNil_08() {
+    checkCompareExchangeNil(count: 8, iterations: iterations)
+  }
+  func testCompareExchangeNil_16() {
+    checkCompareExchangeNil(count: 16, iterations: iterations)
+  }
 
-  func checkLoadStore(readers: Int, writers: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkLoadStore(
+    readers: Int, writers: Int, iterations: Int, file: StaticString = #file,
+    line: UInt = #line
+  ) {
     let a = Node()
     let b = Node()
     let ref = UnsafeAtomic<Node>.create(a)
@@ -134,36 +163,69 @@ class StrongReferenceRace: XCTestCase {
     DispatchQueue.concurrentPerform(iterations: readers + writers) { id in
       if id < writers {
         var next = b
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           ref.store(next, ordering: .relaxed)
           next = next === a ? b : a
         }
       } else {
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           blackHole(ref.load(ordering: .relaxed))
         }
       }
     }
   }
-  func testLoadStore_01_01() { checkLoadStore(readers: 1, writers: 1, iterations: iterations) }
-  func testLoadStore_02_01() { checkLoadStore(readers: 2, writers: 1, iterations: iterations) }
-  func testLoadStore_04_01() { checkLoadStore(readers: 4, writers: 1, iterations: iterations) }
-  func testLoadStore_08_01() { checkLoadStore(readers: 8, writers: 1, iterations: iterations) }
-  func testLoadStore_16_01() { checkLoadStore(readers: 16, writers: 1, iterations: iterations) }
+  func testLoadStore_01_01() {
+    checkLoadStore(readers: 1, writers: 1, iterations: iterations)
+  }
+  func testLoadStore_02_01() {
+    checkLoadStore(readers: 2, writers: 1, iterations: iterations)
+  }
+  func testLoadStore_04_01() {
+    checkLoadStore(readers: 4, writers: 1, iterations: iterations)
+  }
+  func testLoadStore_08_01() {
+    checkLoadStore(readers: 8, writers: 1, iterations: iterations)
+  }
+  func testLoadStore_16_01() {
+    checkLoadStore(readers: 16, writers: 1, iterations: iterations)
+  }
 
-  func testLoadStore_01_02() { checkLoadStore(readers: 1, writers: 2, iterations: iterations) }
-  func testLoadStore_02_02() { checkLoadStore(readers: 2, writers: 2, iterations: iterations) }
-  func testLoadStore_04_02() { checkLoadStore(readers: 4, writers: 2, iterations: iterations) }
-  func testLoadStore_08_02() { checkLoadStore(readers: 8, writers: 2, iterations: iterations) }
-  func testLoadStore_16_02() { checkLoadStore(readers: 16, writers: 2, iterations: iterations) }
+  func testLoadStore_01_02() {
+    checkLoadStore(readers: 1, writers: 2, iterations: iterations)
+  }
+  func testLoadStore_02_02() {
+    checkLoadStore(readers: 2, writers: 2, iterations: iterations)
+  }
+  func testLoadStore_04_02() {
+    checkLoadStore(readers: 4, writers: 2, iterations: iterations)
+  }
+  func testLoadStore_08_02() {
+    checkLoadStore(readers: 8, writers: 2, iterations: iterations)
+  }
+  func testLoadStore_16_02() {
+    checkLoadStore(readers: 16, writers: 2, iterations: iterations)
+  }
 
-  func testLoadStore_01_04() { checkLoadStore(readers: 1, writers: 4, iterations: iterations) }
-  func testLoadStore_02_04() { checkLoadStore(readers: 2, writers: 4, iterations: iterations) }
-  func testLoadStore_04_04() { checkLoadStore(readers: 4, writers: 4, iterations: iterations) }
-  func testLoadStore_08_04() { checkLoadStore(readers: 8, writers: 4, iterations: iterations) }
-  func testLoadStore_16_04() { checkLoadStore(readers: 16, writers: 4, iterations: iterations) }
+  func testLoadStore_01_04() {
+    checkLoadStore(readers: 1, writers: 4, iterations: iterations)
+  }
+  func testLoadStore_02_04() {
+    checkLoadStore(readers: 2, writers: 4, iterations: iterations)
+  }
+  func testLoadStore_04_04() {
+    checkLoadStore(readers: 4, writers: 4, iterations: iterations)
+  }
+  func testLoadStore_08_04() {
+    checkLoadStore(readers: 8, writers: 4, iterations: iterations)
+  }
+  func testLoadStore_16_04() {
+    checkLoadStore(readers: 16, writers: 4, iterations: iterations)
+  }
 
-  func checkExchange(readers: Int, writers: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkExchange(
+    readers: Int, writers: Int, iterations: Int, file: StaticString = #file,
+    line: UInt = #line
+  ) {
     let a = Node()
     let b = Node()
     let ref = UnsafeAtomic<Node?>.create(nil)
@@ -172,53 +234,90 @@ class StrongReferenceRace: XCTestCase {
     DispatchQueue.concurrentPerform(iterations: readers + writers) { id in
       if id < writers {
         var next: Node? = nil
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           let old = ref.exchange(next, ordering: .relaxed)
-          if old == nil { next = a }
-          else if old === a { next = b }
-          else { next = nil }
+          if old == nil {
+            next = a
+          } else if old === a {
+            next = b
+          } else {
+            next = nil
+          }
         }
       } else {
-        for _ in 0 ..< iterations {
+        for _ in 0..<iterations {
           blackHole(ref.load(ordering: .relaxed))
         }
       }
     }
   }
-  func testExchange_01_01() { checkExchange(readers: 1, writers: 1, iterations: iterations) }
-  func testExchange_02_01() { checkExchange(readers: 2, writers: 1, iterations: iterations) }
-  func testExchange_04_01() { checkExchange(readers: 4, writers: 1, iterations: iterations) }
-  func testExchange_08_01() { checkExchange(readers: 8, writers: 1, iterations: iterations) }
-  func testExchange_16_01() { checkExchange(readers: 16, writers: 1, iterations: iterations) }
+  func testExchange_01_01() {
+    checkExchange(readers: 1, writers: 1, iterations: iterations)
+  }
+  func testExchange_02_01() {
+    checkExchange(readers: 2, writers: 1, iterations: iterations)
+  }
+  func testExchange_04_01() {
+    checkExchange(readers: 4, writers: 1, iterations: iterations)
+  }
+  func testExchange_08_01() {
+    checkExchange(readers: 8, writers: 1, iterations: iterations)
+  }
+  func testExchange_16_01() {
+    checkExchange(readers: 16, writers: 1, iterations: iterations)
+  }
 
-  func testExchange_01_02() { checkExchange(readers: 1, writers: 2, iterations: iterations) }
-  func testExchange_02_02() { checkExchange(readers: 2, writers: 2, iterations: iterations) }
-  func testExchange_04_02() { checkExchange(readers: 4, writers: 2, iterations: iterations) }
-  func testExchange_08_02() { checkExchange(readers: 8, writers: 2, iterations: iterations) }
-  func testExchange_16_02() { checkExchange(readers: 16, writers: 2, iterations: iterations) }
+  func testExchange_01_02() {
+    checkExchange(readers: 1, writers: 2, iterations: iterations)
+  }
+  func testExchange_02_02() {
+    checkExchange(readers: 2, writers: 2, iterations: iterations)
+  }
+  func testExchange_04_02() {
+    checkExchange(readers: 4, writers: 2, iterations: iterations)
+  }
+  func testExchange_08_02() {
+    checkExchange(readers: 8, writers: 2, iterations: iterations)
+  }
+  func testExchange_16_02() {
+    checkExchange(readers: 16, writers: 2, iterations: iterations)
+  }
 
-  func testExchange_01_04() { checkExchange(readers: 1, writers: 4, iterations: iterations) }
-  func testExchange_02_04() { checkExchange(readers: 2, writers: 4, iterations: iterations) }
-  func testExchange_04_04() { checkExchange(readers: 4, writers: 4, iterations: iterations) }
-  func testExchange_08_04() { checkExchange(readers: 8, writers: 4, iterations: iterations) }
-  func testExchange_16_04() { checkExchange(readers: 16, writers: 4, iterations: iterations) }
+  func testExchange_01_04() {
+    checkExchange(readers: 1, writers: 4, iterations: iterations)
+  }
+  func testExchange_02_04() {
+    checkExchange(readers: 2, writers: 4, iterations: iterations)
+  }
+  func testExchange_04_04() {
+    checkExchange(readers: 4, writers: 4, iterations: iterations)
+  }
+  func testExchange_08_04() {
+    checkExchange(readers: 8, writers: 4, iterations: iterations)
+  }
+  func testExchange_16_04() {
+    checkExchange(readers: 16, writers: 4, iterations: iterations)
+  }
 
-  func checkLifetimes(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
+  func checkLifetimes(
+    count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line
+  ) {
     precondition(count > 1)
-    let objects = (0 ..< count).map { ManagedAtomic<Node>(Node($0)) }
+    let objects = (0..<count).map { ManagedAtomic<Node>(Node($0)) }
     let originals = objects.map { $0.load(ordering: .relaxed).value }
 
     DispatchQueue.concurrentPerform(iterations: count) { id in
       var object = objects[id].load(ordering: .acquiring)
       var i = id
-      for _ in 0 ..< iterations {
+      for _ in 0..<iterations {
         let j = (i + 1) % count
         object = objects[j].exchange(object, ordering: .acquiringAndReleasing)
         object = objects[i].exchange(object, ordering: .acquiringAndReleasing)
         i = j
       }
       while true {
-        let new = objects[object.value].exchange(object, ordering: .acquiringAndReleasing)
+        let new = objects[object.value].exchange(
+          object, ordering: .acquiringAndReleasing)
         if new === object { break }
         object = new
       }
@@ -233,7 +332,7 @@ class StrongReferenceRace: XCTestCase {
   func testLifetimes_08() { checkLifetimes(count: 8, iterations: iterations) }
   func testLifetimes_16() { checkLifetimes(count: 16, iterations: iterations) }
 
-#if MANUAL_TEST_DISCOVERY
+  #if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("testLoad1", testLoad1),
     ("testLoad2", testLoad2),
@@ -285,5 +384,5 @@ class StrongReferenceRace: XCTestCase {
     ("testLifetimes_08", testLifetimes_08),
     ("testLifetimes_16", testLifetimes_16),
   ]
-#endif
+  #endif
 }

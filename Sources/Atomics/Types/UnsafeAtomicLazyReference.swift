@@ -36,7 +36,7 @@ public struct UnsafeAtomicLazyReference<Instance: AnyObject> {
   /// deallocated.
   ///
   /// Note: This is not an atomic operation.
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public init(@_nonEphemeral at pointer: UnsafeMutablePointer<Storage>) {
     // `Storage` is layout-compatible with its only stored property.
     _ptr = UnsafeMutableRawPointer(pointer).assumingMemoryBound(to: _Rep.self)
@@ -120,9 +120,11 @@ extension UnsafeAtomicLazyReference {
 
 extension UnsafeAtomicLazyReference {
   /// Atomically initializes this reference if its current value is nil, then
-  /// returns the initialized value. If this reference is already initialized,
-  /// then `storeIfNilThenLoad(_:)` discards its supplied argument and returns
-  /// the current value without updating it.
+  /// returns the initialized value.
+  ///
+  /// If this reference is already initialized, then `storeIfNilThenLoad(_:)`
+  /// discards its supplied argument and returns the current value without
+  /// updating it.
   ///
   /// The following example demonstrates how this can be used to implement a
   /// thread-safe lazily initialized reference:

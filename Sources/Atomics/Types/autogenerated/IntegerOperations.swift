@@ -16,7 +16,6 @@
 // #                                                                           #
 // #############################################################################
 
-
 extension UnsafeAtomic where Value: AtomicInteger {
   /// Perform an atomic wrapping add operation and return the original value, applying
   /// the specified memory ordering.
@@ -214,7 +213,6 @@ extension UnsafeAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original ^ operand
   }
-
 
   /// Perform an atomic wrapping increment operation applying the
   /// specified memory ordering.
@@ -453,7 +451,6 @@ extension ManagedAtomic where Value: AtomicInteger {
       ordering: ordering)
     return original ^ operand
   }
-
 
   /// Perform an atomic wrapping increment operation applying the
   /// specified memory ordering.

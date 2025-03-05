@@ -47,4 +47,3 @@ extension Unmanaged {
     return .passRetained(instance)
   }
 }
-

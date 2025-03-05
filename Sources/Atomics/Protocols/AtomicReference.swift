@@ -105,7 +105,7 @@ extension DoubleWord {
   }
 
   @inline(__always)
-  fileprivate static var _readersMask: UInt { (1 &<< _readersBitWidth) - 1  }
+  fileprivate static var _readersMask: UInt { (1 &<< _readersBitWidth) - 1 }
 
   @inline(__always)
   fileprivate var _readers: Int {
@@ -122,9 +122,9 @@ extension DoubleWord {
     get { Int(bitPattern: second &>> Self._readersBitWidth) }
     set {
       // Silently truncate any high bits we cannot store.
-      second = (
-        (UInt(bitPattern: newValue) &<< Self._readersBitWidth) |
-        second & Self._readersMask)
+      second =
+        ((UInt(bitPattern: newValue) &<< Self._readersBitWidth) | second
+          & Self._readersMask)
     }
   }
 }
@@ -161,7 +161,8 @@ internal struct _AtomicReferenceStorage {
   @usableFromInline
   internal func dispose() -> AnyObject? {
     let value = _storage.dispose()
-    precondition(value._readers == 0,
+    precondition(
+      value._readers == 0,
       "Attempt to dispose of a busy atomic strong reference \(value)")
     return value._unmanaged?.takeRetainedValue()
   }
@@ -170,7 +171,8 @@ internal struct _AtomicReferenceStorage {
     from pointer: UnsafeMutablePointer<Self>,
     hint: DoubleWord? = nil
   ) -> DoubleWord {
-    var old = hint ?? Storage.atomicLoad(at: pointer._extract, ordering: .relaxed)
+    var old =
+      hint ?? Storage.atomicLoad(at: pointer._extract, ordering: .relaxed)
     if old._raw == nil {
       atomicMemoryFence(ordering: .acquiring)
       return old
@@ -217,7 +219,8 @@ internal struct _AtomicReferenceStorage {
         at: pointer._extract,
         successOrdering: .acquiringAndReleasing,
         failureOrdering: .acquiring)
-    } while !done && current._raw == value._raw && current._version == value._version
+    } while !done && current._raw == value._raw
+      && current._version == value._version
     if !done {
       // The reference changed while we were loading it. Cancel out
       // our part of the refcount bias for the loaded instance.
@@ -248,7 +251,8 @@ internal struct _AtomicReferenceStorage {
     new: Unmanaged<AnyObject>?,
     at pointer: UnsafeMutablePointer<Self>
   ) -> (exchanged: Bool, original: AnyObject?) {
-    let new = DoubleWord(_raw: new?.toOpaque(), readers: 0, version: old._version &+ 1)
+    let new = DoubleWord(
+      _raw: new?.toOpaque(), readers: 0, version: old._version &+ 1)
     guard let ref = old._unmanaged else {
       // Try replacing the current nil value with the desired new value.
       let (done, current) = Storage.atomicCompareExchange(
@@ -278,12 +282,12 @@ internal struct _AtomicReferenceStorage {
         assert(current._readers == old._readers)
         assert(current._raw == old._raw)
         assert(current._readers <= delta)
-        ref.release(by: delta - current._readers + 1) // +1 is for our own role as a reader.
+        ref.release(by: delta - current._readers + 1)  // +1 is for our own role as a reader.
         return (true, ref.takeRetainedValue())
       }
       if current._version != old._version {
         // Someone else changed the reference. Give up for now.
-        ref.release(by: delta + 1) // +1 covers our reader bias
+        ref.release(by: delta + 1)  // +1 covers our reader bias
         old = _startLoading(from: pointer, hint: current)
         return (false, nil)
       }
@@ -350,7 +354,7 @@ public struct AtomicReferenceStorage<Value: AnyObject> {
 
   @inlinable
   public func dispose() -> Value {
-    return unsafeDowncast(_storage.dispose()!, to: Value.self)
+    unsafeDowncast(_storage.dispose()!, to: Value.self)
   }
 }
 
@@ -361,7 +365,7 @@ extension AtomicReferenceStorage {
     _ ptr: UnsafeMutablePointer<Self>
   ) -> UnsafeMutablePointer<_AtomicReferenceStorage> {
     // `Self` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(ptr)
+    UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicReferenceStorage.self)
   }
 }
@@ -486,7 +490,7 @@ extension AtomicOptionalReferenceStorage {
     _ ptr: UnsafeMutablePointer<Self>
   ) -> UnsafeMutablePointer<_AtomicReferenceStorage> {
     // `Self` is layout-compatible with its only stored property.
-    return UnsafeMutableRawPointer(ptr)
+    UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicReferenceStorage.self)
   }
 }

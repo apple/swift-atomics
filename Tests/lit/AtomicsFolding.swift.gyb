@@ -84,6 +84,7 @@ public class Bar {}
 
 // -----------------------------------------------------------------------------
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 public struct AtomicFoldingTests {
   % for (label, type, builtin) in all_types:
   // SECTIONING-LABEL: // AtomicFoldingTests.load_${label}_relaxed(_:)

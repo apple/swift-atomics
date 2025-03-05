@@ -70,14 +70,14 @@ extension DoubleWord {
   }
 }
 
-#else // compiler(>=5.9)
+#else  // compiler(>=5.9)
 
 #if ATOMICS_NATIVE_BUILTINS
 #error("swift-atomics requires C shims on Swift versions below 5.9")
 #endif
 import _AtomicsShims
 public typealias DoubleWord = _AtomicsShims.DoubleWord
-#endif // compiler(>=5.9)
+#endif  // compiler(>=5.9)
 
 extension DoubleWord {
   /// Initialize a new `DoubleWord` value given its high- and
@@ -90,6 +90,9 @@ extension DoubleWord {
 
   /// The most significant word in `self`, considering it as a single,
   /// wide integer value.
+  ///
+  /// This may correspond to either `first` or `second`, depending on the
+  /// endianness of the underlying architecture.
   @available(*, deprecated, renamed: "second")
   @inlinable @inline(__always)
   public var high: UInt {
@@ -98,9 +101,10 @@ extension DoubleWord {
   }
 
   /// The least significant word in `self`, considering it as a
-  /// single, wide integer value. This may correspond to either
-  /// `first` or `second`, depending on the endianness of the
-  /// underlying architecture.
+  /// single, wide integer value.
+  ///
+  /// This may correspond to either `first` or `second`, depending on the
+  /// endianness of the underlying architecture.
   @available(*, deprecated, renamed: "first")
   @inlinable @inline(__always)
   public var low: UInt {
@@ -111,7 +115,7 @@ extension DoubleWord {
 
 extension DoubleWord: Equatable {
   @inlinable
-  public static func ==(left: Self, right: Self) -> Bool {
+  public static func == (left: Self, right: Self) -> Bool {
     left.first == right.first && left.second == right.second
   }
 }

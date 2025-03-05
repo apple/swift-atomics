@@ -19,7 +19,7 @@ public struct AtomicLoadOrdering {
   internal var _rawValue: Int
 
   @_semantics("constant_evaluable")
-  @inlinable @_transparent // Debug performance
+  @inlinable @_transparent  // Debug performance
   internal init(_rawValue: Int) {
     self._rawValue = _rawValue
   }
@@ -34,20 +34,22 @@ extension AtomicLoadOrdering {
   /// This value corresponds to `std::memory_order_relaxed` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var relaxed: Self {
     Self(_rawValue: 0)
   }
 
   /// An acquiring load synchronizes with a releasing operation whose
-  /// value its reads. It ensures that the releasing and acquiring
-  /// threads agree that all subsequent variable accesses on the
-  /// acquiring thread happen after the atomic operation itself.
+  /// value its reads.
+  ///
+  /// It ensures that the releasing and acquiring threads agree that all
+  /// subsequent variable accesses on the acquiring thread happen after
+  /// the atomic operation itself.
   ///
   /// This value corresponds to `std::memory_order_acquire` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var acquiring: Self {
     Self(_rawValue: 2)
   }
@@ -60,16 +62,16 @@ extension AtomicLoadOrdering {
   /// This value corresponds to `std::memory_order_seq_cst` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var sequentiallyConsistent: Self {
     Self(_rawValue: 5)
   }
 }
 
 extension AtomicLoadOrdering: Equatable {
-  @_transparent // Debug performance
-  public static func ==(left: Self, right: Self) -> Bool {
-    return left._rawValue == right._rawValue
+  @_transparent  // Debug performance
+  public static func == (left: Self, right: Self) -> Bool {
+    left._rawValue == right._rawValue
   }
 }
 
@@ -102,7 +104,7 @@ public struct AtomicStoreOrdering {
   internal var _rawValue: Int
 
   @_semantics("constant_evaluable")
-  @inlinable @_transparent // Debug performance
+  @inlinable @_transparent  // Debug performance
   internal init(_rawValue: Int) {
     self._rawValue = _rawValue
   }
@@ -117,20 +119,22 @@ extension AtomicStoreOrdering {
   /// This value corresponds to `std::memory_order_relaxed` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var relaxed: Self {
     Self(_rawValue: 0)
   }
 
   /// A releasing store synchronizes with acquiring operations that
-  /// read the value it stores. It ensures that the releasing and
-  /// acquiring threads agree that all preceding variable accesses on
-  /// the releasing thread happen before the atomic operation itself.
+  /// read the value it stores.
+  ///
+  /// It ensures that the releasing and acquiring threads agree that all
+  /// preceding variable accesses on the releasing thread happen before the
+  /// atomic operation itself.
   ///
   /// This value corresponds to `std::memory_order_release` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var releasing: Self {
     Self(_rawValue: 3)
   }
@@ -143,16 +147,16 @@ extension AtomicStoreOrdering {
   /// This value corresponds to `std::memory_order_seq_cst` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var sequentiallyConsistent: Self {
     Self(_rawValue: 5)
   }
 }
 
 extension AtomicStoreOrdering: Equatable {
-  @_transparent // Debug performance
-  public static func ==(left: Self, right: Self) -> Bool {
-    return left._rawValue == right._rawValue
+  @_transparent  // Debug performance
+  public static func == (left: Self, right: Self) -> Bool {
+    left._rawValue == right._rawValue
   }
 }
 
@@ -186,7 +190,7 @@ public struct AtomicUpdateOrdering {
   internal var _rawValue: Int
 
   @_semantics("constant_evaluable")
-  @inlinable @_transparent // Debug performance
+  @inlinable @_transparent  // Debug performance
   internal init(_rawValue: Int) {
     self._rawValue = _rawValue
   }
@@ -201,33 +205,37 @@ extension AtomicUpdateOrdering {
   /// This value corresponds to `std::memory_order_relaxed` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var relaxed: Self {
     Self(_rawValue: 0)
   }
 
   /// An acquiring update synchronizes with a releasing operation
-  /// whose value its reads. It ensures that the releasing and
-  /// acquiring threads agree that all subsequent variable accesses on
-  /// the acquring thread happen after the atomic operation itself.
+  /// whose value its reads.
+  ///
+  /// It ensures that the releasing and acquiring threads agree that all
+  /// subsequent variable accesses on the acquring thread happen after the
+  /// atomic operation itself.
   ///
   /// This value corresponds to `std::memory_order_acquire` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var acquiring: Self {
     Self(_rawValue: 2)
   }
 
   /// A releasing update synchronizes with acquiring operations that
-  /// read the value it stores. It ensures that the releasing and
-  /// acquiring threads agree that all preceding variable accesses on
-  /// the releasing thread happen before the atomic operation itself.
+  /// read the value it stores.
+  ///
+  /// It ensures that the releasing and acquiring threads agree that all
+  /// preceding variable accesses on the releasing thread happen before the
+  /// atomic operation itself.
   ///
   /// This value corresponds to `std::memory_order_release` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var releasing: Self {
     Self(_rawValue: 3)
   }
@@ -238,7 +246,7 @@ extension AtomicUpdateOrdering {
   /// This value corresponds to `std::memory_order_acq_rel` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var acquiringAndReleasing: Self {
     Self(_rawValue: 4)
   }
@@ -252,16 +260,16 @@ extension AtomicUpdateOrdering {
   /// This value corresponds to `std::memory_order_seq_cst` in C++.
   @_semantics("constant_evaluable")
   @_alwaysEmitIntoClient
-  @_transparent // Debug performance
+  @_transparent  // Debug performance
   public static var sequentiallyConsistent: Self {
     Self(_rawValue: 5)
   }
 }
 
 extension AtomicUpdateOrdering: Equatable {
-  @_transparent // Debug performance
-  public static func ==(left: Self, right: Self) -> Bool {
-    return left._rawValue == right._rawValue
+  @_transparent  // Debug performance
+  public static func == (left: Self, right: Self) -> Bool {
+    left._rawValue == right._rawValue
   }
 }
 
@@ -325,7 +333,7 @@ extension AtomicLoadOrdering {
 /// Be aware that Thread Sanitizer does not support fences and may report
 /// false-positive races for data protected by a fence.
 @_semantics("atomics.requires_constant_orderings")
-@_transparent // Debug performance
+@_transparent  // Debug performance
 public func atomicMemoryFence(
   ordering: AtomicUpdateOrdering
 ) {

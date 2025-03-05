@@ -10,14 +10,16 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
 import Atomics
+import XCTest
 
 class DoubleWordTests: XCTestCase {
   func testMemoryLayout() {
     XCTAssertEqual(MemoryLayout<DoubleWord>.size, 2 * MemoryLayout<UInt>.size)
-    XCTAssertEqual(MemoryLayout<DoubleWord>.stride, MemoryLayout<DoubleWord>.size)
-    XCTAssertEqual(MemoryLayout<DoubleWord>.alignment, 2 * MemoryLayout<UInt>.alignment) 
+    XCTAssertEqual(
+      MemoryLayout<DoubleWord>.stride, MemoryLayout<DoubleWord>.size)
+    XCTAssertEqual(
+      MemoryLayout<DoubleWord>.alignment, 2 * MemoryLayout<UInt>.alignment)
   }
 
   struct UIntPair: Equatable {
@@ -36,7 +38,8 @@ class DoubleWordTests: XCTestCase {
       alignment: MemoryLayout<DoubleWord>.alignment)
     p.storeBytes(of: dword, as: DoubleWord.self)
     let first = p.load(as: UInt.self)
-    let second = p.load(fromByteOffset: MemoryLayout<UInt>.stride, as: UInt.self)
+    let second = p.load(
+      fromByteOffset: MemoryLayout<UInt>.stride, as: UInt.self)
     return UIntPair(first, second)
   }
 
@@ -83,7 +86,7 @@ class DoubleWordTests: XCTestCase {
     XCTAssertEqual(componentsInMemoryOrder(of: value), UIntPair(5, 6))
   }
 
-#if MANUAL_TEST_DISCOVERY
+  #if MANUAL_TEST_DISCOVERY
   public static var allTests = [
     ("testMemoryLayout", testMemoryLayout),
     ("testFirstSecondInitializer", testFirstSecondInitializer),
@@ -91,5 +94,5 @@ class DoubleWordTests: XCTestCase {
     ("testPropertyGetters", testPropertyGetters),
     ("testPropertySetters", testPropertySetters),
   ]
-#endif
+  #endif
 }
