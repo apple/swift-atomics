@@ -22,6 +22,7 @@ where Value.AtomicRepresentation.Value == Value {
   @usableFromInline
   internal typealias _Storage = Value.AtomicRepresentation
 
+  // swift-format-ignore: AlwaysUseLowerCamelCase
   /// The atomic representation of the value stored inside.
   ///
   /// Warning: This ivar must only ever be accessed via `_ptr` after

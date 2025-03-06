@@ -11,9 +11,11 @@
 //===----------------------------------------------------------------------===//
 
 #if ATOMICS_SINGLE_MODULE
+// swift-format-ignore: AlwaysUseLowerCamelCase
 @_silgen_name("_sa_retain_n")
 internal func _sa_retain_n(_ object: UnsafeMutableRawPointer, _ delta: UInt32)
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 @_silgen_name("_sa_release_n")
 internal func _sa_release_n(_ object: UnsafeMutableRawPointer, _ delta: UInt32)
 #else

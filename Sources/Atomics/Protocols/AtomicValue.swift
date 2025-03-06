@@ -15,5 +15,5 @@
 public protocol AtomicValue {
   /// The atomic storage representation for this value.
   associatedtype AtomicRepresentation: AtomicStorage
-  /* where Self is a subtype of AtomicRepresentation.Value */
+  // where Self is a subtype of AtomicRepresentation.Value
 }

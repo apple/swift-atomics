@@ -282,7 +282,8 @@ internal struct _AtomicReferenceStorage {
         assert(current._readers == old._readers)
         assert(current._raw == old._raw)
         assert(current._readers <= delta)
-        ref.release(by: delta - current._readers + 1)  // +1 is for our own role as a reader.
+        // +1 is for our own role as a reader.
+        ref.release(by: delta - current._readers + 1)
         return (true, ref.takeRetainedValue())
       }
       if current._version != old._version {

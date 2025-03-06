@@ -50,10 +50,6 @@ enum Fred: Int, AtomicValue {
 struct Hyacinth: RawRepresentable, Equatable, AtomicOptionalWrappable {
   var rawValue: UnsafeRawPointer
 
-  init(rawValue: UnsafeRawPointer) {
-    self.rawValue = rawValue
-  }
-
   static let bucket: Hyacinth = Hyacinth(
     rawValue: UnsafeMutableRawPointer.allocate(byteCount: 8, alignment: 8))
 }
