@@ -28,6 +28,7 @@ struct Bar {
   var value = 0
 }
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Int() -> UnsafeAtomic<Int> {
   var storage = UnsafeAtomic<Int>.Storage(0)
   let atomic = UnsafeAtomic<Int>(at: &storage)
@@ -36,6 +37,7 @@ func test_Int() -> UnsafeAtomic<Int> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Int64() -> UnsafeAtomic<Int64> {
   var storage = UnsafeAtomic<Int64>.Storage(0)
   let atomic = UnsafeAtomic<Int64>(at: &storage)
@@ -44,6 +46,7 @@ func test_Int64() -> UnsafeAtomic<Int64> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Int32() -> UnsafeAtomic<Int32> {
   var storage = UnsafeAtomic<Int32>.Storage(0)
   let atomic = UnsafeAtomic<Int32>(at: &storage)
@@ -52,6 +55,7 @@ func test_Int32() -> UnsafeAtomic<Int32> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Int16() -> UnsafeAtomic<Int16> {
   var storage = UnsafeAtomic<Int16>.Storage(0)
   let atomic = UnsafeAtomic<Int16>(at: &storage)
@@ -60,6 +64,7 @@ func test_Int16() -> UnsafeAtomic<Int16> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Int8() -> UnsafeAtomic<Int8> {
   var storage = UnsafeAtomic<Int8>.Storage(0)
   let atomic = UnsafeAtomic<Int8>(at: &storage)
@@ -68,6 +73,7 @@ func test_Int8() -> UnsafeAtomic<Int8> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UInt() -> UnsafeAtomic<UInt> {
   var storage = UnsafeAtomic<UInt>.Storage(0)
   let atomic = UnsafeAtomic<UInt>(at: &storage)
@@ -76,6 +82,7 @@ func test_UInt() -> UnsafeAtomic<UInt> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UInt64() -> UnsafeAtomic<UInt64> {
   var storage = UnsafeAtomic<UInt64>.Storage(0)
   let atomic = UnsafeAtomic<UInt64>(at: &storage)
@@ -84,6 +91,7 @@ func test_UInt64() -> UnsafeAtomic<UInt64> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UInt32() -> UnsafeAtomic<UInt32> {
   var storage = UnsafeAtomic<UInt32>.Storage(0)
   let atomic = UnsafeAtomic<UInt32>(at: &storage)
@@ -92,6 +100,7 @@ func test_UInt32() -> UnsafeAtomic<UInt32> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UInt16() -> UnsafeAtomic<UInt16> {
   var storage = UnsafeAtomic<UInt16>.Storage(0)
   let atomic = UnsafeAtomic<UInt16>(at: &storage)
@@ -100,6 +109,7 @@ func test_UInt16() -> UnsafeAtomic<UInt16> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UInt8() -> UnsafeAtomic<UInt8> {
   var storage = UnsafeAtomic<UInt8>.Storage(0)
   let atomic = UnsafeAtomic<UInt8>(at: &storage)
@@ -108,6 +118,7 @@ func test_UInt8() -> UnsafeAtomic<UInt8> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_URP() -> UnsafeAtomic<UnsafeRawPointer> {
   var storage = UnsafeAtomic<UnsafeRawPointer>.Storage(
     UnsafeRawPointer(
@@ -118,77 +129,97 @@ func test_URP() -> UnsafeAtomic<UnsafeRawPointer> {
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UP() -> UnsafeAtomic<UnsafePointer<Bar>> {
   var storage = UnsafeAtomic<UnsafePointer<Bar>>.Storage(
     UnsafePointer(UnsafeMutablePointer<Bar>.allocate(capacity: 1)))
-  let atomic = UnsafeAtomic<UnsafePointer<Bar>>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafePointer<Bar>>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafePointer<Bar>>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafePointer<Bar>>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UMRP() -> UnsafeAtomic<UnsafeMutableRawPointer> {
   var storage = UnsafeAtomic<UnsafeMutableRawPointer>.Storage(
     .allocate(byteCount: 8, alignment: 8))
-  let atomic = UnsafeAtomic<UnsafeMutableRawPointer>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafeMutableRawPointer>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafeMutableRawPointer>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafeMutableRawPointer>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UMP() -> UnsafeAtomic<UnsafeMutablePointer<Bar>> {
   var storage = UnsafeAtomic<UnsafeMutablePointer<Bar>>.Storage(
     .allocate(capacity: 1))
-  let atomic = UnsafeAtomic<UnsafeMutablePointer<Bar>>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafeMutablePointer<Bar>>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafeMutablePointer<Bar>>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafeMutablePointer<Bar>>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_Unmanaged() -> UnsafeAtomic<Unmanaged<Foo>> {
   var storage = UnsafeAtomic<Unmanaged<Foo>>.Storage(
     Unmanaged.passRetained(Foo()))
-  let atomic = UnsafeAtomic<Unmanaged<Foo>>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<Unmanaged<Foo>>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<Unmanaged<Foo>>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<Unmanaged<Foo>>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_URPOpt() -> UnsafeAtomic<UnsafeRawPointer?> {
   var storage = UnsafeAtomic<UnsafeRawPointer?>.Storage(nil)
-  let atomic = UnsafeAtomic<UnsafeRawPointer?>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafeRawPointer?>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafeRawPointer?>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafeRawPointer?>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UPOpt() -> UnsafeAtomic<UnsafePointer<Bar>?> {
   var storage = UnsafeAtomic<UnsafePointer<Bar>?>.Storage(nil)
-  let atomic = UnsafeAtomic<UnsafePointer<Bar>?>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafePointer<Bar>?>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafePointer<Bar>?>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafePointer<Bar>?>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UMRPOpt() -> UnsafeAtomic<UnsafeMutableRawPointer?> {
   var storage = UnsafeAtomic<UnsafeMutableRawPointer?>.Storage(nil)
-  let atomic = UnsafeAtomic<UnsafeMutableRawPointer?>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafeMutableRawPointer?>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafeMutableRawPointer?>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafeMutableRawPointer?>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UMPOpt() -> UnsafeAtomic<UnsafeMutablePointer<Bar>?> {
   var storage = UnsafeAtomic<UnsafeMutablePointer<Bar>?>.Storage(nil)
-  let atomic = UnsafeAtomic<UnsafeMutablePointer<Bar>?>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<UnsafeMutablePointer<Bar>?>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<UnsafeMutablePointer<Bar>?>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<UnsafeMutablePointer<Bar>?>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UnmanagedOpt() -> UnsafeAtomic<Unmanaged<Foo>?> {
   var storage = UnsafeAtomic<Unmanaged<Foo>?>.Storage(nil)
-  let atomic = UnsafeAtomic<Unmanaged<Foo>?>(at: &storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomic<Unmanaged<Foo>?>(at: &storage)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<Unmanaged<Foo>?>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<Unmanaged<Foo>?>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
 }
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 func test_UnsafeAtomicLazyReference() -> UnsafeAtomicLazyReference<Foo> {
   var value = UnsafeAtomicLazyReference<Foo>.Storage()
-  let atomic = UnsafeAtomicLazyReference(at: &value)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+  let atomic = UnsafeAtomicLazyReference(at: &value)
+  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
   // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomicLazyReference<Foo>.Storage' to 'UnsafeMutablePointer<UnsafeAtomicLazyReference<Foo>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
   // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   return atomic
@@ -202,7 +233,8 @@ class BrokenAtomicCounter {  // THIS IS BROKEN; DO NOT USE
     // This escapes the ephemeral pointer generated by the inout expression,
     // so it leads to undefined behavior when the pointer gets dereferenced
     // in the atomic operations below. DO NOT DO THIS.
-    _value = UnsafeAtomic(at: &_storage)  // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
+    _value = UnsafeAtomic(at: &_storage)
+    // expected-warning {{inout expression creates a temporary pointer, but argument 'at' should be a pointer that outlives the call to 'init(at:)'}}
     // expected-note@-1 {{implicit argument conversion from 'UnsafeAtomic<Int>.Storage' to 'UnsafeMutablePointer<UnsafeAtomic<Int>.Storage>' produces a pointer valid only for the duration of the call to 'init(at:)'}}
     // expected-note@-2 {{use 'withUnsafeMutablePointer' in order to explicitly convert argument to pointer valid for a defined scope}}
   }

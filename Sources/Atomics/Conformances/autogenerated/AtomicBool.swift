@@ -193,10 +193,11 @@ extension Bool.AtomicRepresentation {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter pointer: A memory location previously initialized with a value
-  ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - pointer: A memory location previously initialized with a value
+  ///     returned by `prepareAtomicRepresentation(for:)`.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -213,10 +214,11 @@ extension Bool.AtomicRepresentation {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter pointer: A memory location previously initialized with a value
-  ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - pointer: A memory location previously initialized with a value
+  ///     returned by `prepareAtomicRepresentation(for:)`.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -233,10 +235,11 @@ extension Bool.AtomicRepresentation {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter pointer: A memory location previously initialized with a value
-  ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - pointer: A memory location previously initialized with a value
+  ///     returned by `prepareAtomicRepresentation(for:)`.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -255,8 +258,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -272,8 +276,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -289,8 +294,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -309,8 +315,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -328,8 +335,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -347,8 +355,9 @@ extension UnsafeAtomic where Value == Bool {
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -368,8 +377,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -385,8 +395,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -402,8 +413,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -422,8 +434,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical AND operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -441,8 +454,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical OR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -460,8 +474,9 @@ extension ManagedAtomic where Value == Bool {
   /// Perform an atomic logical XOR operation and return the original value, applying
   /// the specified memory ordering.
   ///
-  /// - Parameter operand: A boolean value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - operand: A boolean value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient

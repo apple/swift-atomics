@@ -93,8 +93,9 @@ extension UnsafeAtomic {
   /// Atomically sets the current value to `desired`, applying the specified
   /// memory ordering.
   ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - desired: The desired new value.
+  ///   - ordering: The memory ordering to apply on this operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func store(
@@ -107,8 +108,9 @@ extension UnsafeAtomic {
   /// Atomically sets the current value to `desired` and returns the original
   /// value, applying the specified memory ordering.
   ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - desired: The desired new value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
@@ -137,9 +139,10 @@ extension UnsafeAtomic {
   /// This method implements a "strong" compare and exchange operation
   /// that does not permit spurious failures.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
   @_semantics("atomics.requires_constant_orderings")
@@ -178,11 +181,12 @@ extension UnsafeAtomic {
   /// This method implements a "strong" compare and exchange operation
   /// that does not permit spurious failures.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - successOrdering: The memory ordering to apply if this
   ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
+  ///   - failureOrdering: The memory ordering to apply on this
   ///    operation does not perform the exchange.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
@@ -225,9 +229,10 @@ extension UnsafeAtomic {
   /// expected` check to sometimes return false when the two values are in fact
   /// the same.)
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
   @_semantics("atomics.requires_constant_orderings")
@@ -271,11 +276,12 @@ extension UnsafeAtomic {
   /// operation manages to update the current value, while `failureOrdering`
   /// will be used when the operation leaves the value intact.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter successOrdering: The memory ordering to apply if this
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - successOrdering: The memory ordering to apply if this
   ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
+  ///   - failureOrdering: The memory ordering to apply on this
   ///    operation does not perform the exchange.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.

@@ -17,6 +17,7 @@ srcroot="$(dirname "$0")/.."
 cd "$srcroot"
 
 gyb="./Utilities/gyb"
+formatconfig="$srcroot/.swift-format"
 
 # Disable line directives in gyb output. We commit generated sources
 # into the package repository, so we do not want absolute file names
@@ -29,7 +30,7 @@ lineDirective=''
 
 
 # Create a temporary directory; remove it on exit.
-tmpdir="$(mktemp -d  "${TMPDIR:-/tmp}/$(basename "$0").XXXXXXXX")"
+tmpdir="$(mktemp -d  "${TMPDIR:-/tmp}$(basename "$0").XXXXXXXX")"
 trap "rm -rf \"$tmpdir\"" EXIT
 
 # Run gyb on each gyb file in the source tree and put results in
@@ -45,6 +46,7 @@ find ./Sources ./Tests -name "*.gyb" | while read input; do
 
     # Run gyb, making sure to only update files when they change.
     "$gyb" --line-directive "$lineDirective" -o "$tmpfile" "$input"
+    swift format -i "$tmpfile" --configuration "$formatconfig"
     if [ -e "$output" ] && cmp -s "$tmpfile" "$output"; then
         : Ignore unchanged file
     else

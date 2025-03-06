@@ -42,10 +42,11 @@ public protocol AtomicIntegerStorage: AtomicStorage {
   /// Note: This operation silently wraps around on overflow, like the
   /// `&+=` operator does on integer values.
   ///
-  /// - Parameter operand: The value to add to the current value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - operand: The value to add to the current value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoadThenWrappingIncrement(
@@ -61,10 +62,11 @@ public protocol AtomicIntegerStorage: AtomicStorage {
   /// Note: This operation silently wraps around on overflow, like the
   /// `&-=` operator does on integer values.
   ///
-  /// - Parameter operand: The value to subtract from the current value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - operand: The value to subtract from the current value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoadThenWrappingDecrement(
@@ -77,10 +79,11 @@ public protocol AtomicIntegerStorage: AtomicStorage {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - operand: An integer value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoadThenBitwiseAnd(
@@ -93,10 +96,11 @@ public protocol AtomicIntegerStorage: AtomicStorage {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - operand: An integer value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoadThenBitwiseOr(
@@ -109,10 +113,11 @@ public protocol AtomicIntegerStorage: AtomicStorage {
   /// `pointer` and return the original value, applying the specified memory
   /// ordering.
   ///
-  /// - Parameter operand: An integer value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - operand: An integer value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value before the operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoadThenBitwiseXor(

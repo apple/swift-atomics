@@ -54,9 +54,10 @@ public protocol AtomicStorage {
   /// Atomically loads and returns the value referenced by the given pointer,
   /// applying the specified memory ordering.
   ///
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The current value referenced by `pointer`.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicLoad(
@@ -67,10 +68,11 @@ public protocol AtomicStorage {
   /// Atomically sets the value referenced by `pointer` to `desired`,
   /// applying the specified memory ordering.
   ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicStore(
     _ desired: __owned Value,
@@ -81,10 +83,11 @@ public protocol AtomicStorage {
   /// Atomically sets the value referenced by `pointer` to `desired` and returns
   /// the original value, applying the specified memory ordering.
   ///
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: The original value.
   @_semantics("atomics.requires_constant_orderings")
   static func atomicExchange(
@@ -111,11 +114,12 @@ public protocol AtomicStorage {
   /// This method implements a "strong" compare and exchange operation
   /// that does not permit spurious failures.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
   @_semantics("atomics.requires_constant_orderings")
@@ -148,13 +152,14 @@ public protocol AtomicStorage {
   /// This method implements a "strong" compare and exchange operation
   /// that does not permit spurious failures.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareSelf(for:)`.
-  /// - Parameter successOrdering: The memory ordering to apply if this
+  ///   - successOrdering: The memory ordering to apply if this
   ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
+  ///   - failureOrdering: The memory ordering to apply on this
   ///    operation does not perform the exchange.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
@@ -189,11 +194,12 @@ public protocol AtomicStorage {
   /// expected` check to sometimes return false when the two values are in fact
   /// the same.)
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter ordering: The memory ordering to apply on this operation.
+  ///   - ordering: The memory ordering to apply on this operation.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
   @_semantics("atomics.requires_constant_orderings")
@@ -230,13 +236,14 @@ public protocol AtomicStorage {
   /// operation manages to update the current value, while `failureOrdering`
   /// will be used when the operation leaves the value intact.
   ///
-  /// - Parameter expected: The expected current value.
-  /// - Parameter desired: The desired new value.
-  /// - Parameter pointer: A memory location previously initialized with a value
+  /// - Parameters:
+  ///   - expected: The expected current value.
+  ///   - desired: The desired new value.
+  ///   - pointer: A memory location previously initialized with a value
   ///   returned by `prepareAtomicRepresentation(for:)`.
-  /// - Parameter successOrdering: The memory ordering to apply if this
+  ///   - successOrdering: The memory ordering to apply if this
   ///    operation performs the exchange.
-  /// - Parameter failureOrdering: The memory ordering to apply on this
+  ///   - failureOrdering: The memory ordering to apply on this
   ///    operation does not perform the exchange.
   /// - Returns: A tuple `(exchanged, original)`, where `exchanged` is true if
   ///   the exchange was successful, and `original` is the original value.
