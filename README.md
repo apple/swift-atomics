@@ -29,7 +29,6 @@ The only way to access the counter value is to use one of the methods provided b
   * [Getting Started](#getting-started)
   * [Features](#features)
     * [Lock\-Free vs Wait\-Free Operations](#lock-free-vs-wait-free-operations)
-    * [Portability Concerns](#portability-concerns)
     * [Memory Management](#memory-management)
   * [Source Stability](#source-stability)
   * [Contributing to Swift Atomics](#contributing-to-swift-atomics)
