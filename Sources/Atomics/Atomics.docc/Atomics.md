@@ -51,7 +51,7 @@ Atomic access is implemented in terms of dedicated atomic storage representation
 - it enables custom storage representations (such as the one used by atomic strong references), and
 - it is a better fit with the standard C atomics library that we use to implement the actual operations (as enabled by [SE-0282]).
 
-[SE-0282]: https://github.com/apple/swift-evolution/blob/master/proposals/0282-atomics.md
+[SE-0282]: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0282-atomics.md
 
 While the underlying pointer-based atomic operations are exposed as static methods on the corresponding `AtomicStorage` types, we strongly recommend the use of higher-level atomic wrappers to manage the details of preparing/disposing atomic storage. This version of the library provides two wrapper types:
 
