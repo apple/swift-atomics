@@ -34,7 +34,11 @@
 #    define SWIFTATOMIC_SHIMS_EXPORT
 #  endif
 #else
-#  define SWIFTATOMIC_SHIMS_EXPORT extern
+#  ifdef __cplusplus
+#    define SWIFTATOMIC_SHIMS_EXPORT extern "C"
+#  else
+#    define SWIFTATOMIC_SHIMS_EXPORT extern
+#  endif
 #endif
 
 // Swift-importable shims for C atomics.
