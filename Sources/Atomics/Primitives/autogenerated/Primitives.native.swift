@@ -18,13 +18,6 @@
 // #############################################################################
 
 
-// FIXME: The conditionals below have been carefully constructed to
-// avoid confusing Swift 5.7; they can be sanitized once we drop support
-// for that version.
-#if compiler(>=5.9)
-#if !ATOMICS_NATIVE_BUILTINS
-#error("swift-atomics requires native builtins on Swift 5.9")
-#endif
 import Builtin
 
 @_alwaysEmitIntoClient
@@ -2453,9 +2446,3 @@ extension UnsafeMutablePointer where Pointee == _AtomicInt128Storage {
 #else
 #error("Unexpected pointer bit width")
 #endif
-
-#else // compiler(>=5.9)
-#if ATOMICS_NATIVE_BUILTINS
-#error("swift-atomics requires C shims on Swift versions below 5.9")
-#endif
-#endif // compiler(>=5.9)

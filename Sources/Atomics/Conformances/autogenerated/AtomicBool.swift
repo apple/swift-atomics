@@ -18,7 +18,6 @@
 // #############################################################################
 
 
-#if ATOMICS_NATIVE_BUILTINS
 import Builtin
 
 extension Bool {
@@ -28,9 +27,6 @@ extension Bool {
     self = unsafeBitCast(builtin, to: Bool.self)
   }
 }
-#else
-import _AtomicsShims
-#endif
 
 extension Bool: AtomicValue {
   @frozen
@@ -45,25 +41,16 @@ extension Bool: AtomicValue {
 
     @_transparent @_alwaysEmitIntoClient
     public init(_ value: Bool) {
-#if ATOMICS_NATIVE_BUILTINS
       _storage = value._atomicRepresentation
-#else
-      _storage = _sa_prepare_Int8(value._atomicRepresentation)
-#endif
     }
 
     @_transparent @_alwaysEmitIntoClient
     public func dispose() -> Value {
-#if ATOMICS_NATIVE_BUILTINS
       return _storage._decodeBool
-#else
-      return _sa_dispose_Int8(_storage)._decodeBool
-#endif
     }
   }
 }
 
-#if ATOMICS_NATIVE_BUILTINS
 extension Bool {
   @_transparent @_alwaysEmitIntoClient
   internal var _atomicRepresentation: _AtomicInt8Storage {
@@ -78,21 +65,6 @@ extension _AtomicInt8Storage {
     (Int8(self._value) & 1) != 0
   }
 }
-#else
-extension Bool {
-  @_transparent @_alwaysEmitIntoClient
-  internal var _atomicRepresentation: Int8 {
-    self ? 1 : 0
-  }
-}
-
-extension Int8 {
-  @_transparent @_alwaysEmitIntoClient
-  internal var _decodeBool: Bool {
-    (self & 1) != 0
-  }
-}
-#endif
 
 extension UnsafeMutablePointer
 where Pointee == Bool.AtomicRepresentation {

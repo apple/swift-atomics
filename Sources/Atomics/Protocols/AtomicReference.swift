@@ -10,10 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if !ATOMICS_NATIVE_BUILTINS
-import _AtomicsShims
-#endif
-
 /// A class type that supports atomic strong references.
 ///
 ///     class MyObject: AtomicReference {}
