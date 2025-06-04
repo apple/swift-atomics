@@ -2,21 +2,13 @@
 //
 // This source file is part of the Swift Atomics open source project
 //
-// Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
+// Copyright (c) 2020 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
 // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 //===----------------------------------------------------------------------===//
-
-// FIXME: The conditionals below have been carefully constructed to
-// avoid confusing Swift 5.7; they can be sanitized once we drop support
-// for that version.
-#if compiler(>=5.9)
-#if !ATOMICS_NATIVE_BUILTINS
-#error("swift-atomics requires native builtins on Swift 5.9")
-#endif
 
 import Builtin
 
@@ -69,15 +61,6 @@ extension DoubleWord {
     unsafeBitCast(self, to: _Builtin.self)
   }
 }
-
-#else // compiler(>=5.9)
-
-#if ATOMICS_NATIVE_BUILTINS
-#error("swift-atomics requires C shims on Swift versions below 5.9")
-#endif
-import _AtomicsShims
-public typealias DoubleWord = _AtomicsShims.DoubleWord
-#endif // compiler(>=5.9)
 
 extension DoubleWord {
   /// Initialize a new `DoubleWord` value given its high- and

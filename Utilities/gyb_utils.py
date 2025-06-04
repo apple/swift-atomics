@@ -2,7 +2,7 @@
 #
 # This source file is part of the Swift.org open source project
 #
-# Copyright (c) 2020 - 2023 Apple Inc. and the Swift project authors
+# Copyright (c) 2020 - 2025 Apple Inc. and the Swift project authors
 # Licensed under Apache License v2.0 with Runtime Library Exception
 #
 # See https://swift.org/LICENSE.txt for license information
@@ -137,5 +137,3 @@ def lowerFirst(str):
 
 def argLabel(label):
   return label + ": " if label != "_" else ""
-
-ptrBitWidth32 = "(compiler(>=5.9) && _pointerBitWidth(_32)) || (compiler(<5.9) && (arch(i386) || arch(arm) || arch(arm64_32) || arch(wasm32)))"
