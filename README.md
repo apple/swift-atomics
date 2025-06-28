@@ -124,16 +124,16 @@ Requiring a new Swift release will only require a minor version bump.
 
 For a detailed overview of the interfaces offered by this package, please see [our API documentation][APIDocs].
 
-[APIDocs]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics
-[AtomicValue]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicvalue
-[DoubleWord]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/doubleword
-[AtomicReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicreference
-[UnsafeAtomic]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/unsafeatomic
-[ManagedAtomic]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/managedatomic
-[ManagedAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/managedatomiclazyreference
-[UnsafeAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/unsafeatomiclazyreference
-[AtomicStorage]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicstorage
-[AtomicInteger]: https://swiftpackageindex.com/apple/swift-atomics/1.2.0/documentation/atomics/atomicinteger
+[APIDocs]: https://swiftpackageindex.com/apple/swift-atomics//documentation/atomics
+[AtomicValue]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/atomicvalue
+[DoubleWord]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/doubleword
+[AtomicReference]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/atomicreference
+[UnsafeAtomic]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/unsafeatomic
+[ManagedAtomic]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/managedatomic
+[ManagedAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/managedatomiclazyreference
+[UnsafeAtomicLazyReference]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/unsafeatomiclazyreference
+[AtomicStorage]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/atomicstorage
+[AtomicInteger]: https://swiftpackageindex.com/apple/swift-atomics/documentation/atomics/atomicinteger
 
 The package implements atomic operations for the following Swift constructs, all of which conform to the public [`AtomicValue` protocol][AtomicValue]:
 
