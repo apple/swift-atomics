@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-import Atomics
+@_spi(Testing) import Atomics
 import Dispatch
 
 private var iterations: Int {
@@ -74,6 +74,14 @@ class StrongReferenceRace: XCTestCase {
   func testLoad4() { checkLoad(count: 4, iterations: iterations) }
   func testLoad8() { checkLoad(count: 8, iterations: iterations) }
   func testLoad16() { checkLoad(count: 16, iterations: iterations) }
+
+  func testReaderCountDoesNotWrapAtCapacity() {
+    let result = AtomicReferenceStorage<Node>._testStartLoadingReaderCounts(
+      for: Node(),
+      readerMask: 3)
+    XCTAssertEqual(result.counts, [1, 2, 3])
+    XCTAssertTrue(result.overflowed)
+  }
 
   func checkCompareExchange(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
     let a = Node()
@@ -240,6 +248,7 @@ class StrongReferenceRace: XCTestCase {
     ("testLoad4", testLoad4),
     ("testLoad8", testLoad8),
     ("testLoad16", testLoad16),
+    ("testReaderCountDoesNotWrapAtCapacity", testReaderCountDoesNotWrapAtCapacity),
     ("testCompareExchange1", testCompareExchange1),
     ("testCompareExchange2", testCompareExchange2),
     ("testCompareExchange4", testCompareExchange4),
