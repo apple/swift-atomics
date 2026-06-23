@@ -148,7 +148,7 @@ internal struct _AtomicReferenceStorage {
   @usableFromInline
   internal init(_ value: __owned AnyObject?) {
     let dword = DoubleWord(
-      _raw: Unmanaged.passRetained(value)?.toOpaque(),
+      _raw: Unmanaged._passRetained(value)?.toOpaque(),
       readers: 0,
       version: 0)
     _storage = Storage(dword)
@@ -302,7 +302,7 @@ internal struct _AtomicReferenceStorage {
     _ desired: __owned AnyObject?,
     at pointer: UnsafeMutablePointer<Self>
   ) -> AnyObject? {
-    let new = Unmanaged.passRetained(desired)
+    let new = Unmanaged._passRetained(desired)
     var old = _startLoading(from: pointer)
     var (exchanged, original) = _tryExchange(old: &old, new: new, at: pointer)
     while !exchanged {
@@ -318,7 +318,7 @@ internal struct _AtomicReferenceStorage {
     at pointer: UnsafeMutablePointer<Self>
   ) -> (exchanged: Bool, original: AnyObject?) {
     let expectedRaw = expected._raw
-    let new = Unmanaged.passRetained(desired)
+    let new = Unmanaged._passRetained(desired)
     var old = _startLoading(from: pointer)
     while old._raw == expectedRaw {
       let (exchanged, original) = _tryExchange(old: &old, new: new, at: pointer)

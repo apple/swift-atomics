@@ -42,7 +42,7 @@ extension Unmanaged {
 
 extension Unmanaged {
   @inline(__always)
-  internal static func passRetained(_ instance: __owned Instance?) -> Self? {
+  internal static func _passRetained(_ instance: __owned Instance?) -> Self? {
     guard let instance = instance else { return nil }
     return .passRetained(instance)
   }
