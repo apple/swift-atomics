@@ -156,6 +156,7 @@ if [ "$(uname)" = "Darwin" ]; then
     try_xcodebuild "xcodebuild.test.watchOS-simulator" "platform=watchOS Simulator,name=Apple Watch Series 6 (44mm)" test
     try_xcodebuild "xcodebuild.test.tvOS-simulator" "platform=tvOS Simulator,name=Apple TV 4K (at 1080p)" test
 
+    try_xcodeproj "xcodeproj.single-module.smoke" "platform=macOS" -project Xcode/Atomics.xcodeproj -scheme Atomics test -only-testing:AtomicsTests/BasicAtomicUnmanagedTests/test_create_destroy
     try_xcodeproj "xcodeproj.test.macOS" "platform=macOS" -project Xcode/Atomics.xcodeproj -scheme Atomics test
 fi
 
