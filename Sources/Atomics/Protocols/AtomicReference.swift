@@ -74,8 +74,8 @@ internal var _concurrencyWindow: Int { 20 }
 
 extension DoubleWord {
   fileprivate init(_raw: UnsafeRawPointer?, readers: Int, version: Int) {
-    let r = UInt(bitPattern: readers) & Self._readersMask
-    assert(r == readers)
+    let r = UInt(bitPattern: readers)
+    precondition(r <= Self._readersMask)
     self.init(
       first: UInt(bitPattern: _raw),
       second: r | (UInt(bitPattern: version) &<< Self._readersBitWidth))
@@ -107,8 +107,8 @@ extension DoubleWord {
   fileprivate var _readers: Int {
     get { Int(bitPattern: second & Self._readersMask) }
     set {
-      let n = UInt(bitPattern: newValue) & Self._readersMask
-      assert(n == newValue)
+      let n = UInt(bitPattern: newValue)
+      precondition(n <= Self._readersMask)
       second = (second & ~Self._readersMask) | n
     }
   }
@@ -122,6 +122,19 @@ extension DoubleWord {
         (UInt(bitPattern: newValue) &<< Self._readersBitWidth) |
         second & Self._readersMask)
     }
+  }
+
+  @inline(__always)
+  fileprivate func _incrementingReaders(
+    readerMask: UInt = Self._readersMask
+  ) -> Self? {
+    precondition(readerMask <= Self._readersMask)
+    let readers = UInt(bitPattern: _readers)
+    guard readers < readerMask else { return nil }
+    return DoubleWord(
+      _raw: _raw,
+      readers: Int(readers + 1),
+      version: _version)
   }
 }
 
@@ -166,6 +179,20 @@ internal struct _AtomicReferenceStorage {
     from pointer: UnsafeMutablePointer<Self>,
     hint: DoubleWord? = nil
   ) -> DoubleWord {
+    var hint = hint
+    while true {
+      if let result = _tryStartLoading(from: pointer, hint: hint) {
+        return result
+      }
+      hint = nil
+    }
+  }
+
+  fileprivate static func _tryStartLoading(
+    from pointer: UnsafeMutablePointer<Self>,
+    hint: DoubleWord? = nil,
+    readerMask: UInt = DoubleWord._readersMask
+  ) -> DoubleWord? {
     var old = hint ?? Storage.atomicLoad(at: pointer._extract, ordering: .relaxed)
     if old._raw == nil {
       atomicMemoryFence(ordering: .acquiring)
@@ -173,10 +200,9 @@ internal struct _AtomicReferenceStorage {
     }
     // Increment reader count
     while true {
-      let new = DoubleWord(
-        _raw: old._raw,
-        readers: old._readers &+ 1,
-        version: old._version)
+      guard let new = old._incrementingReaders(readerMask: readerMask) else {
+        return nil
+      }
       var done: Bool
       (done, old) = Storage.atomicWeakCompareExchange(
         expected: old,
@@ -189,7 +215,7 @@ internal struct _AtomicReferenceStorage {
     }
   }
 
-  private static func _finishLoading(
+  fileprivate static func _finishLoading(
     _ value: DoubleWord,
     from pointer: UnsafeMutablePointer<Self>
   ) -> AnyObject? {
@@ -359,6 +385,44 @@ extension AtomicReferenceStorage {
     // `Self` is layout-compatible with its only stored property.
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicReferenceStorage.self)
+  }
+}
+
+extension AtomicReferenceStorage {
+  @_spi(Testing)
+  public static func _testStartLoadingReaderCounts(
+    for value: Value,
+    readerMask: UInt
+  ) -> (counts: [Int], overflowed: Bool) {
+    precondition(readerMask <= DoubleWord._readersMask)
+
+    let pointer = UnsafeMutablePointer<_AtomicReferenceStorage>.allocate(capacity: 1)
+    pointer.initialize(to: _AtomicReferenceStorage(value))
+
+    var started: [DoubleWord] = []
+    defer {
+      for value in started.reversed() {
+        _ = _AtomicReferenceStorage._finishLoading(value, from: pointer)
+      }
+      _ = pointer.pointee.dispose()
+      pointer.deinitialize(count: 1)
+      pointer.deallocate()
+    }
+
+    for _ in 0 ..< Int(readerMask) {
+      guard let value = _AtomicReferenceStorage._tryStartLoading(
+        from: pointer,
+        readerMask: readerMask)
+      else {
+        return (started.map { $0._readers }, true)
+      }
+      started.append(value)
+    }
+
+    let overflowed = _AtomicReferenceStorage._tryStartLoading(
+      from: pointer,
+      readerMask: readerMask) == nil
+    return (started.map { $0._readers }, overflowed)
   }
 }
 
