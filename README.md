@@ -2,6 +2,12 @@
 
 [SE-0282]: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0282-atomics.md
 [SE-0282r0]: https://github.com/swiftlang/swift-evolution/blob/3a358a07e878a58bec256639d2beb48461fc3177/proposals/0282-atomics.md
+[SE-0410]: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0410-atomics.md
+
+> [!WARNING]
+> As of Swift 6.0, this package has been largely superseded by [`struct Atomic` in the Synchronization module of the Swift Standard Library][SE-0410]. The new noncopyable construct provides a much better representation for atomics, and we highly recommend all developers to adopt it in newly written code.
+> 
+> Existing code will continue to work as is for the foreseeable future. However, we recommend developers plan to migrate to the standard solution when it is convenient to do so, to take advantage of its safety and performance benefits.
 
 This package implements an atomics library for Swift, providing atomic operations for a variety of Swift types, including integers and pointer values. The goal is to enable intrepid developers to start building synchronization constructs directly in Swift. 
 
