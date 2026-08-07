@@ -113,8 +113,10 @@ extension UnsafeAtomicLazyReference {
     // `Storage` is layout-compatible with its only stored property.
     let address = UnsafeMutableRawPointer(_ptr)
       .assumingMemoryBound(to: Storage.self)
-    defer { address.deallocate() }
-    return address.pointee.dispose()
+    let result = address.pointee.dispose()
+    address.deinitialize(count: 1)
+    address.deallocate()
+    return result
   }
 }
 
