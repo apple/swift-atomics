@@ -46,6 +46,7 @@ report_failure() {
 }
 
 _count=0
+failures=0
 try() {
     label="$1"
     shift
@@ -62,6 +63,7 @@ try() {
         echo "  ${red_on}${bold_on}Failed in $(($end - $start))s.${bold_off}${red_off}" \
              "${red_on}See $output for full console output.${red_off}"
         tail -10 "$output" | sed 's/^/  /'
+        failures=$(($failures + 1))
     fi
 }
 
@@ -189,4 +191,9 @@ else
         --sanitize=thread \
         -Xswiftc -DSWIFT_ATOMICS_LONG_TESTS \
         --build-path "$build_dir/spm.release.test.long+tsan"
+fi
+
+if [ "$failures" -ne 0 ]; then
+    echo "${red_on}${bold_on}Completed with $failures failing test configuration(s).${bold_off}${red_off}"
+    exit 1
 fi
