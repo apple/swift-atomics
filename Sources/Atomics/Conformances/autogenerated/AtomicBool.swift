@@ -281,12 +281,12 @@ extension UnsafeAtomic where Value == Bool {
 }
 
 extension UnsafeAtomic where Value == Bool {
-  /// Perform an atomic logical AND operation and return the original value, applying
+  /// Perform an atomic logical AND operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalAndThenLoad(
@@ -300,12 +300,12 @@ extension UnsafeAtomic where Value == Bool {
     return original && operand
   }
 
-  /// Perform an atomic logical OR operation and return the original value, applying
+  /// Perform an atomic logical OR operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalOrThenLoad(
@@ -319,12 +319,12 @@ extension UnsafeAtomic where Value == Bool {
     return original || operand
   }
 
-  /// Perform an atomic logical XOR operation and return the original value, applying
+  /// Perform an atomic logical XOR operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalXorThenLoad(
@@ -394,12 +394,12 @@ extension ManagedAtomic where Value == Bool {
 }
 
 extension ManagedAtomic where Value == Bool {
-  /// Perform an atomic logical AND operation and return the original value, applying
+  /// Perform an atomic logical AND operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalAndThenLoad(
@@ -413,12 +413,12 @@ extension ManagedAtomic where Value == Bool {
     return original && operand
   }
 
-  /// Perform an atomic logical OR operation and return the original value, applying
+  /// Perform an atomic logical OR operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalOrThenLoad(
@@ -432,12 +432,12 @@ extension ManagedAtomic where Value == Bool {
     return original || operand
   }
 
-  /// Perform an atomic logical XOR operation and return the original value, applying
+  /// Perform an atomic logical XOR operation and return the resulting value, applying
   /// the specified memory ordering.
   ///
   /// - Parameter operand: A boolean value.
   /// - Parameter ordering: The memory ordering to apply on this operation.
-  /// - Returns: The original value before the operation.
+  /// - Returns: The value after the operation.
   @_semantics("atomics.requires_constant_orderings")
   @_transparent @_alwaysEmitIntoClient
   public func logicalXorThenLoad(
