@@ -27,6 +27,12 @@
 #  define SWIFTATOMIC_SWIFTCC
 #endif
 
+#if defined(SWIFTATOMIC_SINGLE_MODULE) && !defined(ATOMICS_SINGLE_MODULE)
+#  define ATOMICS_SINGLE_MODULE SWIFTATOMIC_SINGLE_MODULE
+#elif defined(ATOMICS_SINGLE_MODULE) && !defined(SWIFTATOMIC_SINGLE_MODULE)
+#  define SWIFTATOMIC_SINGLE_MODULE ATOMICS_SINGLE_MODULE
+#endif
+
 #if ATOMICS_SINGLE_MODULE
 #  if __has_attribute(visibility) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(_WIN32)
 #    define SWIFTATOMIC_SHIMS_EXPORT __attribute__((visibility("hidden")))
@@ -41,7 +47,7 @@
 #  endif
 #endif
 
-#if SWIFTATOMIC_SINGLE_MODULE
+#if ATOMICS_SINGLE_MODULE
 // In the single-module configuration, declare _sa_retain_n/_sa_release_n with
 // the Swift calling convention, so that they can be easily picked up with
 // @_silgen_name'd declarations.
