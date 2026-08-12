@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-import Atomics
+@testable import Atomics
 import Dispatch
 
 private var iterations: Int {
@@ -74,6 +74,26 @@ class StrongReferenceRace: XCTestCase {
   func testLoad4() { checkLoad(count: 4, iterations: iterations) }
   func testLoad8() { checkLoad(count: 8, iterations: iterations) }
   func testLoad16() { checkLoad(count: 16, iterations: iterations) }
+
+  func testReaderCountAtCapacity() {
+    let pointer = UnsafeMutablePointer<_AtomicReferenceStorage>.allocate(capacity: 1)
+    pointer.initialize(to: _AtomicReferenceStorage(Node()))
+
+    var started: [DoubleWord] = []
+    defer {
+      for value in started.reversed() {
+        _ = _AtomicReferenceStorage._finishLoading(value, from: pointer)
+      }
+      _ = pointer.pointee.dispose()
+      pointer.deinitialize(count: 1)
+      pointer.deallocate()
+    }
+
+    for _ in 0 ..< Int(DoubleWord._readersMask) {
+      started.append(_AtomicReferenceStorage._startLoading(from: pointer))
+    }
+    XCTAssertEqual(started.count, Int(DoubleWord._readersMask))
+  }
 
   func checkCompareExchange(count: Int, iterations: Int, file: StaticString = #file, line: UInt = #line) {
     let a = Node()
@@ -240,6 +260,7 @@ class StrongReferenceRace: XCTestCase {
     ("testLoad4", testLoad4),
     ("testLoad8", testLoad8),
     ("testLoad16", testLoad16),
+    ("testReaderCountAtCapacity", testReaderCountAtCapacity),
     ("testCompareExchange1", testCompareExchange1),
     ("testCompareExchange2", testCompareExchange2),
     ("testCompareExchange4", testCompareExchange4),

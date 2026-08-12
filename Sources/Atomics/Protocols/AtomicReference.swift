@@ -74,8 +74,8 @@ internal var _concurrencyWindow: Int { 20 }
 
 extension DoubleWord {
   fileprivate init(_raw: UnsafeRawPointer?, readers: Int, version: Int) {
-    let r = UInt(bitPattern: readers) & Self._readersMask
-    assert(r == readers)
+    let r = UInt(bitPattern: readers)
+    precondition(r <= Self._readersMask, "Congestion overflow while loading an atomic reference")
     self.init(
       first: UInt(bitPattern: _raw),
       second: r | (UInt(bitPattern: version) &<< Self._readersBitWidth))
@@ -101,14 +101,14 @@ extension DoubleWord {
   }
 
   @inline(__always)
-  fileprivate static var _readersMask: UInt { (1 &<< _readersBitWidth) - 1  }
+  package static var _readersMask: UInt { (1 &<< _readersBitWidth) - 1  }
 
   @inline(__always)
   fileprivate var _readers: Int {
     get { Int(bitPattern: second & Self._readersMask) }
     set {
-      let n = UInt(bitPattern: newValue) & Self._readersMask
-      assert(n == newValue)
+      let n = UInt(bitPattern: newValue)
+      precondition(n <= Self._readersMask, "Congestion overflow while loading an atomic reference")
       second = (second & ~Self._readersMask) | n
     }
   }
@@ -162,7 +162,7 @@ internal struct _AtomicReferenceStorage {
     return value._unmanaged?.takeRetainedValue()
   }
 
-  private static func _startLoading(
+  package static func _startLoading(
     from pointer: UnsafeMutablePointer<Self>,
     hint: DoubleWord? = nil
   ) -> DoubleWord {
@@ -189,7 +189,7 @@ internal struct _AtomicReferenceStorage {
     }
   }
 
-  private static func _finishLoading(
+  package static func _finishLoading(
     _ value: DoubleWord,
     from pointer: UnsafeMutablePointer<Self>
   ) -> AnyObject? {
