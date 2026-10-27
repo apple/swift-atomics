@@ -94,7 +94,7 @@ swift-atomics       | Supported Swift Versions
 `1.0.x`             | 5.3, 5.4, 5.5
 `1.1.x`             | 5.6, 5.7, 5.8
 `1.2.x`             | 5.7, 5.8, 5.9
-`main`              | 5.8, 5.9, unreleased snapshots of 5.10 and trunk
+`main`              | 5.10 minimum (see `Package.swift`)
 
 Note that the `main` branch is not a tagged release, so its contents are inherently unstable. Because of this, we do not recommended using it in production. (For example, its set of supported Swift releases is subject to change without notice.)
 
