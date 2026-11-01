@@ -65,3 +65,17 @@ struct Hyacinth: RawRepresentable, Equatable, AtomicOptionalWrappable {
   static let bucket: Hyacinth = Hyacinth(
     rawValue: UnsafeMutableRawPointer.allocate(byteCount: 8, alignment: 8))
 }
+
+/// Returns operands that exercise the edge cases of atomic integer operations:
+/// overflow in both directions, the sign bit, and bits throughout the full
+/// width of the type. (The list contains duplicates for some types.)
+func integerBoundaryValues<T: FixedWidthInteger>(of type: T.Type) -> [T] {
+  let pattern = T(truncatingIfNeeded: 0x5A5A_5A5A_5A5A_5A5A as UInt64)
+  return [
+    .min, .min &+ 1,
+    ~0, // -1 in signed types
+    0, 1,
+    pattern, ~pattern,
+    .max &- 1, .max,
+  ]
+}
