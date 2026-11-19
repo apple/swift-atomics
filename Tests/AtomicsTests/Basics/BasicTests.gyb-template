@@ -405,6 +405,64 @@ class BasicAtomic${label}Tests: XCTestCase {
 
 %     end
 %   end
+
+  // Check every integer operation over operands that exercise overflow, the
+  // sign bit and the full width of the storage.
+%   for (name, _, operator, arglabel, _) in integerOperations:
+%     for (order, _, _, _, _) in updateOrderings:
+  func test_${lowerFirst(name)}_boundaries_${order}() {
+    let v: UnsafeAtomic<${type}> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: ${type}.self)
+    for a in values {
+      for b in values {
+        let expected: ${type} = a ${operator} b
+
+        v.store(a, ordering: .relaxed)
+        let old: ${type} = v.loadThen${name}(${argLabel(arglabel)}b, ordering: .${order})
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: ${type} = v.${lowerFirst(name)}ThenLoad(${argLabel(arglabel)}b, ordering: .${order})
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+%     end
+%   end
+
+  // Check that the wrapping operations wrap around at the limits of the type,
+  // using the default operand and each of the available spellings.
+%   for (order, _, _, _, _) in updateOrderings:
+%     for (prefix, create, destroy) in [("unsafe", "UnsafeAtomic<" + type + ">.create(.max)", "defer { v.destroy() }"), ("managed", "ManagedAtomic<" + type + ">(.max)", "")]:
+  func test_${prefix}_wrappingOverflow_${order}() {
+    let v = ${create}
+%       if destroy:
+    ${destroy}
+%       end
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .${order}), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .${order}), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .${order}), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .${order}), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .${order})
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .${order})
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+%     end
+%   end
 % end
 
 #if MANUAL_TEST_DISCOVERY
@@ -450,6 +508,16 @@ class BasicAtomic${label}Tests: XCTestCase {
 %   for (name, _, operator, arglabel, _) in integerOperations:
 %     for (order, _, _, _, _) in updateOrderings:
     ("test_${lowerFirst(name)}ThenLoad_${order}", test_${lowerFirst(name)}ThenLoad_${order}),
+%     end
+%   end
+%   for (name, _, operator, arglabel, _) in integerOperations:
+%     for (order, _, _, _, _) in updateOrderings:
+    ("test_${lowerFirst(name)}_boundaries_${order}", test_${lowerFirst(name)}_boundaries_${order}),
+%     end
+%   end
+%   for (order, _, _, _, _) in updateOrderings:
+%     for prefix in ["unsafe", "managed"]:
+    ("test_${prefix}_wrappingOverflow_${order}", test_${prefix}_wrappingOverflow_${order}),
 %     end
 %   end
 % end

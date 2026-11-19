@@ -2798,6 +2798,757 @@ class BasicAtomicUInt64Tests: XCTestCase {
   }
 
 
+  // Check every integer operation over operands that exercise overflow, the
+  // sign bit and the full width of the storage.
+  func test_wrappingIncrement_boundaries_relaxed() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &+ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .relaxed)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .relaxed)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingIncrement_boundaries_acquiring() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &+ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiring)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiring)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingIncrement_boundaries_releasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &+ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .releasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .releasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingIncrement_boundaries_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &+ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingIncrement_boundaries_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &+ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingIncrement(by: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingIncrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingDecrement_boundaries_relaxed() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &- b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .relaxed)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .relaxed)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingDecrement_boundaries_acquiring() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &- b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiring)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiring)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingDecrement_boundaries_releasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &- b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .releasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .releasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingDecrement_boundaries_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &- b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_wrappingDecrement_boundaries_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a &- b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenWrappingDecrement(by: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.wrappingDecrementThenLoad(by: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseAnd_boundaries_relaxed() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a & b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .relaxed)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .relaxed)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseAnd_boundaries_acquiring() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a & b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiring)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiring)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseAnd_boundaries_releasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a & b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .releasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .releasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseAnd_boundaries_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a & b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseAnd_boundaries_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a & b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseAnd(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseAndThenLoad(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseOr_boundaries_relaxed() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a | b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .relaxed)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .relaxed)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseOr_boundaries_acquiring() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a | b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .acquiring)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiring)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseOr_boundaries_releasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a | b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .releasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .releasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseOr_boundaries_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a | b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseOr_boundaries_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a | b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseOr(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseOrThenLoad(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseXor_boundaries_relaxed() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a ^ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .relaxed)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .relaxed)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseXor_boundaries_acquiring() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a ^ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .acquiring)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiring)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseXor_boundaries_releasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a ^ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .releasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .releasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseXor_boundaries_acquiringAndReleasing() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a ^ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .acquiringAndReleasing)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+  func test_bitwiseXor_boundaries_sequentiallyConsistent() {
+    let v: UnsafeAtomic<UInt64> = .create(0)
+    defer { v.destroy() }
+
+    let values = integerBoundaryValues(of: UInt64.self)
+    for a in values {
+      for b in values {
+        let expected: UInt64 = a ^ b
+
+        v.store(a, ordering: .relaxed)
+        let old: UInt64 = v.loadThenBitwiseXor(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(old, a, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+
+        v.store(a, ordering: .relaxed)
+        let new: UInt64 = v.bitwiseXorThenLoad(with: b, ordering: .sequentiallyConsistent)
+        XCTAssertEqual(new, expected, "a = \(a), b = \(b)")
+        XCTAssertEqual(v.load(ordering: .relaxed), expected, "a = \(a), b = \(b)")
+      }
+    }
+  }
+
+
+  // Check that the wrapping operations wrap around at the limits of the type,
+  // using the default operand and each of the available spellings.
+  func test_unsafe_wrappingOverflow_relaxed() {
+    let v = UnsafeAtomic<UInt64>.create(.max)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .relaxed), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .relaxed), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .relaxed), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .relaxed), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_managed_wrappingOverflow_relaxed() {
+    let v = ManagedAtomic<UInt64>(.max)
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .relaxed), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .relaxed), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .relaxed), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .relaxed), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .relaxed)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_unsafe_wrappingOverflow_acquiring() {
+    let v = UnsafeAtomic<UInt64>.create(.max)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .acquiring), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .acquiring), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .acquiring), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .acquiring), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .acquiring)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .acquiring)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_managed_wrappingOverflow_acquiring() {
+    let v = ManagedAtomic<UInt64>(.max)
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .acquiring), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .acquiring), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .acquiring), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .acquiring), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .acquiring)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .acquiring)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_unsafe_wrappingOverflow_releasing() {
+    let v = UnsafeAtomic<UInt64>.create(.max)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .releasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .releasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .releasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .releasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_managed_wrappingOverflow_releasing() {
+    let v = ManagedAtomic<UInt64>(.max)
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .releasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .releasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .releasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .releasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .releasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_unsafe_wrappingOverflow_acquiringAndReleasing() {
+    let v = UnsafeAtomic<UInt64>.create(.max)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .acquiringAndReleasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .acquiringAndReleasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .acquiringAndReleasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .acquiringAndReleasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .acquiringAndReleasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .acquiringAndReleasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_managed_wrappingOverflow_acquiringAndReleasing() {
+    let v = ManagedAtomic<UInt64>(.max)
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .acquiringAndReleasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .acquiringAndReleasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .acquiringAndReleasing), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .acquiringAndReleasing), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .acquiringAndReleasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .acquiringAndReleasing)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_unsafe_wrappingOverflow_sequentiallyConsistent() {
+    let v = UnsafeAtomic<UInt64>.create(.max)
+    defer { v.destroy() }
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .sequentiallyConsistent), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .sequentiallyConsistent), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .sequentiallyConsistent), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .sequentiallyConsistent), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+  func test_managed_wrappingOverflow_sequentiallyConsistent() {
+    let v = ManagedAtomic<UInt64>(.max)
+
+    XCTAssertEqual(v.loadThenWrappingIncrement(ordering: .sequentiallyConsistent), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.loadThenWrappingDecrement(ordering: .sequentiallyConsistent), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    XCTAssertEqual(v.wrappingIncrementThenLoad(ordering: .sequentiallyConsistent), .min)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    XCTAssertEqual(v.wrappingDecrementThenLoad(ordering: .sequentiallyConsistent), .max)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+
+    v.wrappingIncrement(ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), .min)
+    v.wrappingDecrement(ordering: .sequentiallyConsistent)
+    XCTAssertEqual(v.load(ordering: .relaxed), .max)
+  }
+
+
 #if MANUAL_TEST_DISCOVERY
   public static var allTests: [(String, (BasicAtomicUInt64Tests) -> () -> ())] = [
     ("test_create_destroy", test_create_destroy),
@@ -2897,6 +3648,41 @@ class BasicAtomicUInt64Tests: XCTestCase {
     ("test_bitwiseXorThenLoad_releasing", test_bitwiseXorThenLoad_releasing),
     ("test_bitwiseXorThenLoad_acquiringAndReleasing", test_bitwiseXorThenLoad_acquiringAndReleasing),
     ("test_bitwiseXorThenLoad_sequentiallyConsistent", test_bitwiseXorThenLoad_sequentiallyConsistent),
+    ("test_wrappingIncrement_boundaries_relaxed", test_wrappingIncrement_boundaries_relaxed),
+    ("test_wrappingIncrement_boundaries_acquiring", test_wrappingIncrement_boundaries_acquiring),
+    ("test_wrappingIncrement_boundaries_releasing", test_wrappingIncrement_boundaries_releasing),
+    ("test_wrappingIncrement_boundaries_acquiringAndReleasing", test_wrappingIncrement_boundaries_acquiringAndReleasing),
+    ("test_wrappingIncrement_boundaries_sequentiallyConsistent", test_wrappingIncrement_boundaries_sequentiallyConsistent),
+    ("test_wrappingDecrement_boundaries_relaxed", test_wrappingDecrement_boundaries_relaxed),
+    ("test_wrappingDecrement_boundaries_acquiring", test_wrappingDecrement_boundaries_acquiring),
+    ("test_wrappingDecrement_boundaries_releasing", test_wrappingDecrement_boundaries_releasing),
+    ("test_wrappingDecrement_boundaries_acquiringAndReleasing", test_wrappingDecrement_boundaries_acquiringAndReleasing),
+    ("test_wrappingDecrement_boundaries_sequentiallyConsistent", test_wrappingDecrement_boundaries_sequentiallyConsistent),
+    ("test_bitwiseAnd_boundaries_relaxed", test_bitwiseAnd_boundaries_relaxed),
+    ("test_bitwiseAnd_boundaries_acquiring", test_bitwiseAnd_boundaries_acquiring),
+    ("test_bitwiseAnd_boundaries_releasing", test_bitwiseAnd_boundaries_releasing),
+    ("test_bitwiseAnd_boundaries_acquiringAndReleasing", test_bitwiseAnd_boundaries_acquiringAndReleasing),
+    ("test_bitwiseAnd_boundaries_sequentiallyConsistent", test_bitwiseAnd_boundaries_sequentiallyConsistent),
+    ("test_bitwiseOr_boundaries_relaxed", test_bitwiseOr_boundaries_relaxed),
+    ("test_bitwiseOr_boundaries_acquiring", test_bitwiseOr_boundaries_acquiring),
+    ("test_bitwiseOr_boundaries_releasing", test_bitwiseOr_boundaries_releasing),
+    ("test_bitwiseOr_boundaries_acquiringAndReleasing", test_bitwiseOr_boundaries_acquiringAndReleasing),
+    ("test_bitwiseOr_boundaries_sequentiallyConsistent", test_bitwiseOr_boundaries_sequentiallyConsistent),
+    ("test_bitwiseXor_boundaries_relaxed", test_bitwiseXor_boundaries_relaxed),
+    ("test_bitwiseXor_boundaries_acquiring", test_bitwiseXor_boundaries_acquiring),
+    ("test_bitwiseXor_boundaries_releasing", test_bitwiseXor_boundaries_releasing),
+    ("test_bitwiseXor_boundaries_acquiringAndReleasing", test_bitwiseXor_boundaries_acquiringAndReleasing),
+    ("test_bitwiseXor_boundaries_sequentiallyConsistent", test_bitwiseXor_boundaries_sequentiallyConsistent),
+    ("test_unsafe_wrappingOverflow_relaxed", test_unsafe_wrappingOverflow_relaxed),
+    ("test_managed_wrappingOverflow_relaxed", test_managed_wrappingOverflow_relaxed),
+    ("test_unsafe_wrappingOverflow_acquiring", test_unsafe_wrappingOverflow_acquiring),
+    ("test_managed_wrappingOverflow_acquiring", test_managed_wrappingOverflow_acquiring),
+    ("test_unsafe_wrappingOverflow_releasing", test_unsafe_wrappingOverflow_releasing),
+    ("test_managed_wrappingOverflow_releasing", test_managed_wrappingOverflow_releasing),
+    ("test_unsafe_wrappingOverflow_acquiringAndReleasing", test_unsafe_wrappingOverflow_acquiringAndReleasing),
+    ("test_managed_wrappingOverflow_acquiringAndReleasing", test_managed_wrappingOverflow_acquiringAndReleasing),
+    ("test_unsafe_wrappingOverflow_sequentiallyConsistent", test_unsafe_wrappingOverflow_sequentiallyConsistent),
+    ("test_managed_wrappingOverflow_sequentiallyConsistent", test_managed_wrappingOverflow_sequentiallyConsistent),
   ]
 #endif
 }
