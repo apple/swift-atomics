@@ -314,7 +314,7 @@ The current version of the `Atomics` module does not implement APIs for tagged a
 
 Swift Atomics is a standalone library separate from the core Swift project. We expect some of the atomics APIs may eventually get incorporated into the Swift Standard Library. If and when that happens such changes will be proposed to the Swift Standard Library using the established evolution process of the Swift project.
 
-This library is licensed under the [Swift License]. For more information, see the Swift.org [Community Guidelines], [Contribution Guidelines], as well as the files [LICENSE.txt](./LICENSE.txt), [CONTRIBUTING.md](./CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) at the root of this repository.
+This library is licensed under the [Swift License]. For more information, see the Swift.org [Community Guidelines], [Contribution Guidelines], as well as the files [LICENSE.txt](./LICENSE.txt), [CONTRIBUTING.md](./CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/apple/.github/blob/main/CODE_OF_CONDUCT.md) at the root of this repository.
 
 Swift Atomics uses GitHub issues to track bugs and enhancement requests. We use pull requests for development.
 
